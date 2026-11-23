@@ -1,0 +1,5 @@
+# Reaping Trials tooling (everything else in this repo is media)
+node_modules/
+.env
+credits.json
+reaping-trials/build/

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>The Reaping Trials — Part 1 Test Scene</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+  #stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#000;overflow:hidden;--u:4px;}
+  #stage canvas{display:block;}
+  #fade{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none;}
+  #cap{position:absolute;left:0;right:0;top:12%;text-align:center;color:#fff;font-family:Inter,system-ui,sans-serif;
+       font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:calc(var(--u)*3.1);padding:0 6%;line-height:1.5;
+       text-shadow:0 1px 3px #000,0 2px 12px rgba(0,0,0,.9);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.38) 45%,rgba(0,0,0,0));padding-top:calc(var(--u)*3);padding-bottom:calc(var(--u)*6);top:9%;opacity:0;transition:opacity .4s;pointer-events:none;}
+  #sub{position:absolute;left:7%;right:7%;top:56%;text-align:center;pointer-events:none;opacity:0;transition:opacity .25s;}
+  #sub .spk{display:inline-block;font-family:Inter,system-ui,sans-serif;font-weight:700;color:#ffcf7a;
+       font-size:calc(var(--u)*3.6);letter-spacing:.12em;margin-bottom:calc(var(--u)*1.2);text-shadow:0 2px 8px rgba(0,0,0,.9);}
+  #sub .txt{font-family:Inter,system-ui,sans-serif;font-weight:700;color:#fff;font-size:calc(var(--u)*6.2);line-height:1.25;
+       text-shadow:0 0 2px #000,0 3px 12px rgba(0,0,0,.95);}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+       text-align:center;color:#fff;opacity:0;pointer-events:none;}
+  #title .t1{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:calc(var(--u)*9.5);line-height:1.05;letter-spacing:.06em;
+       color:#f3d39a;text-shadow:0 0 30px rgba(255,170,80,.35);}
+  #title .t2{margin-top:calc(var(--u)*4);font-family:Inter,system-ui,sans-serif;font-weight:500;letter-spacing:.3em;
+       font-size:calc(var(--u)*3.4);color:#ddd;}
+  #title .t3{margin-top:calc(var(--u)*14);font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:calc(var(--u)*3.6);color:#ffcf7a;}
+  #menu{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+       background:rgba(0,0,0,.55);color:#fff;text-align:center;font-family:Inter,system-ui,sans-serif;padding:0 8%;box-sizing:border-box;}
+  #menu h1{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:calc(var(--u)*8);margin:0 0 calc(var(--u)*2);color:#f3d39a;line-height:1.1;}
+  #menu p{font-size:calc(var(--u)*3.4);opacity:.85;margin:0 0 calc(var(--u)*6);line-height:1.45;}
+  #play{font:700 calc(var(--u)*4.6) Inter,system-ui,sans-serif;color:#1a1208;background:#f3c66e;border:0;border-radius:999px;
+       padding:calc(var(--u)*3) calc(var(--u)*9);cursor:pointer;box-shadow:0 8px 30px rgba(243,198,110,.35);}
+  #menu small{display:block;margin-top:calc(var(--u)*6);font-size:calc(var(--u)*2.9);opacity:.7;line-height:1.5;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="fade"></div>
+  <div id="cap"></div>
+  <div id="sub"><div class="spk"></div><div class="txt"></div></div>
+  <div id="title">
+    <div class="t1">THE REAPING<br>TRIALS</div>
+    <div class="t2">PART 1 · THE CHOOSING</div>
+    <div class="t3">Follow for Part 2</div>
+  </div>
+  <div id="menu">
+    <h1>The Reaping Trials</h1>
+    <p>Part 1 · Opening test scene<br>(about 27 seconds)</p>
+    <button id="play">▶ Play</button>
+    <small>Tip: start your phone's screen recorder first,<br>then tap Play. Crop out this menu when editing.</small>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const stage=document.getElementById('stage');
+const fadeEl=document.getElementById('fade');
+const capEl=document.getElementById('cap');
+const subEl=document.getElementById('sub');
+const spkEl=subEl.querySelector('.spk');
+const txtEl=subEl.querySelector('.txt');
+const titleEl=document.getElementById('title');
+const menu=document.getElementById('menu');
+const playBtn=document.getElementById('play');
+
+// ---------- helpers ----------
+function clamp(x,a,b){return Math.min(b,Math.max(a,x));}
+function smooth(a,b,x){x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x);}
+function ease(p){return 0.5-0.5*Math.cos(Math.PI*clamp(p,0,1));}
+function lerp(a,b,p){return a+(b-a)*p;}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const rand=rng(7);
+
+function hgt(x,z){
+  const d=Math.hypot(x,z);
+  const s=smooth(55,260,d);
+  let h=Math.sin(x*0.011)*9+Math.cos(z*0.013)*11+Math.sin((x+z)*0.0045)*22+Math.sin(x*0.031+z*0.02)*4;
+  h=(h+14)*s;
+  h+=Math.sin(x*0.15)*Math.cos(z*0.13)*0.25;
+  return h;
+}
+
+// ---------- renderer / scene ----------
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.25;
+stage.insertBefore(renderer.domElement,stage.firstChild);
+
+const scene=new THREE.Scene();
+const fogColor=new THREE.Color(0xe7b88f);
+scene.fog=new THREE.Fog(fogColor,90,1150);
+const camera=new THREE.PerspectiveCamera(50,9/16,0.1,3200);
+
+const sunDir=new THREE.Vector3(-0.6,0.14,-0.79).normalize();
+
+// sky
+const skyMat=new THREE.ShaderMaterial({
+  side:THREE.BackSide,depthWrite:false,
+  uniforms:{top:{value:new THREE.Color(0x4f74ad)},horizon:{value:new THREE.Color(0xf4c08f)},
+            sunCol:{value:new THREE.Color(0xffb36b)},sunDir:{value:sunDir}},
+  vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+  fragmentShader:'uniform vec3 top;uniform vec3 horizon;uniform vec3 sunCol;uniform vec3 sunDir;varying vec3 vP;'+
+   'void main(){vec3 d=normalize(vP);float h=d.y;vec3 c=mix(horizon,top,smoothstep(-0.02,0.55,h));'+
+   'float s=max(dot(d,sunDir),0.0);c+=sunCol*pow(s,6.0)*0.55+vec3(1.0,0.9,0.75)*pow(s,400.0)*1.2;'+
+   'c=mix(c,horizon*0.9,smoothstep(0.0,-0.2,h));gl_FragColor=vec4(c,1.0);}'
+});
+const sky=new THREE.Mesh(new THREE.SphereGeometry(1500,32,16),skyMat);
+scene.add(sky);
+
+// sun disc + glow
+const sunDisc=new THREE.Mesh(new THREE.SphereGeometry(28,24,12),new THREE.MeshBasicMaterial({color:0xfff6e0,fog:false,toneMapped:false}));
+scene.add(sunDisc);
+const gc=document.createElement('canvas');gc.width=gc.height=128;
+const g2=gc.getContext('2d');const gr=g2.createRadialGradient(64,64,0,64,64,64);
+gr.addColorStop(0,'rgba(255,230,180,1)');gr.addColorStop(0.25,'rgba(255,190,120,0.45)');gr.addColorStop(1,'rgba(255,150,80,0)');
+g2.fillStyle=gr;g2.fillRect(0,0,128,128);
+const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),blending:THREE.AdditiveBlending,
+  depthWrite:false,transparent:true,fog:false,toneMapped:false,opacity:0.8}));
+glow.scale.set(520,520,1);scene.add(glow);
+
+// lights
+scene.add(new THREE.HemisphereLight(0xbcd0ff,0x6b5a3a,0.65));
+const sun=new THREE.DirectionalLight(0xffcf99,1.7);
+sun.position.copy(sunDir).multiplyScalar(150);
+sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+const sc=sun.shadow.camera;sc.left=-45;sc.right=45;sc.top=45;sc.bottom=-45;sc.near=10;sc.far=400;
+sun.shadow.bias=-0.0006;
+scene.add(sun);scene.add(sun.target);
+const fill=new THREE.DirectionalLight(0xffd9c0,0.45);fill.position.set(2,3,10);scene.add(fill);
+
+// ---------- terrain ----------
+const tg=new THREE.PlaneGeometry(1800,1800,220,220);tg.rotateX(-Math.PI/2);
+const tp=tg.attributes.position;const tcol=new Float32Array(tp.count*3);
+const cGrass=new THREE.Color(0x5d7a36),cDry=new THREE.Color(0x9c8a46),cDark=new THREE.Color(0x3c5a2c),cSoil=new THREE.Color(0x7a5e34),c=new THREE.Color();
+for(let i=0;i<tp.count;i++){
+  const x=tp.getX(i),z=tp.getZ(i),h=hgt(x,z);tp.setY(i,h);
+  const n=0.5+0.5*Math.sin(x*0.05+Math.cos(z*0.04)*2);
+  c.copy(cGrass).lerp(cDry,n*0.6).lerp(cDark,clamp((h-15)/40,0,1));
+  const fx=Math.max(Math.abs(x),Math.abs(z));
+  if(fx<25)c.lerp(cSoil,smooth(25,21,fx));
+  tcol[i*3]=c.r;tcol[i*3+1]=c.g;tcol[i*3+2]=c.b;
+}
+tg.setAttribute('color',new THREE.BufferAttribute(tcol,3));
+tg.computeVertexNormals();
+const terrain=new THREE.Mesh(tg,new THREE.MeshLambertMaterial({vertexColors:true}));
+terrain.receiveShadow=true;scene.add(terrain);
+
+// ---------- wheat field ----------
+const WN=3200;
+const stalkGeo=new THREE.BoxGeometry(0.035,1,0.035);stalkGeo.translate(0,0.5,0);
+const headGeo=new THREE.BoxGeometry(0.075,0.2,0.075);
+const wheatMat=new THREE.MeshLambertMaterial({color:0xffffff});
+const stalks=new THREE.InstancedMesh(stalkGeo,wheatMat,WN);
+const heads=new THREE.InstancedMesh(headGeo,wheatMat,WN);
+const wd=[];const wc=new THREE.Color();
+for(let i=0;i<WN;i++){
+  let x,z;
+  if(i<WN*0.5){x=(rand()*2-1)*21;z=(rand()*2-1)*21;}
+  else{const a=rand()*Math.PI*2,r=0.6+Math.pow(rand(),0.8)*11;x=Math.cos(a)*r;z=Math.sin(a)*r;}
+  if(Math.hypot(x,z)<0.6){x+=0.8;}
+  wd.push({x:x,z:z,y:hgt(x,z),h:0.8+rand()*0.35,ph:rand()*6.28});
+  wc.setHSL(0.11+rand()*0.02,0.55+rand()*0.15,0.45+rand()*0.12);
+  stalks.setColorAt(i,wc);wc.offsetHSL(0,0,0.06);heads.setColorAt(i,wc);
+}
+stalks.instanceColor.needsUpdate=true;heads.instanceColor.needsUpdate=true;
+scene.add(stalks);scene.add(heads);
+const dmy=new THREE.Object3D();
+function updateWheat(t){
+  for(let i=0;i<WN;i++){
+    const w=wd[i];
+    const gust=Math.sin(t*0.9+w.x*0.12+w.z*0.05);
+    const rz=Math.sin(t*1.6+w.ph+w.x*0.25)*0.06+gust*0.09;
+    const rx=Math.cos(t*1.3+w.ph+w.z*0.2)*0.05;
+    dmy.position.set(w.x,w.y,w.z);dmy.rotation.set(rx,0,rz);dmy.scale.set(1,w.h,1);dmy.updateMatrix();
+    stalks.setMatrixAt(i,dmy.matrix);
+    dmy.position.set(w.x-Math.sin(rz)*w.h,w.y+Math.cos(rz)*Math.cos(rx)*w.h,w.z+Math.cos(rz)*Math.sin(rx)*w.h);
+    dmy.scale.set(1,1,1);dmy.updateMatrix();heads.setMatrixAt(i,dmy.matrix);
+  }
+  stalks.instanceMatrix.needsUpdate=true;heads.instanceMatrix.needsUpdate=true;
+}
+
+// ---------- village houses ----------
+const wallMats=[0x8a6a48,0x7b5c3e,0x957552,0x6e5640].map(function(col){return new THREE.MeshStandardMaterial({color:col,roughness:0.95});});
+const roofMats=[0x5a3b2a,0x4a3a30,0x6b4630].map(function(col){return new THREE.MeshStandardMaterial({color:col,roughness:1,flatShading:true});});
+const doorMat=new THREE.MeshStandardMaterial({color:0x3a2618,roughness:1});
+const shotBAngle=Math.atan2(21,13);
+let placed=0,tries=0;
+while(placed<16&&tries<200){
+  tries++;
+  const a=rand()*Math.PI*2,r=42+rand()*30;
+  let da=Math.abs(((a-shotBAngle)+Math.PI*3)%(Math.PI*2)-Math.PI);
+  if(da<0.55)continue;
+  const x=Math.cos(a)*r,z=Math.sin(a)*r;
+  const w=4+rand()*2.5,d=4+rand()*2.5,hh=2.6+rand()*0.8;
+  const house=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.BoxGeometry(w,hh,d),wallMats[placed%4]);body.position.y=hh/2;
+  body.castShadow=body.receiveShadow=true;house.add(body);
+  const roof=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),roofMats[placed%3]);
+  roof.rotation.y=Math.PI/4;roof.scale.set(w*0.78,2.2,d*0.78);roof.position.y=hh+1.1;roof.castShadow=true;house.add(roof);
+  const door=new THREE.Mesh(new THREE.BoxGeometry(0.9,1.7,0.08),doorMat);door.position.set(0,0.85,d/2+0.04);house.add(door);
+  house.position.set(x,hgt(x,z)-0.1,z);
+  house.lookAt(0,house.position.y,0);
+  scene.add(house);placed++;
+}
+
+// ---------- trees (instanced) ----------
+const TN=1100;
+const trunkGeo=new THREE.CylinderGeometry(0.22,0.32,2,5);trunkGeo.translate(0,1,0);
+const leafGeo=new THREE.ConeGeometry(1.7,5.2,7);leafGeo.translate(0,4.3,0);
+const trunks=new THREE.InstancedMesh(trunkGeo,new THREE.MeshLambertMaterial({color:0x4a3524}),TN);
+const leaves=new THREE.InstancedMesh(leafGeo,new THREE.MeshStandardMaterial({color:0xffffff,flatShading:true,roughness:1}),TN);
+const lc=new THREE.Color();
+for(let i=0;i<TN;i++){
+  let x,z,d;
+  do{const a=rand()*Math.PI*2;d=78+Math.pow(rand(),0.7)*560;x=Math.cos(a)*d;z=Math.sin(a)*d;}while(false);
+  const s=0.8+rand()*0.9;
+  dmy.position.set(x,hgt(x,z)-0.2,z);dmy.rotation.set(0,rand()*6.28,0);dmy.scale.set(s,s*(0.9+rand()*0.4),s);dmy.updateMatrix();
+  trunks.setMatrixAt(i,dmy.matrix);leaves.setMatrixAt(i,dmy.matrix);
+  lc.setHSL(0.24+rand()*0.06,0.35+rand()*0.2,0.2+rand()*0.1);leaves.setColorAt(i,lc);
+}
+leaves.instanceColor.needsUpdate=true;
+scene.add(trunks);scene.add(leaves);
+
+// ---------- distant mountains + capital ----------
+const capPos=new THREE.Vector3(60,0,-650);
+const capAng=Math.atan2(capPos.z,capPos.x);
+const mMat=new THREE.MeshStandardMaterial({color:0x6d7d98,flatShading:true,roughness:1});
+const snowMat=new THREE.MeshStandardMaterial({color:0xe8e4ee,flatShading:true,roughness:1});
+for(let i=0;i<34;i++){
+  const a=(i/34)*Math.PI*2+rand()*0.15;
+  let da=Math.abs(((a-capAng)+Math.PI*3)%(Math.PI*2)-Math.PI);
+  if(da<0.22)continue;
+  const d=720+rand()*260,r=170+rand()*120,h=110+rand()*130;
+  const m=new THREE.Mesh(new THREE.ConeGeometry(r,h,7),mMat);
+  m.position.set(Math.cos(a)*d,h/2-25,Math.sin(a)*d);m.rotation.y=rand()*3;scene.add(m);
+  const cap=new THREE.Mesh(new THREE.ConeGeometry(r*0.28,h*0.28,7),snowMat);
+  cap.position.set(m.position.x,h-25-h*0.14+1,m.position.z);cap.rotation.y=m.rotation.y;scene.add(cap);
+}
+const towerMat=new THREE.MeshStandardMaterial({color:0xcfd8e6,emissive:0x8fb3ff,emissiveIntensity:0.18,metalness:0.6,roughness:0.3});
+const towers=[[0,0,16,230],[-28,10,12,160],[26,-8,14,190],[-50,-14,10,120],[48,12,11,140],[-12,-30,9,105],[14,28,9,115],[70,-20,8,90],[-74,4,8,85]];
+towers.forEach(function(tw,i){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(tw[2],tw[3],tw[2]),towerMat);
+  b.position.set(capPos.x+tw[0],tw[3]/2-5,capPos.z+tw[1]);scene.add(b);
+  if(i<3){const sp=new THREE.Mesh(new THREE.ConeGeometry(tw[2]*0.35,tw[3]*0.3,4),towerMat);
+    sp.position.set(b.position.x,tw[3]-5+tw[3]*0.15,b.position.z);scene.add(sp);}
+});
+
+// ---------- dust motes ----------
+const DN=380;const dg=new THREE.BufferGeometry();const dp=new Float32Array(DN*3);const dbase=[];
+for(let i=0;i<DN;i++){const x=(rand()*2-1)*14,y=0.3+rand()*4,z=(rand()*2-1)*14;dbase.push([x,y,z,rand()*6.28]);}
+dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffe2b0,size:0.05,transparent:true,opacity:0.75,
+  blending:THREE.AdditiveBlending,depthWrite:false}));
+scene.add(dust);
+function updateDust(t){for(let i=0;i<DN;i++){const b=dbase[i];
+  dp[i*3]=b[0]+Math.sin(t*0.3+b[3])*0.6+t*0.08;dp[i*3+1]=b[1]+Math.sin(t*0.5+b[3]*2)*0.25;dp[i*3+2]=b[2]+Math.cos(t*0.25+b[3])*0.6;}
+  dg.attributes.position.needsUpdate=true;}
+
+// ---------- Rhea (blocky character) ----------
+function std(col){return new THREE.MeshStandardMaterial({color:col,roughness:0.85});}
+function box(w,h,d,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.castShadow=true;m.receiveShadow=true;return m;}
+const skin=std(0xc99a72),jacket=std(0x6b4a2f),shirt=std(0x8f8a6e),pants=std(0x3b3a36),boots=std(0x2a1d14),hairM=std(0x241710),eyeM=std(0x15100c);
+const rhea=new THREE.Group();
+const legL=box(0.36,0.8,0.36,pants);legL.position.set(-0.2,0.4,0);
+const legR=box(0.36,0.8,0.36,pants);legR.position.set(0.2,0.4,0);
+const bootL=box(0.38,0.2,0.42,boots);bootL.position.set(-0.2,0.1,0.02);
+const bootR=box(0.38,0.2,0.42,boots);bootR.position.set(0.2,0.1,0.02);
+const torso=new THREE.Group();torso.position.y=0.8;
+const tMesh=box(0.82,0.82,0.42,jacket);tMesh.position.y=0.41;torso.add(tMesh);
+const tShirt=box(0.3,0.6,0.02,shirt);tShirt.position.set(0,0.48,0.215);torso.add(tShirt);
+function arm(side){const g=new THREE.Group();g.position.set(side*0.58,1.58,0);
+  const m=box(0.3,0.8,0.3,jacket);m.position.y=-0.36;g.add(m);
+  const hnd=box(0.26,0.14,0.26,skin);hnd.position.y=-0.83;g.add(hnd);return g;}
+const armL=arm(-1),armR=arm(1);
+const headG=new THREE.Group();headG.position.y=1.64;
+const head=box(0.6,0.6,0.6,skin);head.position.y=0.3;headG.add(head);
+const hairTop=box(0.66,0.2,0.66,hairM);hairTop.position.set(0,0.62,-0.01);headG.add(hairTop);
+const hairBack=box(0.66,0.5,0.14,hairM);hairBack.position.set(0,0.4,-0.31);headG.add(hairBack);
+const hairSideL=box(0.08,0.36,0.5,hairM);hairSideL.position.set(-0.33,0.42,-0.05);headG.add(hairSideL);
+const hairSideR=box(0.08,0.36,0.5,hairM);hairSideR.position.set(0.33,0.42,-0.05);headG.add(hairSideR);
+const fringe=box(0.6,0.1,0.06,hairM);fringe.position.set(0,0.56,0.3);headG.add(fringe);
+const braidG=new THREE.Group();braidG.position.set(0,0.2,-0.36);
+[0,1,2,3].forEach(function(k){const b=box(0.14-k*0.015,0.16,0.14-k*0.015,hairM);b.position.y=-0.1-k*0.15;braidG.add(b);});
+headG.add(braidG);
+const eyeL=box(0.08,0.1,0.02,eyeM);eyeL.position.set(-0.13,0.33,0.305);headG.add(eyeL);
+const eyeR=box(0.08,0.1,0.02,eyeM);eyeR.position.set(0.13,0.33,0.305);headG.add(eyeR);
+const brL=box(0.13,0.03,0.02,hairM);brL.position.set(-0.13,0.43,0.306);brL.rotation.z=-0.12;headG.add(brL);
+const brR=box(0.13,0.03,0.02,hairM);brR.position.set(0.13,0.43,0.306);brR.rotation.z=0.12;headG.add(brR);
+const mouth=box(0.14,0.025,0.02,std(0x7a4a3a));mouth.position.set(0,0.16,0.305);headG.add(mouth);
+[legL,legR,bootL,bootR,torso,armL,armR,headG].forEach(function(o){rhea.add(o);});
+scene.add(rhea);
+
+const capDir=new THREE.Vector3(capPos.x,0,capPos.z).normalize();
+const faceCap=Math.atan2(capDir.x,capDir.z);
+function updateRhea(t){
+  const br=Math.sin(t*1.8);
+  torso.scale.set(1,1+br*0.012,1+br*0.02);
+  headG.position.y=1.64+br*0.008;
+  armL.rotation.x=Math.sin(t*0.9)*0.03;armR.rotation.x=Math.sin(t*0.9+1)*0.03;
+  armL.rotation.z=-0.04;armR.rotation.z=0.04;
+  braidG.rotation.x=0.12+Math.sin(t*1.7)*0.06;braidG.rotation.z=Math.sin(t*1.1)*0.08;
+  if(t<17.5){
+    rhea.rotation.y=0;
+    headG.rotation.x=t>12.2?lerp(0.12,-0.05,ease((t-12.4)/3.5)):0.05;
+    headG.rotation.y=t>12.2?Math.sin(t*0.6)*0.04:0;
+  }else{
+    rhea.rotation.y=faceCap;
+    headG.rotation.x=lerp(0.02,-0.1,ease((t-17.6)/3));
+    headG.rotation.y=lerp(0.25,0,ease((t-17.6)/2.5));
+  }
+  // blink
+  const bl=(t%3.7)<0.12?0.15:1;eyeL.scale.y=bl;eyeR.scale.y=bl;
+}
+
+// ---------- shots ----------
+const right=new THREE.Vector3(-capDir.z,0,capDir.x);
+function v(x,y,z){return new THREE.Vector3(x,y,z);}
+const osA=capDir.clone().multiplyScalar(-3.1).add(right.clone().multiplyScalar(0.5)).setY(2.25);
+const osB=capDir.clone().multiplyScalar(-4.2).add(right.clone().multiplyScalar(0.6)).setY(2.5);
+const osL=capDir.clone().multiplyScalar(40);
+const shots=[
+  {s:0,e:7.2,from:v(260,105,300),to:v(75,32,105),la:v(0,12,0),lb:v(0,4,0),fa:50,fb:46,shake:0},
+  {s:7.2,e:12.2,from:v(13,3.1,21),to:v(4.5,2.2,10),la:v(0,1.4,0),lb:v(0,1.5,0),fa:44,fb:42,shake:0.012},
+  {s:12.2,e:17.5,from:v(0.3,1.88,6.2),to:v(0.1,1.84,3.0),la:v(0,1.78,0),lb:v(0,1.84,0),fa:34,fb:30,shake:0.005},
+  {s:17.5,e:30,from:osA,to:osB,la:osL.clone().setY(4.5),lb:osL.clone().setY(7.5),fa:42,fb:45,shake:0.006}
+];
+const tmpP=new THREE.Vector3(),tmpL=new THREE.Vector3();
+function updateCamera(t){
+  let sh=shots[0];for(let i=0;i<shots.length;i++){if(t>=shots[i].s)sh=shots[i];}
+  const p=ease((t-sh.s)/(Math.min(sh.e,sh.s+ (sh===shots[3]?5:99))-sh.s));
+  tmpP.copy(sh.from).lerp(sh.to,p);tmpL.copy(sh.la).lerp(sh.lb,p);
+  if(sh.shake){tmpP.x+=Math.sin(t*1.3)*sh.shake+Math.sin(t*3.1)*sh.shake*0.4;tmpP.y+=Math.sin(t*1.7+1)*sh.shake*0.8;}
+  camera.position.copy(tmpP);camera.lookAt(tmpL);
+  camera.fov=lerp(sh.fa,sh.fb,p);camera.updateProjectionMatrix();
+  sky.position.copy(camera.position);
+  sunDisc.position.copy(camera.position).addScaledVector(sunDir,1300);
+  glow.position.copy(sunDisc.position);
+}
+
+// ---------- overlays ----------
+const cues=[
+  {s:12.9,e:17.2,spk:'RHEA',text:'Every year, they take one of us.'},
+  {s:18.3,e:21.5,spk:'RHEA',text:'This year… it could be my brother.'}
+];
+let lastSub='';
+function updateOverlays(t){
+  // fade
+  let f=0;
+  if(t<1.4)f=1-t/1.4;
+  else if(t>=17.25&&t<17.5)f=(t-17.25)/0.25;
+  else if(t>=17.5&&t<17.85)f=1-(t-17.5)/0.35;
+  else if(t>=21.7)f=clamp((t-21.7)/0.8,0,1);
+  fadeEl.style.opacity=f.toFixed(3);
+  // location caption (hook)
+  capEl.innerHTML='Sector 7<br>The morning of the Choosing';
+  capEl.style.opacity=(t>1.2&&t<6.6)?'1':'0';
+  // subtitles with typewriter
+  let html='',show=false;
+  for(let i=0;i<cues.length;i++){const q=cues[i];
+    if(t>=q.s&&t<q.e){show=true;const n=Math.floor(clamp((t-q.s)/1.3,0,1)*q.text.length);
+      html=q.spk+'|'+q.text.slice(0,n);break;}}
+  if(html!==lastSub){lastSub=html;const parts=html.split('|');spkEl.textContent=parts[0]||'';txtEl.textContent=parts[1]||'';}
+  subEl.style.opacity=show?'1':'0';
+  // title card
+  let to=0;
+  if(t>=22.6&&t<23.6)to=(t-22.6)/1;else if(t>=23.6&&t<26.6)to=1;else if(t>=26.6)to=clamp(1-(t-26.6)/0.8,0,1);
+  titleEl.style.opacity=to.toFixed(3);
+}
+
+// ---------- layout ----------
+function layout(){
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const H=Math.min(vh,vw*16/9),W=H*9/16;
+  stage.style.width=W+'px';stage.style.height=H+'px';
+  stage.style.setProperty('--u',(W/100)+'px');
+  renderer.setSize(W,H);
+  camera.aspect=W/H;camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',layout);
+layout();
+
+// ---------- playback ----------
+const END=27.6;
+let playing=false,startTime=0;
+playBtn.addEventListener('click',function(){
+  menu.classList.add('hidden');
+  playBtn.textContent='↺ Replay';
+  lastSub='';
+  playing=true;startTime=performance.now();
+});
+
+function frame(now){
+  let t;
+  if(playing){
+    t=(now-startTime)/1000;
+    if(t>=END){playing=false;menu.classList.remove('hidden');}
+  }
+  if(!playing){
+    t=4+((now/1000)%3)*0.2;
+    fadeEl.style.opacity='0';capEl.style.opacity='0';subEl.style.opacity='0';titleEl.style.opacity='0';
+  }else{
+    updateOverlays(t);
+  }
+  dust.visible=t>7;updateCamera(t);updateWheat(t);updateRhea(t);updateDust(t);
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

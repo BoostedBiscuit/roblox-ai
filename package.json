@@ -1,0 +1,15 @@
+{
+  "name": "roblox-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Reaping Trials: Roblox-style 3D story shorts built with three.js r128, rendered to 1080x1920 MP4 (Puppeteer + ffmpeg). All code lives in reaping-trials/.",
+  "type": "module",
+  "scripts": {
+    "viewer-shots": "node reaping-trials/tools/viewer-shots.js"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "puppeteer": "^24.10.0",
+    "three": "0.128.0"
+  }
+}

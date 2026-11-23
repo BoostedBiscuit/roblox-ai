@@ -1,0 +1,297 @@
+<!--
+=====================================================================================
+THE REAPING TRIALS · TEASER TRAILER
+Length: 20.0 s · 1080 × 1920 · 30 fps
+Render:  npm run render -- reaping-trailer        → out/reaping-trials/trailer.mp4
+Voice:   npm run narrate -- trailer                (only needed after you change the NARRATION lines below)
+Preview: open this file on your phone and tap ▶ Play (the small green timer is preview-only)
+
+=== NARRATION ===  (seconds, who, text · *stars* = yellow accent caption · after editing run: npm run narrate -- trailer)
+at     who       text
+0.20   narrator  Every year, my town *loses* one kid.
+2.95   narrator  The Council takes one of us…
+4.55   narrator  …and only *one* ever comes back.
+6.75   narrator  This year? They picked my little *brother.*
+8.65   rhea      I volunteer!
+10.15  narrator  Now I'm in the arena. Eight kids. *One* winner.
+13.55  narrator  But this time… I don't play *their* game.
+=== END ===
+
+=== CUE SHEET ===  (edit freely, then re-render; the mixer reads these lines)
+time = seconds · volume: 1.0 = as loud as the narration (music: 0.50 = 50 %)
+options: align=onset|peak|end (which moment of the sound hits the time) · dur=seconds · loop · fadein= · fadeout=
+         music only: from= (start point in the song) · duck= (music level while someone talks) · mute=a-b (silence)
+time   sound                volume  options
+0.00   music:trailer        0.50    from=57.7 fadein=0.05 fadeout=18.8-20.0 duck=0.7 mute=13.95-14.45
+0.00   title_boom           1.00    align=onset dur=1.6 fadeout=0.7
+0.50   wind_wheat           0.22    dur=4.3 loop fadein=0.5 fadeout=0.6
+0.50   birds_morning        0.18    dur=4.3 fadein=0.5 fadeout=0.6
+1.15   whoosh               0.40    align=peak
+2.55   whoosh               0.45    align=peak
+5.00   whoosh               0.45    align=peak
+5.00   crowd_murmur         0.30    dur=3.5 fadein=0.1 fadeout=0.5
+5.85   braam_hit            0.80    align=onset dur=1.15 fadeout=0.4
+7.00   heartbeat            0.60    dur=1.5
+8.50   gasp                 0.70    align=onset
+10.00  riser                0.55    align=end dur=2.0
+10.00  braam_hit            0.70    align=onset dur=0.65 fadeout=0.25
+10.00  platform_rise        0.55    align=onset dur=0.65
+10.65  whoosh               0.50    align=peak
+10.65  forcefield_hum       0.45    dur=0.65 loop
+11.30  whoosh               0.50    align=peak
+11.95  whoosh               0.50    align=peak
+12.60  whoosh               0.50    align=peak
+12.60  running_steps        0.60    dur=0.65
+13.25  whoosh               0.50    align=peak
+13.67  teleport_zap         0.80    align=peak
+14.50  heartbeat            0.70    dur=1.55
+16.05  title_boom           1.00    align=onset
+=== END ===
+
+SHOTS (times in seconds; change them in the SHOTS list in the script below)
+ 0.00 hook: black screen, boom, "EVERY YEAR…"      1.15 drone over the wheat at sunrise
+ 2.55 Rhea in the wheat turns toward the Capital    5.00 the glass bowl          5.85 low-angle push-in on Vire
+ 7.00 Pip's scared face (white flash at 8.50)      8.50 Rhea raises her hand: "I volunteer!"
+10.00 arena montage: platforms rise · 10.65 dome · 11.30 Dax · 11.95 Juno · 12.60 night run · 13.25 teleport
+14.00 black · 14.45 slow push-in on Rhea's face    16.05 title card, follow line, fade out at 20.0
+=====================================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>The Reaping Trials · Trailer</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../fonts/fonts.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../scenery.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../audio/voice/trailer_narration.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { clamp, lerp, ease, easeOut } = RT, C = RT.characters, A = RT.anim, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const RENDER = RT.player.RENDER || !!RT.player.THUMB;
+  const DURATION = 20.0;
+
+  // ---------- renderer, camera, light ----------
+  const renderer = RT.mood.renderer(null, { preserve: RENDER });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.1, 3200);
+  const env = RT.mood.create(scene, renderer, { mood: 'sunrise', shadowSize: 2048 });
+  const rim = new THREE.DirectionalLight('#7fe6ff', 0); scene.add(rim); scene.add(rim.target);   // cyan rim light for the night face shot (no shadows)
+  const key = new THREE.DirectionalLight('#ffe2c4', 0); scene.add(key); scene.add(key.target);    // soft warm key light on faces at night (no shadows)
+
+  // ---------- the three locations (only the one on screen is drawn) ----------
+  const village = RT.scenery.sector7Village();
+  const PIP_AT = [-5.2, -3.6], RHEA_AT = [5.6, -1.2];
+  const toStage = (p, d) => { const a = Math.atan2(-p[0], -12 - p[1]); return [p[0] + Math.sin(a) * d, p[1] + Math.cos(a) * d]; };   // a point d units from p toward the stage
+  const square = RT.scenery.choosingSquare({ keepClear: [[PIP_AT[0], PIP_AT[1], 1.2], [RHEA_AT[0], RHEA_AT[1], 1.2],
+    [...toStage(PIP_AT, 1.4), 1.1], [...toStage(PIP_AT, 2.6), 1.2], [...toStage(RHEA_AT, 1.6), 1.3], [...toStage(RHEA_AT, 3.0), 1.5], [...toStage(RHEA_AT, 4.2), 1.5]] });
+  const arena = RT.scenery.arena();
+  const SETS = { village, square, arena };
+  for (const k in SETS) { scene.add(SETS[k]); SETS[k].visible = false; }
+
+  // ---------- cast ----------
+  const face = (ch, yaw) => { ch.rotation.y = yaw; return ch; };
+  const yawTo = (from, to) => Math.atan2(to[0] - from[0], to[1] - from[1]);
+  // village
+  const capDir = village.spots.capPos.clone().setY(0).normalize(), FACE_CAP = Math.atan2(capDir.x, capDir.z);
+  const rheaV = C.rhea(); village.add(rheaV);
+  // square
+  const vire = C.vire(); vire.position.set(0, 1.4, -12.6); square.add(vire);
+  const guards = [[-7.4, 1.4, -9.6], [7.4, 1.4, -9.6], [-3.2, 0, -6.4], [3.2, 0, -6.4]].map((p, i) => { const g = C.guard({ seed: i }); g.position.set(p[0], p[1], p[2]); square.add(g); return g; });
+  const pip = C.pip(); pip.position.set(PIP_AT[0], 0, PIP_AT[1]); face(pip, yawTo(PIP_AT, [0, -12])); square.add(pip);
+  const rheaS = C.rhea(); rheaS.position.set(RHEA_AT[0], 0, RHEA_AT[1]); face(rheaS, yawTo(RHEA_AT, [0, -12])); square.add(rheaS);
+  // arena: tributes ride up on the 8 platforms (Sector 1 = Dax, 3 = Juno, 7 = Rhea)
+  const plats = arena.spots.platforms, tributes = [];
+  for (let i = 0; i < 8; i++) {
+    const sector = i + 1, ch = sector === 1 ? C.dax() : sector === 3 ? C.juno() : sector === 7 ? C.rhea() : C.tribute(sector, 40 + i);
+    ch.position.y = 0.0; plats[i].add(ch); tributes.push(ch);
+  }
+  const dax = tributes[0], juno = tributes[2];
+  const runner = C.rhea(); arena.add(runner);                                     // night run
+  const zapped = C.tribute(5, 77); zapped.position.set(0.4, 0, -62); face(zapped, 0.2); arena.add(zapped);
+  const rheaN = C.rhea(); rheaN.position.set(0, 0, -35); arena.add(rheaN);         // night face shot
+  // teleport beam + glow
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 40, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#bff6ff', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+  beam.position.set(0.4, 20, -62); arena.add(beam);
+
+  // ---------- SHOTS ----------
+  const BOWL = [-3.6, 1.4, -10.4], VIRE_HEAD = [0, 3.78, -12.6];
+  const pipFwd = [Math.sin(pip.rotation.y), Math.cos(pip.rotation.y)], rheaFwd = [Math.sin(rheaS.rotation.y), Math.cos(rheaS.rotation.y)];
+  const runZ = (t) => -86 + (t - 12.6) * 11;                                       // the runner's position during the night run
+  const shots = RT.camera.list([
+    { t0: 0.00, set: 'village', mood: 'sunrise', pos: [[150, 70, 180]], look: [[0, 10, 0]], fov: [50] },
+    { t0: 1.15, set: 'village', mood: 'sunrise', pos: [[52, 8.5, 70], [9, 2.6, 12.5]], look: [[0, 1.2, 0], [0, 1.6, 0]], fov: [52, 46], ease: 'out', shake: 0.004 },
+    { t0: 2.55, set: 'village', mood: 'sunrise', fov: [40, 38], shake: 0.003,
+      pos: [[1.45, 1.9, 3.3], [-0.5, 2.4, 3.1]],
+      look: (lt) => V3(0, 1.95, 0).lerp(capDir.clone().multiplyScalar(40).setY(2.2), ease(clamp((lt - 1.0) / 1.4, 0, 1)) * 0.92) },
+    { t0: 5.00, set: 'square', mood: 'overcast', pos: [[-1.2, 4.6, -5.6], [-2.0, 4.35, -6.9]], look: [[-3.6, 3.2, -10.4], [-3.6, 3.15, -10.4]], fov: [40, 36] },
+    { t0: 5.85, set: 'square', mood: 'overcast', pos: [[1.9, 1.5, -6.6], [1.25, 1.9, -9.2]], look: [VIRE_HEAD, VIRE_HEAD], fov: [42, 36] },
+    { t0: 7.00, set: 'square', mood: 'overcast', fov: [36, 30], shake: 0.002,
+      pos: [[PIP_AT[0] + pipFwd[0] * 2.4 + 0.25, 1.65, PIP_AT[1] + pipFwd[1] * 2.4], [PIP_AT[0] + pipFwd[0] * 1.35 + 0.1, 1.6, PIP_AT[1] + pipFwd[1] * 1.35]], look: [[PIP_AT[0], 1.5, PIP_AT[1]]] },
+    { t0: 8.50, set: 'square', mood: 'overcast', fov: [52, 45], shake: 0.004,
+      pos: [[RHEA_AT[0] + rheaFwd[0] * 3.9, 0.8, RHEA_AT[1] + rheaFwd[1] * 3.9], [RHEA_AT[0] + rheaFwd[0] * 2.9, 1.0, RHEA_AT[1] + rheaFwd[1] * 2.9]], look: [[RHEA_AT[0], 2.4, RHEA_AT[1]], [RHEA_AT[0], 2.6, RHEA_AT[1]]] },
+    // arena montage (fast cuts)
+    { t0: 10.00, set: 'arena', mood: 'arenaDay', pos: [[-13.6, 0.35, 13.6], [-12.9, 0.7, 12.9]], look: [[-9.9, 0.4, 9.9], [-9.4, 1.6, 9.4]], fov: [50, 46], shake: 0.012 },
+    { t0: 10.65, set: 'arena', mood: 'arenaNight', pos: [[30, 1.5, 70], [28, 2.5, 66]], look: [[0, 120, -260], [0, 150, -260]], fov: [62, 58], shake: 0.006 },
+    { t0: 11.30, set: 'arena', mood: 'arenaDay', pos: [[0.55, 0.3, 10.4], [0.4, 0.42, 11.0]], look: [[0, 2.1, 14], [0, 2.1, 14]], fov: [44, 40], shake: 0.004 },
+    { t0: 11.95, set: 'arena', mood: 'arenaDay', pos: [[11.2, 2.2, 0.6], [11.7, 2.15, 0.45]], look: [[14, 2.0, 0], [14, 2.0, 0]], fov: [40, 36], shake: 0.004 },
+    { t0: 12.60, set: 'arena', mood: 'arenaNight', fov: [52, 52], shake: 0.03, pos: (lt) => V3(0.7, 1.35, runZ(12.6 + lt) + 3.4), look: (lt) => V3(0, 1.55, runZ(12.6 + lt) - 0.5) },
+    { t0: 13.25, set: 'arena', mood: 'arenaNight', pos: [[0.9, 1.6, -57.0], [0.75, 1.8, -57.8]], look: [[0.4, 1.5, -62], [0.4, 2.1, -62]], fov: [46, 42], shake: 0.01 },
+    { t0: 14.00, set: 'arena', mood: 'arenaNight', pos: [[0.2, 2.1, -32.2]], look: [[0, 2.05, -35]], fov: [34] },
+    { t0: 14.45, t1: 16.05, set: 'arena', mood: 'arenaNight', pos: [[0.18, 2.08, -32.0], [0.04, 2.06, -33.35]], look: [[0, 2.03, -35], [0, 2.04, -35]], fov: [36, 30], ease: 'linear' },
+    { t0: 16.05, set: 'arena', mood: 'arenaNight', pos: [[0, 4, 70], [0, 7, 62]], look: [[0, 60, -300], [0, 80, -300]], fov: [55, 52], moveDur: 3.95 },
+  ]);
+  for (const s of shots.shots) s.t1 = s.t1 || (shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION);
+  const CUTS = [2.55, 5.0, 5.85, 7.0, 10.0, 10.65, 11.3, 11.95, 12.6, 13.25];
+
+  // ---------- everything that moves (pure function of t) ----------
+  let curMood = '', curSet = '';
+  function frame(t) {
+    const s = shots.at(t);
+    if (s.mood !== curMood) { curMood = s.mood; env.set(s.mood); }
+    if (s.set !== curSet) { for (const k in SETS) SETS[k].visible = k === s.set; curSet = s.set; }
+    SETS[s.set].update(t);
+    const lt = t - s.t0;
+    if (s.set === 'village') {
+      // Rhea in the wheat: faces the camera, then turns toward the Capital
+      const turn = ease(clamp((t - 3.55) / 0.9, 0, 1));
+      rheaV.rotation.y = lerp(0.38, FACE_CAP + Math.PI * 2 * (FACE_CAP < 0 ? 1 : 0), turn);
+      A.set(rheaV, 'idle', t);
+      rheaV.rig.setFace('determined'); rheaV.rig.update(t);
+      env.shadowFocus(0, 0, 0, 14);
+    } else if (s.set === 'square') {
+      A.set(vire, 'idle', t); vire.rig.setFace('smiling'); vire.rig.update(t);
+      if (t > 6.3 && t < 7) A.set(vire, 'look', t - 6.3, { turn: -0.12, nod: 0.08 });
+      guards.forEach((g, i) => { A.set(g, 'idle', t + i); g.rig.update(t); });
+      A.set(pip, 'idle', t * 1.6); pip.rig.setFace(t > 7.36 ? 'shocked' : 'scared'); pip.rig.update(t);
+      A.seq(rheaS, [{ at: 0, name: 'idle' }, { at: 8.6, name: 'raiseHand', blend: 0.12 }], t); rheaS.rig.setFace('determined'); rheaS.rig.update(t);
+      square.spots.crowd.update(t, { lookAt: t > 8.75 ? V3(RHEA_AT[0], 2, RHEA_AT[1]) : V3(0, 3, -11) });
+      const f = s.t0 === 7.0 ? [PIP_AT[0], 0, PIP_AT[1], 8] : s.t0 === 8.5 ? [RHEA_AT[0], 0, RHEA_AT[1], 9] : [0, 1.4, -11, 10];
+      env.shadowFocus(f[0], f[1], f[2], f[3]);
+    } else {
+      // platforms rise out of the ground (10.0 → 10.55)
+      const rise = easeOut(clamp((t - 10.0) / 0.55, 0, 1));
+      plats.forEach((p, i) => { p.position.y = lerp(-3.4, 0, clamp(rise * 1.15 - i * 0.02, 0, 1)); });
+      tributes.forEach((ch, i) => { A.set(ch, i === 0 ? 'crossArms' : 'idle', t + i * 0.7); ch.rig.update(t); });
+      dax.rig.setFace('smirk'); juno.rig.setFace('determined'); tributes[6].rig.setFace('determined');
+      if (s.t0 === 11.95) A.set(juno, 'look', lt + 0.2, { turn: -0.25, nod: -0.05 });
+      arena.spots.domeM.uniforms.strength.value = s.t0 === 10.65 ? 1.2 + 0.8 * Math.sin(lt * 9) ** 2 : curMood === 'arenaNight' ? 1.1 : 0.45;
+      // night run
+      runner.visible = s.t0 === 12.6; if (runner.visible) { runner.position.set(0, 0, runZ(t)); runner.rotation.y = 0; A.set(runner, 'run', t, { speed: 1.25 }); runner.rig.setFace('determined'); runner.rig.update(t); }
+      // teleport: beam grows, flash at 13.67, the tribute is gone
+      const zt = t - 13.25;
+      zapped.visible = t < 13.67; A.set(zapped, zt > 0.15 ? 'look' : 'idle', t, { turn: 0.5, nod: -0.3 }); zapped.rig.setFace(zt > 0.12 ? 'shocked' : 'scared'); zapped.rig.update(t);
+      beam.visible = s.t0 === 13.25; beam.material.opacity = clamp((zt - 0.12) / 0.25, 0, 1) * (t < 13.67 ? 0.9 : clamp(1 - (t - 13.67) / 0.3, 0, 1));
+      beam.scale.set(t < 13.67 ? lerp(0.2, 1, clamp((zt - 0.12) / 0.3, 0, 1)) : lerp(1, 2.5, clamp((t - 13.67) / 0.3, 0, 1)), 1, 1);
+      // Rhea's face at night, lit from behind by the dome
+      rheaN.visible = t >= 13.9; A.set(rheaN, 'idle', t); rheaN.rig.setFace('determined'); rheaN.rig.update(t);
+      rim.intensity = t >= 13.9 && t < 16.05 ? 1.6 : 0; rim.position.set(0.5, 3, -40); rim.target.position.set(0, 2, -35);
+      const night = curMood === 'arenaNight'; key.intensity = night && s.t0 !== 10.65 && s.t0 < 16 ? 0.85 : 0;
+      key.position.copy(camera.position).add(V3(-1.5, 1.5, 0)); key.target.position.set(camera.position.x * 0.5, 1.8, camera.position.z - 3);
+      const f = s.t0 === 12.6 ? [0, 0, runZ(t), 8] : s.t0 === 13.25 ? [0.4, 0, -62, 8] : s.t0 >= 13.9 && s.t0 < 16 ? [0, 0, -35, 6] : s.t0 === 11.95 ? [14, 0, 0, 6] : s.t0 === 11.3 ? [0, 0, 14, 6] : [0, 0, 8, 26];
+      env.shadowFocus(f[0], f[1], f[2], f[3]);
+    }
+    RT.camera.apply(camera, s, t);
+    env.follow(camera);
+  }
+
+  // black: the hook, short dips at every cut, the black beat before Rhea's face, a dimmed title card, final fade
+  function black(t) {
+    if (t < 1.15) return 1;
+    if (t >= 13.95 && t < 14.45) return 1;
+    if (t >= 14.45 && t < 14.8) return 1 - (t - 14.45) / 0.35;
+    if (t >= 16.05) return Math.max(0.42, clamp((t - 19.3) / 0.7, 0, 1));
+    return RT.camera.dips(t, CUTS, 0.12);
+  }
+  // white flashes: the flash cut after Pip, the teleport, the title hit
+  function white(t) {
+    const fl = (c, d) => (t >= c && t < c + d ? 1 - (t - c) / d : 0);
+    return Math.max(fl(8.5, 0.28), fl(13.67, 0.32), fl(16.05, 0.2) * 0.6);
+  }
+
+  // ---------- THUMBNAILS (Part 7D): npm run render -- reaping-trailer --thumbs → out/reaping-trials/trailer-thumb-option1.png / 2.png ----------
+  // Big face close-up + bright rim light + 2–4 word title + one red arrow/circle. Text and faces stay inside the middle 70 % (app buttons).
+  function thumbnail(n) {
+    const T = Number(n) || 1, stage = document.getElementById('stage');
+    renderer.domElement.style.filter = 'saturate(1.3) contrast(1.08) brightness(1.04)';
+    frame(8.2);                                               // square set, everyone posed
+    square.spots.crowd.visible = false;
+    env.set(RT.mood.mix('overcast', 'sunrise', 0.55)); env.sun.castShadow = true;
+    rim.color.set(T === 1 ? '#ffd28a' : '#9fe8ff'); rim.intensity = 2.2;
+    key.color.set('#fff1e0'); key.intensity = 0.55;
+    // put an object so that the point `lift` above its origin lands on screen point (sx %, sy %) at distance d from the camera
+    const placeAt = (obj, sx, sy, d, lift) => {
+      camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+      const v = V3((sx / 100) * 2 - 1, 1 - (sy / 100) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
+      const p = camera.position.clone().addScaledVector(v, d); obj.position.set(p.x, p.y - lift, p.z);
+      obj.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z);
+      return V3(p.x, p.y, p.z);
+    };
+    let subject, aim;
+    camera.fov = 44; camera.position.set(0, 1.95, -3.0); camera.lookAt(0, 2.25, -9); camera.updateProjectionMatrix();
+    if (T === 1) {
+      subject = rheaS; placeAt(subject, 42, 63, 3.0, 2.02); subject.rotation.y += 0.1;
+      A.set(subject, 'raiseHand', 1.3); subject.rig.setFace('determined'); subject.rig.setEyes('open');
+      aim = placeAt(vire, 78, 41, 9.5, 2.37); vire.rotation.y -= 0.25;             // Vire small in the background (not on the stage for this picture)
+      A.set(vire, 'idle', 1); vire.rig.setFace('smiling'); vire.rig.setEyes('open');
+    } else {
+      subject = pip; placeAt(subject, 55, 64, 2.4, 1.54);
+      A.set(subject, 'idle', 0.4); subject.rig.setFace('shocked'); subject.rig.setEyes('open');
+      const bowl = square.spots.bowls[0]; aim = placeAt(bowl, 25, 44, 11, 1.95); bowl.rotation.y = 0;
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: env.glow.material.map, color: '#bff6ff', blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.85 }));
+      glow.position.copy(aim); glow.scale.set(3.2, 3.2, 1); square.add(glow);
+    }
+    rim.position.copy(subject.position).add(V3(0.6, 4, -6)); rim.target.position.copy(subject.position).add(V3(0, 1.5, 0));
+    subject.rig.update(0); camera.updateProjectionMatrix(); key.position.copy(camera.position).add(V3(-1, 1, 0)); key.target.position.copy(subject.position);
+    env.follow(camera); env.shadowFocus(subject.position.x, 0, subject.position.z, 10);
+    renderer.render(scene, camera);
+    // where the arrow / circle points (screen %, y in units of the 100 × 177.8 SVG box)
+    const proj = (v) => { const q = v.clone().project(camera); return [(q.x * 0.5 + 0.5) * 100, (-q.y * 0.5 + 0.5) * 177.8]; };
+    const [ax, ay] = proj(aim), edge = proj(aim.clone().add(V3(1.35, 0, 0))), rad = Math.max(7, Math.abs(edge[0] - ax) * 1.15);
+    const css = document.createElement('style'); css.textContent = `
+      .th{position:absolute;left:0;right:0;text-align:center;font-family:Montserrat,'Arial Black',sans-serif;font-weight:900;line-height:.95;color:#fff;
+          -webkit-text-stroke:calc(var(--u)*1.6) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*1) 0 #000,0 0 calc(var(--u)*4) rgba(0,0,0,.6);transform:rotate(-3deg);}
+      .th .y{color:#ffd23f;}`;
+    document.head.appendChild(css);
+    const add = (html) => { const d = document.createElement('div'); d.innerHTML = html; stage.appendChild(d.firstChild); };
+    if (T === 1) add('<div class="th" style="top:13%"><div style="font-size:calc(var(--u)*17)">I</div><div class="y" style="font-size:calc(var(--u)*12.2)">VOLUNTEERED</div></div>');
+    else add('<div class="th" style="top:13%"><div style="font-size:calc(var(--u)*12)">THEY PICKED</div><div class="y" style="font-size:calc(var(--u)*21)">HIM</div></div>');
+    // red curiosity mark (SVG, drawn in % of the frame)
+    let svg;
+    if (T === 1) {   // curved arrow from the upper left, ending just left of the target
+      const p0 = [ax - 30, ay - 16], c = [ax - 26, ay + 4], p1 = [ax - 7, ay + 1], d = [p1[0] - c[0], p1[1] - c[1]], L = Math.hypot(d[0], d[1]), u = [d[0] / L, d[1] / L], n = [-u[1], u[0]];
+      const tip = [p1[0] + u[0] * 4, p1[1] + u[1] * 4], h1 = [p1[0] + n[0] * 3.6, p1[1] + n[1] * 3.6], h2 = [p1[0] - n[0] * 3.6, p1[1] - n[1] * 3.6];
+      const path = `M ${p0} Q ${c} ${p1}`;
+      svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><path d="${path}" fill="none" stroke="#000" stroke-width="5.6" stroke-linecap="round"/><path d="${path}" fill="none" stroke="#ff2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M ${tip} L ${h1} L ${h2} Z" fill="#ff2a2a" stroke="#000" stroke-width="1" stroke-linejoin="round"/></svg>`;
+    } else svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><ellipse cx="${ax}" cy="${ay}" rx="${rad}" ry="${rad * 0.9}" fill="none" stroke="#000" stroke-width="4.6"/><ellipse cx="${ax}" cy="${ay}" rx="${rad}" ry="${rad * 0.9}" fill="none" stroke="#ff2a2a" stroke-width="2.8"/></svg>`;
+    add(svg);
+  }
+
+  RT.player.start({
+    name: 'trailer', duration: DURATION, renderer, scene, camera, frame, black, white,
+    narration: window.RT_NARRATION && window.RT_NARRATION.trailer,
+    speakers: { rhea: 'RHEA' },
+    noCaptions: [[0, 1.15], [16.0, 99]],
+    hooks: [{ t0: 0.12, t1: 1.12, html: 'EVERY YEAR…' }],
+    title: { t0: 16.05, stagger: [0, 0.6, 1.3], html: '<div class="t1">THE REAPING<br>TRIALS</div><div class="t2">PART 1 · COMING SOON</div><div class="t3">Follow so you don\'t miss it.</div>' },
+    audio: '../audio/mix/trailer_mix.mp3',
+    menu: { title: 'The Reaping Trials', sub: 'Teaser trailer · 20 seconds' },
+    idleTime: (s) => 3.2 + (s % 2) * 0.2,
+    thumbnail,
+    stills: [0.5, 1.6, 2.4, 3.0, 4.2, 4.9, 5.4, 6.5, 7.7, 8.4, 9.4, 10.4, 11.0, 11.6, 12.3, 12.9, 13.5, 13.75, 14.6, 15.6, 16.9, 18.5],
+  });
+})();
+</script>
+</body>
+</html>

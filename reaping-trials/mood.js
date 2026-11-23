@@ -32,8 +32,8 @@
       sun: '#fff4dc', sunI: 1.85, fill: '#dbeeff', fillI: 0.4, exposure: 1.18 },
     // the Arena at night: deep blue, moonlight, the dome glow does the rest
     arenaNight: { top: '#070d24', horizon: '#1d3157', sunCol: '#9fb8ff', sunDir: [0.4, 0.45, -0.6], sunDisc: 0.55, moon: 1,
-      fog: '#0e1a33', fogNear: 25, fogFar: 420, hemiSky: '#3a5590', hemiGround: '#141a24', hemi: 0.6,
-      sun: '#9bb4ff', sunI: 0.75, fill: '#4a6db8', fillI: 0.3, exposure: 1.25 },
+      fog: '#0e1a33', fogNear: 25, fogFar: 420, hemiSky: '#5a78c0', hemiGround: '#1c2433', hemi: 0.95,
+      sun: '#a9c0ff', sunI: 0.95, fill: '#6f8fd8', fillI: 0.45, exposure: 1.35 },
     // the Arena storm: dark green-grey, low fog
     storm: { top: '#2b3338', horizon: '#5d6a6a', sunCol: '#8f9c9a', sunDir: [0.2, 0.7, 0.3], sunDisc: 0,
       fog: '#4a5656', fogNear: 20, fogFar: 300, hemiSky: '#7b8a8f', hemiGround: '#2c3128', hemi: 0.85,

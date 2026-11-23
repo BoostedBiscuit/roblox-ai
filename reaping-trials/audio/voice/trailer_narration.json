@@ -1,0 +1,314 @@
+{
+ "video": "trailer",
+ "voice": "Adam",
+ "tempo": 1.1,
+ "lines": [
+  {
+   "at": 0.2,
+   "who": "narrator",
+   "text": "Every year, my town loses one kid.",
+   "raw": "audio/voice/trailer/l01_37becf837c.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l01_37becf837c_t1.1_p0.5.wav",
+   "start": 0.2,
+   "end": 2.762,
+   "words": [
+    {
+     "w": "Every",
+     "start": 0.2,
+     "end": 0.464
+    },
+    {
+     "w": "year,",
+     "start": 0.527,
+     "end": 0.823
+    },
+    {
+     "w": "my",
+     "start": 1.277,
+     "end": 1.404
+    },
+    {
+     "w": "town",
+     "start": 1.467,
+     "end": 1.71
+    },
+    {
+     "w": "loses",
+     "key": true,
+     "start": 1.774,
+     "end": 2.037
+    },
+    {
+     "w": "one",
+     "start": 2.1,
+     "end": 2.259
+    },
+    {
+     "w": "kid.",
+     "start": 2.312,
+     "end": 2.628
+    }
+   ]
+  },
+  {
+   "at": 2.95,
+   "who": "narrator",
+   "text": "The Council takes one of us…",
+   "raw": "audio/voice/trailer/l02_ba4d7b1f79.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l02_ba4d7b1f79_t1.1_p0.5.wav",
+   "start": 2.95,
+   "end": 4.278,
+   "words": [
+    {
+     "w": "The",
+     "start": 2.95,
+     "end": 3.076
+    },
+    {
+     "w": "Council",
+     "start": 3.129,
+     "end": 3.435
+    },
+    {
+     "w": "takes",
+     "start": 3.488,
+     "end": 3.678
+    },
+    {
+     "w": "one",
+     "start": 3.731,
+     "end": 3.847
+    },
+    {
+     "w": "of",
+     "start": 3.879,
+     "end": 3.921
+    },
+    {
+     "w": "us…",
+     "start": 3.995,
+     "end": 4.154
+    }
+   ]
+  },
+  {
+   "at": 4.55,
+   "who": "narrator",
+   "text": "…and only one ever comes back.",
+   "raw": "audio/voice/trailer/l03_6b909a8802.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l03_6b909a8802_t1.1_p0.5.wav",
+   "start": 4.55,
+   "end": 5.996,
+   "words": [
+    {
+     "w": "…and",
+     "start": 4.586,
+     "end": 4.703
+    },
+    {
+     "w": "only",
+     "start": 4.745,
+     "end": 4.903
+    },
+    {
+     "w": "one",
+     "key": true,
+     "start": 4.966,
+     "end": 5.156
+    },
+    {
+     "w": "ever",
+     "start": 5.188,
+     "end": 5.325
+    },
+    {
+     "w": "comes",
+     "start": 5.367,
+     "end": 5.547
+    },
+    {
+     "w": "back.",
+     "start": 5.6,
+     "end": 5.875
+    }
+   ]
+  },
+  {
+   "at": 6.75,
+   "who": "narrator",
+   "text": "This year? They picked my little brother.",
+   "raw": "audio/voice/trailer/l04_3a171b7dc2.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l04_3a171b7dc2_t1.1_p0.5.wav",
+   "start": 6.75,
+   "end": 8.378,
+   "words": [
+    {
+     "w": "This",
+     "start": 6.75,
+     "end": 6.94
+    },
+    {
+     "w": "year?",
+     "start": 6.993,
+     "end": 7.141
+    },
+    {
+     "w": "They",
+     "start": 7.194,
+     "end": 7.309
+    },
+    {
+     "w": "picked",
+     "start": 7.362,
+     "end": 7.563
+    },
+    {
+     "w": "my",
+     "start": 7.615,
+     "end": 7.689
+    },
+    {
+     "w": "little",
+     "start": 7.753,
+     "end": 7.922
+    },
+    {
+     "w": "brother.",
+     "key": true,
+     "start": 7.954,
+     "end": 8.249
+    }
+   ]
+  },
+  {
+   "at": 8.65,
+   "who": "rhea",
+   "text": "I volunteer!",
+   "raw": "audio/voice/trailer/l05_47bc3e20b5.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l05_47bc3e20b5_t1.1_p0.5.wav",
+   "start": 8.65,
+   "end": 9.516,
+   "words": [
+    {
+     "w": "I",
+     "start": 8.65,
+     "end": 8.724
+    },
+    {
+     "w": "volunteer!",
+     "start": 8.819,
+     "end": 9.378
+    }
+   ]
+  },
+  {
+   "at": 10.15,
+   "who": "narrator",
+   "text": "Now I'm in the arena. Eight kids. One winner.",
+   "raw": "audio/voice/trailer/l06_71c0030577.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l06_71c0030577_t1.1_p0.5.wav",
+   "start": 10.15,
+   "end": 12.889,
+   "words": [
+    {
+     "w": "Now",
+     "start": 10.15,
+     "end": 10.361
+    },
+    {
+     "w": "I'm",
+     "start": 10.414,
+     "end": 10.53
+    },
+    {
+     "w": "in",
+     "start": 10.572,
+     "end": 10.635
+    },
+    {
+     "w": "the",
+     "start": 10.677,
+     "end": 10.741
+    },
+    {
+     "w": "arena.",
+     "start": 10.794,
+     "end": 11.142
+    },
+    {
+     "w": "Eight",
+     "start": 11.343,
+     "end": 11.544
+    },
+    {
+     "w": "kids.",
+     "start": 11.606,
+     "end": 12.007
+    },
+    {
+     "w": "One",
+     "key": true,
+     "start": 12.25,
+     "end": 12.451
+    },
+    {
+     "w": "winner.",
+     "start": 12.483,
+     "end": 12.746
+    }
+   ]
+  },
+  {
+   "at": 13.55,
+   "who": "narrator",
+   "text": "But this time… I don't play their game.",
+   "raw": "audio/voice/trailer/l07_bb7d23a6da.mp3",
+   "clip": "reaping-trials/build/trailer/voice/l07_bb7d23a6da_t1.1_p0.5.wav",
+   "start": 13.55,
+   "end": 16.162,
+   "words": [
+    {
+     "w": "But",
+     "start": 13.55,
+     "end": 13.729
+    },
+    {
+     "w": "this",
+     "start": 13.761,
+     "end": 13.919
+    },
+    {
+     "w": "time…",
+     "start": 13.983,
+     "end": 14.436
+    },
+    {
+     "w": "I",
+     "start": 14.891,
+     "end": 14.944
+    },
+    {
+     "w": "don't",
+     "start": 15.006,
+     "end": 15.165
+    },
+    {
+     "w": "play",
+     "start": 15.196,
+     "end": 15.376
+    },
+    {
+     "w": "their",
+     "key": true,
+     "start": 15.418,
+     "end": 15.566
+    },
+    {
+     "w": "game.",
+     "start": 15.619,
+     "end": 16.02
+    }
+   ]
+  }
+ ]
+}

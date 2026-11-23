@@ -118,16 +118,18 @@ SHOTS (times in seconds; change them in the SHOTS list in the script below)
     ch.position.y = 0.0; plats[i].add(ch); tributes.push(ch);
   }
   const dax = tributes[0], juno = tributes[2];
+  const GA = arena.spots.ah;                                                       // arena ground height at (x, z): everyone stands ON it
   const runner = C.rhea(); arena.add(runner);                                     // night run
-  const zapped = C.tribute(5, 77); zapped.position.set(0.4, 0, -62); face(zapped, 0.2); arena.add(zapped);
-  const rheaN = C.rhea(); rheaN.position.set(0, 0, -35); arena.add(rheaN);         // night face shot
+  const zapped = C.tribute(5, 77); zapped.position.set(0.4, GA(0.4, -62), -62); face(zapped, 0.2); arena.add(zapped);
+  const rheaN = C.rhea(); rheaN.position.set(0, GA(0, -35), -35); arena.add(rheaN);         // night face shot
   // teleport beam + glow
   const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 40, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#bff6ff', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
-  beam.position.set(0.4, 20, -62); arena.add(beam);
+  beam.position.set(0.4, 20 + GA(0.4, -62), -62); arena.add(beam);
 
   // ---------- SHOTS ----------
   const BOWL = [-3.6, 1.4, -10.4], VIRE_HEAD = [0, 3.78, -12.6];
   const pipFwd = [Math.sin(pip.rotation.y), Math.cos(pip.rotation.y)], rheaFwd = [Math.sin(rheaS.rotation.y), Math.cos(rheaS.rotation.y)];
+  const GZ = GA(0.4, -62), GF = GA(0, -35);                                        // ground height under the teleport and the face shot
   const runZ = (t) => -86 + (t - 12.6) * 11;                                       // the runner's position during the night run
   const shots = RT.camera.list([
     { t0: 0.00, set: 'village', mood: 'sunrise', pos: [[150, 70, 180]], look: [[0, 10, 0]], fov: [50] },
@@ -146,10 +148,10 @@ SHOTS (times in seconds; change them in the SHOTS list in the script below)
     { t0: 10.65, set: 'arena', mood: 'arenaNight', pos: [[30, 1.5, 70], [28, 2.5, 66]], look: [[0, 120, -260], [0, 150, -260]], fov: [62, 58], shake: 0.006 },
     { t0: 11.30, set: 'arena', mood: 'arenaDay', pos: [[0.55, 0.3, 10.4], [0.4, 0.42, 11.0]], look: [[0, 2.1, 14], [0, 2.1, 14]], fov: [44, 40], shake: 0.004 },
     { t0: 11.95, set: 'arena', mood: 'arenaDay', pos: [[11.2, 2.2, 0.6], [11.7, 2.15, 0.45]], look: [[14, 2.0, 0], [14, 2.0, 0]], fov: [40, 36], shake: 0.004 },
-    { t0: 12.60, set: 'arena', mood: 'arenaNight', fov: [52, 52], shake: 0.03, pos: (lt) => V3(0.7, 1.35, runZ(12.6 + lt) + 3.4), look: (lt) => V3(0, 1.55, runZ(12.6 + lt) - 0.5) },
-    { t0: 13.25, set: 'arena', mood: 'arenaNight', pos: [[0.9, 1.6, -57.0], [0.75, 1.8, -57.8]], look: [[0.4, 1.5, -62], [0.4, 2.1, -62]], fov: [46, 42], shake: 0.01 },
-    { t0: 14.00, set: 'arena', mood: 'arenaNight', pos: [[0.2, 2.1, -32.2]], look: [[0, 2.05, -35]], fov: [34] },
-    { t0: 14.45, t1: 16.05, set: 'arena', mood: 'arenaNight', pos: [[0.18, 2.08, -32.0], [0.04, 2.06, -33.35]], look: [[0, 2.03, -35], [0, 2.04, -35]], fov: [36, 30], ease: 'linear' },
+    { t0: 12.60, set: 'arena', mood: 'arenaNight', fov: [52, 52], shake: 0.03, pos: (lt) => V3(0.7, 1.35 + GA(0.7, runZ(12.6 + lt) + 3.4), runZ(12.6 + lt) + 3.4), look: (lt) => V3(0, 1.55 + GA(0, runZ(12.6 + lt)), runZ(12.6 + lt) - 0.5) },
+    { t0: 13.25, set: 'arena', mood: 'arenaNight', pos: [[0.9, 1.6 + GZ, -57.0], [0.75, 1.8 + GZ, -57.8]], look: [[0.4, 1.5 + GZ, -62], [0.4, 2.1 + GZ, -62]], fov: [46, 42], shake: 0.01 },
+    { t0: 14.00, set: 'arena', mood: 'arenaNight', pos: [[0.2, 2.1 + GF, -32.2]], look: [[0, 2.05 + GF, -35]], fov: [34] },
+    { t0: 14.45, t1: 16.05, set: 'arena', mood: 'arenaNight', pos: [[0.18, 2.08 + GF, -32.0], [0.04, 2.06 + GF, -33.35]], look: [[0, 2.03 + GF, -35], [0, 2.04 + GF, -35]], fov: [36, 30], ease: 'linear' },
     { t0: 16.05, set: 'arena', mood: 'arenaNight', pos: [[0, 4, 70], [0, 7, 62]], look: [[0, 60, -300], [0, 80, -300]], fov: [55, 52], moveDur: 3.95 },
   ]);
   for (const s of shots.shots) s.t1 = s.t1 || (shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION);
@@ -182,13 +184,13 @@ SHOTS (times in seconds; change them in the SHOTS list in the script below)
     } else {
       // platforms rise out of the ground (10.0 → 10.55)
       const rise = easeOut(clamp((t - 10.0) / 0.55, 0, 1));
-      plats.forEach((p, i) => { p.position.y = lerp(-3.4, 0, clamp(rise * 1.15 - i * 0.02, 0, 1)); });
+      plats.forEach((p, i) => { p.position.y = lerp(-3.4, 0.08, clamp(rise * 1.15 - i * 0.02, 0, 1)); });   // up through the launch hole
       tributes.forEach((ch, i) => { A.set(ch, i === 0 ? 'crossArms' : 'idle', t + i * 0.7); ch.rig.update(t); });
       dax.rig.setFace('smirk'); juno.rig.setFace('determined'); tributes[6].rig.setFace('determined');
       if (s.t0 === 11.95) A.set(juno, 'look', lt + 0.2, { turn: -0.25, nod: -0.05 });
       arena.spots.domeM.uniforms.strength.value = s.t0 === 10.65 ? 1.2 + 0.8 * Math.sin(lt * 9) ** 2 : curMood === 'arenaNight' ? 1.1 : 0.45;
       // night run
-      runner.visible = s.t0 === 12.6; if (runner.visible) { runner.position.set(0, 0, runZ(t)); runner.rotation.y = 0; A.set(runner, 'run', t, { speed: 1.25 }); runner.rig.setFace('determined'); runner.rig.update(t); }
+      runner.visible = s.t0 === 12.6; if (runner.visible) { runner.position.set(0, GA(0, runZ(t)), runZ(t)); runner.rotation.y = 0; A.set(runner, 'run', t, { speed: 1.25 }); runner.rig.setFace('determined'); runner.rig.update(t); }
       // teleport: beam grows, flash at 13.67, the tribute is gone
       const zt = t - 13.25;
       zapped.visible = t < 13.67; A.set(zapped, zt > 0.15 ? 'look' : 'idle', t, { turn: 0.5, nod: -0.3 }); zapped.rig.setFace(zt > 0.12 ? 'shocked' : 'scared'); zapped.rig.update(t);

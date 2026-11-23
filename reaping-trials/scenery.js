@@ -313,6 +313,9 @@
       p.add(RT.mesh(new THREE.CylinderGeometry(0.6, 0.6, 4, 12), platD).translateY(-2.35));
       const ring = RT.mesh(new THREE.TorusGeometry(1.25, 0.06, 6, 28), RT.plastic('#7de0ff', { emissive: '#3fd0ff', emissiveIntensity: 1.2 })); ring.rotation.x = Math.PI / 2; ring.position.y = 0.01; p.add(ring);
       platforms.push(p);
+      // the launch hole the platform rises out of (dark disc + metal rim, flush with the ground)
+      B.add(RT.plastic('#121418', { roughness: 0.9 }), new THREE.CylinderGeometry(1.42, 1.42, 0.02, 28), M(p.position.x, 0.01, p.position.z));
+      B.add(platD, new THREE.TorusGeometry(1.42, 0.07, 6, 28), M(p.position.x, 0.03, p.position.z, Math.PI / 2, 0, 0));
     }
     B.build(G);
     // the forest (instanced): clearing in the middle, a running path to the north
@@ -322,7 +325,7 @@
       if (Math.abs(x - 0) < 2.2 && z < -30 && z > -90) continue;               // the night-run path
       pos.push([x, ah(x, z), z]);
     }
-    for (let k = 0; k < 40; k++) { const z = -32 - k * 1.5, s = k % 2 ? 1 : -1; pos.push([s * (3 + (k % 3) * 1.2), 0, z]); }   // trees lining the path
+    for (let k = 0; k < 40; k++) { const z = -32 - k * 1.5, s = k % 2 ? 1 : -1; const x = s * (3 + (k % 3) * 1.2); pos.push([x, ah(x, z), z]); }   // trees lining the path (on the ground)
     forest(G, pos, { seed: 5, pineRatio: 0.55 });
     // the force-field dome: hexagon lines that glow and pulse
     const domeM = new THREE.ShaderMaterial({

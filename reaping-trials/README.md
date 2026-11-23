@@ -39,6 +39,18 @@ text-to-speech permission is enough. Characters sent are logged in `credits.json
 **Audio files:** music in `audio/music/`, effects in `audio/sfx/` (see `audio/sfx/SOURCES.md`). A missing file is skipped and listed; the render still runs.
 The final mix is normalized to −14 LUFS for phones.
 
+## Brand: Blocktale Studios
+
+| File | Use |
+|---|---|
+| `brand/logo.png` | full logo (gold brick + open storybook + BLOCKTALE STUDIOS), transparent, 1024 × 1024 |
+| `brand/logo-profile.png` | profile picture for Facebook / YouTube (emblem on navy, safe inside a circle), 1024 × 1024 |
+| `brand/watermark.png` | one-line logo used as the video watermark |
+| `brand/logo.html` | the logo source (drawn in code; colors at the top) → `node reaping-trials/tools/brand.js logos` re-renders the PNGs |
+| `brand/brand.json` | watermark opacity (0.4 = 40 %), size and position; `"onRender": true` adds it to every render |
+
+Watermark any MP4 (for example a CapCut export): `node reaping-trials/tools/brand.js watermark in.mp4 out.mp4 0.4`
+
 ## Files
 
 | File | What it does |
@@ -55,7 +67,7 @@ The final mix is normalized to −14 LUFS for phones.
 | `fonts/` | Cinzel (titles), Montserrat Black (captions) and Inter (UI), all SIL Open Font License, stored locally so phone and MP4 look the same. |
 | `tools/browser.js` | Headless Chromium helper used by the render tools. It answers the cdnjs three.js URL with the identical local copy (`three@0.128.0` from npm). |
 | `tools/viewer-shots.js` | Screenshots of the viewer: `npm run viewer-shots -- <folder>`. |
-| `tools/render.js`, `tools/mix.js`, `tools/narrate.js` | Render to MP4, mix the sound, make the narration (commands above). |
+| `tools/render.js`, `tools/mix.js`, `tools/narrate.js`, `tools/brand.js` | Render to MP4, mix the sound, make the narration, logos + watermark (commands above). |
 
 ## Body style
 

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blocktale Studios logo</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<!--
+  BLOCKTALE STUDIOS logo (original design, drawn in code).
+  A gold building brick with two studs on top and an open storybook on its face, plus the wordmark.
+  Open with ?v=logo | profile | watermark   (tools/brand.js renders all three to PNG with a transparent background)
+  Change the colors in :root.
+-->
+<style>
+  :root { --gold1: #ffe08a; --gold2: #f2b632; --gold3: #c98412; --ink: #16100a; --navy1: #1f3a6b; --navy2: #0b1328; --white: #ffffff; }
+  html, body { margin: 0; background: transparent; }
+  .wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+  .word { font-family: Montserrat, 'Arial Black', sans-serif; font-weight: 900; color: var(--white); letter-spacing: .02em;
+          -webkit-text-stroke: 14px var(--ink); paint-order: stroke fill; text-shadow: 0 10px 0 var(--ink); line-height: 1; }
+  .sub { font-family: Inter, system-ui, sans-serif; font-weight: 700; color: var(--gold2); letter-spacing: .5em; text-indent: .5em;
+         -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; line-height: 1; }
+  /* full logo: emblem over the wordmark, 1024 × 1024 */
+  .logo { width: 1024px; height: 1024px; flex-direction: column; gap: 30px; }
+  .logo .emblem { width: 560px; } .logo .word { font-size: 148px; } .logo .sub { font-size: 54px; margin-top: 6px; }
+  /* profile picture: the emblem on a navy circle-safe square */
+  .profile { width: 1024px; height: 1024px; background: radial-gradient(circle at 50% 42%, var(--navy1), var(--navy2) 70%); }
+  .profile .emblem { width: 760px; transform: translateY(10px); }
+  /* watermark: emblem + name in one line */
+  .watermark { width: 1080px; height: 260px; gap: 26px; justify-content: flex-start; padding-left: 20px; box-sizing: border-box; }
+  .watermark .emblem { width: 270px; flex: none; }
+  .watermark .word { font-size: 104px; -webkit-text-stroke-width: 12px; text-shadow: 0 7px 0 var(--ink); }
+  .watermark .sub { font-size: 40px; margin-top: 14px; letter-spacing: .62em; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  // The emblem as SVG: brick body + two studs + open book (+ tiny sparkle). viewBox 0 0 600 520.
+    // colors come from :root (edit them there)
+  const css = getComputedStyle(document.documentElement), C = {};
+  for (const k of ['gold1', 'gold2', 'gold3', 'ink', 'white']) C[k] = css.getPropertyValue('--' + k).trim();
+  const EMBLEM = `
+  <svg class="emblem" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.gold1}"/><stop offset=".55" stop-color="${C.gold2}"/><stop offset="1" stop-color="${C.gold3}"/></linearGradient>
+      <linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.gold3}"/><stop offset=".5" stop-color="${C.gold1}"/><stop offset="1" stop-color="${C.gold3}"/></linearGradient>
+    </defs>
+    <g transform="rotate(-7 300 280)">
+      <!-- studs -->
+      <g stroke="${C.ink}" stroke-width="16" stroke-linejoin="round">
+        <path d="M150 128 v-38 a58 22 0 0 1 116 0 v38 z" fill="url(#s)"/><ellipse cx="208" cy="90" rx="58" ry="22" fill="${C.gold1}"/>
+        <path d="M334 128 v-38 a58 22 0 0 1 116 0 v38 z" fill="url(#s)"/><ellipse cx="392" cy="90" rx="58" ry="22" fill="${C.gold1}"/>
+      </g>
+      <!-- brick body -->
+      <rect x="60" y="120" width="480" height="340" rx="56" fill="url(#g)" stroke="${C.ink}" stroke-width="18"/>
+      <rect x="86" y="142" width="428" height="40" rx="20" fill="#fff" opacity=".28"/>
+      <!-- open book -->
+      <g stroke="${C.ink}" stroke-width="13" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M300 236 C 260 212 196 206 150 214 L 150 388 C 196 380 260 386 300 410 Z" fill="${C.white}"/>
+        <path d="M300 236 C 340 212 404 206 450 214 L 450 388 C 404 380 340 386 300 410 Z" fill="${C.white}"/>
+        <path d="M300 236 V 410" fill="none"/>
+        <g stroke-width="9" opacity=".75"><path d="M180 258 C 215 252 250 256 278 268" fill="none"/><path d="M180 296 C 215 290 250 294 278 306" fill="none"/><path d="M180 334 C 215 328 250 332 278 344" fill="none"/>
+          <path d="M420 258 C 385 252 350 256 322 268" fill="none"/><path d="M420 296 C 385 290 350 294 322 306" fill="none"/></g>
+      </g>
+      <!-- sparkle (a story about to start) -->
+      <path d="M402 318 l10 26 l26 10 l-26 10 l-10 26 l-10 -26 l-26 -10 l26 -10 z" fill="${C.gold2}" stroke="${C.ink}" stroke-width="8" stroke-linejoin="round"/>
+    </g>
+  </svg>`;
+  const v = new URLSearchParams(location.search).get('v') || 'logo';
+  const root = document.getElementById('root');
+  if (v === 'profile') root.innerHTML = `<div class="wrap profile">${EMBLEM}</div>`;
+  else if (v === 'watermark') root.innerHTML = `<div class="wrap watermark">${EMBLEM}<div><div class="word">BLOCKTALE</div><div class="sub">STUDIOS</div></div></div>`;
+  else root.innerHTML = `<div class="wrap logo">${EMBLEM}<div style="text-align:center"><div class="word">BLOCKTALE</div><div class="sub">STUDIOS</div></div></div>`;
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { window.sceneReady = true; });
+</script>
+</body>
+</html>

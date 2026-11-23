@@ -15,6 +15,7 @@ import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { startServer, openPage, ROOT } from './browser.js';
 import { mix, probe } from './mix.js';
+import { settings as brandSettings } from './brand.js';
 
 const FPS = 30, W = 1080, H = 1920;
 const name = (process.argv[2] || 'reaping-trailer').replace(/^reaping-/, '');
@@ -99,8 +100,18 @@ function cover(n) {
   console.log(`✔ ${rel(thumb)}\n✔ ${rel(out)}  (${probe(out).toFixed(2)} s: the last 0.5 s is the cover)`);
 }
 
+// The Blocktale Studios watermark (reaping-trials/brand/brand.json: opacity, size, position; "onRender": false turns it off; NOWM=1 skips it once)
+function watermarkFilter() {
+  const f = path.join(RTD, 'brand', 'watermark.png');
+  let b; try { b = brandSettings(); } catch { return null; }
+  if (!b.onRender || process.env.NOWM === '1' || !fs.existsSync(f)) return null;
+  const w = Math.round(W * SCALE * b.width), x = Math.round(W * SCALE * b.x), y = Math.round(H * SCALE * b.y);
+  return { input: f, filter: `[2:v]scale=${w}:-1,format=rgba,colorchannelmixer=aa=${b.opacity}[wm];[0:v][wm]overlay=${x}:${y}:format=auto,format=yuv420p[v]` };
+}
+
 function encode(framesDir, total, audio, out) {
-  ff(['-framerate', String(FPS / STEP), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, '-map', '0:v', '-map', '1:a',
+  const wm = watermarkFilter();
+  ff(['-framerate', String(FPS / STEP), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input, '-filter_complex', wm.filter, '-map', '[v]'] : ['-map', '0:v']), '-map', '1:a',
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100',
     '-t', String((total * STEP) / FPS), '-movflags', '+faststart', out]);
 }

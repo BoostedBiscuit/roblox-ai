@@ -9,8 +9,8 @@ Everything for the series lives in this folder.
 |---|---|---|
 | 1 | Test scene copied to `reference/ep1-part1-test.html`, music copied to `audio/music/` | done |
 | 2 | Characters, moves, viewer | approved |
-| 3 | Teaser trailer: `episodes/trailer.html` → `out/reaping-trials/trailer.mp4` | rendered, waiting for your approval |
-| 4 | `episodes/ep1-part1.html` (rebuilt test scene, about 60 s) | next |
+| 3 | Teaser trailer: `episodes/trailer.html` → `out/reaping-trials/trailer.mp4` | rendered |
+| 4 | Episode 1 · The Choosing: `episodes/ep1.html` → `out/reaping-trials/ep1.mp4` (2:11, cover: `ep1-with-cover.mp4`) | rendered |
 | 5 | The other locations, one at a time | later |
 
 Preview pictures of the cast, faces, expressions and moves are in [`previews/`](previews/).
@@ -24,6 +24,7 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
 | `npm run render -- reaping-trailer --audio-only` | re-mix after you change the CUE SHEET or swap a sound file, without re-rendering the picture |
 | `npm run render -- reaping-trailer --thumbs` | `out/reaping-trials/trailer-thumb-option1.png` and `-option2.png` |
 | `npm run render -- reaping-trailer --cover 1` | `trailer-thumb.png` + `trailer-with-cover.mp4` (the thumbnail is the last 0.5 s) |
+| `npm run render -- reaping-ep1` | `out/reaping-trials/ep1.mp4` (+ `ep1-no-voice.mp4`, `ep1-voice.mp3`, `--thumbs`, `--cover 1`) |
 | `npm run narrate -- trailer` | ElevenLabs narration for the NARRATION lines (cached: unchanged lines cost nothing) |
 
 **Edit a video** at the top of its scene file (e.g. `episodes/trailer.html`):

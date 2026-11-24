@@ -227,10 +227,16 @@
     for (const s of steps) {
       const from = pos.slice(), startYaw = yaw;
       if (s.to) {
-        const dx = s.to[0] - from[0], dz = s.to[2] - from[2], dist = Math.hypot(dx, dz, (s.to[1] - from[1]) * 0.5);
-        const travel = dist > 1e-3 ? Math.atan2(dx, dz) : yaw, dur = dist / (s.speed || 1.3);
-        segs.push({ s, t0: s.at, t1: s.at + dur, from, to: s.to.slice(), startYaw, travel, endYaw: s.yaw ?? travel, dist });
-        pos = s.to.slice(); yaw = s.yaw ?? travel;
+        // s.via: waypoints walked through without stopping (e.g. around a table), then s.to
+        const pts = [...(s.via || []), s.to];
+        let t0 = s.at, cur = from, d0 = 0, prevYaw = startYaw;
+        pts.forEach((p, k) => {
+          const last = k === pts.length - 1, dx = p[0] - cur[0], dz = p[2] - cur[2], dist = Math.hypot(dx, dz, (p[1] - cur[1]) * 0.5);
+          const travel = dist > 1e-3 ? Math.atan2(dx, dz) : prevYaw, dur = dist / (s.speed || 1.3);
+          segs.push({ s, t0, t1: t0 + dur, from: cur.slice(), to: p.slice(), startYaw: prevYaw, travel, endYaw: last ? (s.yaw ?? travel) : travel, dist, d0, cont: k > 0 });
+          t0 += dur; d0 += dist; cur = p; prevYaw = travel;
+        });
+        pos = s.to.slice(); yaw = s.yaw ?? prevYaw;
       } else { segs.push({ s, t0: s.at, t1: s.at, from, to: from, startYaw, travel: yaw, endYaw: s.yaw ?? yaw, dist: 0 }); yaw = s.yaw ?? yaw; }
     }
     const unit = (char.rig.unit / RT.STUD) * RT.STUD;            // world units per stud for this character
@@ -238,7 +244,7 @@
       const s = g.s;
       if (t < g.t1) {               // travelling
         const p = clamp((t - g.t0) / (g.t1 - g.t0), 0, 1), travelled = p * g.dist;
-        const P = pose(s.gait || 'walk', t, Object.assign({ phase: (travelled / (s.gait === 'run' ? 0.9 : 0.6)) * Math.PI }, s.gaitOpts || {}));
+        const P = pose(s.gait || 'walk', t, Object.assign({ phase: (((g.d0 || 0) + travelled) / (s.gait === 'run' ? 0.9 : 0.6)) * Math.PI }, s.gaitOpts || {}));
         return { P, pos: [lerp(g.from[0], g.to[0], p), lerp(g.from[1], g.to[1], p), lerp(g.from[2], g.to[2], p)], yaw: lerpAngle(g.startYaw, g.travel, clamp((t - g.t0) / 0.25, 0, 1)) };
       }
       const lt = t - g.t1;
@@ -248,7 +254,7 @@
       let i = 0; for (let k = 0; k < segs.length; k++) if (t >= segs[k].t0) i = k;
       const g = segs[i]; let r = evalSeg(g, t);
       const since = t - g.t0;
-      if (i > 0 && since < 0.25) { const prev = evalSeg(segs[i - 1], t); r = { ...r, P: mix(prev.P, r.P, RT.smooth(0, 1, since / 0.25)) }; }
+      if (i > 0 && since < 0.25 && !g.cont) { const prev = evalSeg(segs[i - 1], t); r = { ...r, P: mix(prev.P, r.P, RT.smooth(0, 1, since / 0.25)) }; }
       char.position.set(r.pos[0], r.pos[1], r.pos[2]); char.rotation.y = r.yaw;
       apply(char, r.P);
       let face = null; for (let k = 0; k <= i; k++) if (segs[k].s.face) face = segs[k].s.face;

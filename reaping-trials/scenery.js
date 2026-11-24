@@ -70,6 +70,37 @@
     if (k % 3 === 0) B.add(mats.stone, boxG(0.6, 1.6, 0.6), T(w * 0.25, h + rh * 0.7, -d * 0.2));   // chimney
   }
 
+  // Red barn with white trim, a big X door, a hay loft and two silos beside it. Added into a Batch.
+  function addBarn(B, x, y, z, yaw) {
+    const T = (lx, ly, lz, rx = 0, ry = 0, rz = 0) => new THREE.Matrix4().makeRotationY(yaw).multiply(M(lx, ly, lz, rx, ry, rz)).premultiply(new THREE.Matrix4().makeTranslation(x, y, z));
+    const red = RT.plastic('#b8322a', { roughness: 0.6 }), white = RT.plastic('#f4efe4', { roughness: 0.5 }), roof = RT.plastic('#5b5f66', { roughness: 0.6 }), dark = RT.plastic('#7e211b', { roughness: 0.6 });
+    const steel = RT.plastic('#e3e7ec', { roughness: 0.4, metalness: 0.15 }), band = RT.plastic('#a9b0b9', { roughness: 0.4, metalness: 0.2 });
+    const w = 9, d = 12, h = 5.2, rh = 3.6;
+    const tri = new THREE.Shape([new THREE.Vector2(-w / 2 + 0.05, 0), new THREE.Vector2(w / 2 - 0.05, 0), new THREE.Vector2(0, rh * 0.97)]);
+    const gable = new THREE.ExtrudeGeometry(tri, { depth: 0.2, bevelEnabled: false }); gable.translate(0, 0, -0.1);
+    B.add(red, boxG(w, h, d, 0.08), T(0, h / 2, 0));
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) B.add(white, boxG(0.3, h, 0.3), T(sx * (w / 2 - 0.1), h / 2, sz * (d / 2 - 0.1)));
+    B.add(white, boxG(w + 0.1, 0.25, d + 0.1), T(0, h, 0));
+    B.add(roof, RT.wedgeGeometry(d + 0.8, rh, w / 2 + 0.45), T(w / 4 + 0.2, h + rh / 2, 0, 0, Math.PI / 2, 0));
+    B.add(roof, RT.wedgeGeometry(d + 0.8, rh, w / 2 + 0.45), T(-w / 4 - 0.2, h + rh / 2, 0, 0, -Math.PI / 2, 0));
+    for (const sz of [-1, 1]) {
+      B.add(red, gable, T(0, h, sz * (d / 2 - 0.1)));                                                    // triangle gable end
+      B.add(dark, boxG(3.8, 3.9, 0.12), T(0, 1.95, sz * (d / 2 + 0.03)));                                  // big doors
+      B.add(white, boxG(4.2, 0.22, 0.16), T(0, 3.95, sz * (d / 2 + 0.06)));
+      for (const sx of [-1, 1]) B.add(white, boxG(0.22, 3.9, 0.16), T(sx * 2.0, 1.95, sz * (d / 2 + 0.06)));
+      B.add(white, boxG(0.2, 0.2, 0.16), T(0, 1.95, sz * (d / 2 + 0.06)));
+      for (const sx of [-1, 1]) for (const dx of [-1, 1]) B.add(white, boxG(0.18, 2.6, 0.14), T(sx * 1.0, 1.95, sz * (d / 2 + 0.07), 0, 0, dx * 0.58));
+      B.add(white, boxG(1.6, 1.4, 0.14), T(0, h + 1.0, sz * (d / 2 + 0.05)));                               // hay loft door
+      B.add(dark, boxG(1.2, 1.0, 0.16), T(0, h + 1.0, sz * (d / 2 + 0.06)));
+    }
+    for (const [sx, sz] of [[-1, 0.25], [-1, -0.25]]) {                                                     // silos on the far side
+      const lx = sx * (w / 2 + 2.6), lz = sz * d;
+      B.add(steel, new THREE.CylinderGeometry(2.1, 2.1, 11, 18), T(lx, 5.5, lz));
+      for (let k = 1; k < 5; k++) B.add(band, new THREE.CylinderGeometry(2.14, 2.14, 0.2, 18), T(lx, k * 2.2, lz));
+      B.add(steel, new THREE.SphereGeometry(2.1, 18, 8, 0, Math.PI * 2, 0, Math.PI / 2), T(lx, 11, lz));
+    }
+  }
+
   // Roblox classic trees (trunk + ball leaves) and pines (stacked cones), instanced.
   function forest(group, positions, o = {}) {
     const n = positions.length, half = Math.ceil(n * (o.pineRatio ?? 0.45));
@@ -120,7 +151,7 @@
       col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
     }
     tg.setAttribute('color', new THREE.BufferAttribute(col, 3)); tg.computeVertexNormals();
-    const terrain = new THREE.Mesh(tg, new THREE.MeshLambertMaterial({ vertexColors: true })); terrain.receiveShadow = true; G.add(terrain);
+    const terrain = new THREE.Mesh(tg, new THREE.MeshLambertMaterial({ vertexColors: true })); terrain.receiveShadow = true; terrain.userData.qaSkip = true; G.add(terrain);   // (the clip check uses hgt() for the ground)
 
     // the golden wheat (chunkier + brighter than the test scene), swaying
     const WN = o.wheat || 3200;
@@ -151,24 +182,56 @@
     const mats = { wall: ['#c8874e', '#b5713f', '#d89a5c', '#a8643a'].map((x) => RT.plastic(x, { roughness: 0.6 })), roof: ['#b23b2b', '#8c4a2f', '#c4562f'].map((x) => RT.plastic(x, { roughness: 0.55 })),
       door: RT.plastic('#5a3820'), window: RT.plastic('#26303c', { roughness: 0.2, metalness: 0.3 }), trim: RT.plastic('#f1e3c6', { roughness: 0.5 }), stone: RT.plastic('#8a8f96') };
     const B = new Batch(), shotA = Math.atan2(21, 13);
+    // o.farm (Episode 1): more houses, a barn with silos and animal pens. These areas stay free of houses and trees.
+    const FARM = o.farm ? { barn: [-50, -14], cows: [8, -37], sheep: [35, 31], pigs: [-33, -36], coop: [-31, 11] } : null;
+    const zones = FARM ? [[...FARM.barn, 15], [...FARM.cows, 9], [...FARM.sheep, 7.5], [...FARM.pigs, 5.5], [...FARM.coop, 6], [-32, 30, 5], [58, 46, 7]] : [];
+    const free = (x, z, pad = 0) => !zones.some(([zx, zz, zr]) => Math.hypot(x - zx, z - zz) < zr + pad);
     let placed = 0, tries = 0;
     const houses = [];
-    while (placed < 15 && tries < 300) {
-      tries++; const a = r() * Math.PI * 2, rr = 40 + r() * 32;
-      if (Math.abs(((a - shotA) + Math.PI * 3) % (Math.PI * 2) - Math.PI) < 0.55) continue;
-      const x = Math.cos(a) * rr, z = Math.sin(a) * rr;
-      if (houses.some((h) => Math.hypot(h[0] - x, h[1] - z) < 10)) continue;
-      houses.push([x, z]);
-      addHouse(B, mats, x, hgt(x, z) - 0.15, z, Math.atan2(-x, -z), 4.2 + r() * 2, 4 + r() * 2, 2.8 + r() * 0.8, placed);
-      placed++;
-    }
-    // fences around the field
+    const ring = (count, r0, r1, gap, maxTries) => {
+      let n = 0; tries = 0;
+      while (n < count && tries < maxTries) {
+        tries++; const a = r() * Math.PI * 2, rr = r0 + r() * (r1 - r0);
+        if (Math.abs(((a - shotA) + Math.PI * 3) % (Math.PI * 2) - Math.PI) < 0.55) continue;
+        const x = Math.cos(a) * rr, z = Math.sin(a) * rr;
+        if (houses.some((h) => Math.hypot(h[0] - x, h[1] - z) < gap) || !free(x, z, 4)) continue;
+        houses.push([x, z]);
+        addHouse(B, mats, x, hgt(x, z) - 0.15, z, Math.atan2(-x, -z), 4.2 + r() * 2, 4 + r() * 2, 2.8 + r() * 0.8, placed);
+        placed++; n++;
+      }
+    };
+    ring(FARM ? 21 : 15, 40, 72, 10, FARM ? 600 : 300);
+    if (FARM) ring(26, 78, 125, 11, 900);                        // a second ring of houses further out
+    // fences around the field (and the animal pens)
     const fenceM = RT.plastic('#9a6a3c', { roughness: 0.6 });
-    for (const [x0, z0, x1, z1] of [[-24, -24, 24, -24], [24, -24, 24, 24], [24, 24, -24, 24]]) {
-      const n = Math.round(Math.hypot(x1 - x0, z1 - z0) / 2.4);
+    const fence = (x0, z0, x1, z1) => {
+      const n = Math.max(1, Math.round(Math.hypot(x1 - x0, z1 - z0) / 2.4));
       for (let k = 0; k <= n; k++) { const x = RT.lerp(x0, x1, k / n), z = RT.lerp(z0, z1, k / n); B.add(fenceM, boxG(0.22, 1.2, 0.22), M(x, hgt(x, z) + 0.5, z)); }
       const len = Math.hypot(x1 - x0, z1 - z0), ang = Math.atan2(x1 - x0, z1 - z0);
       for (const y of [0.55, 0.95]) for (let k = 0; k < n; k++) { const x = RT.lerp(x0, x1, (k + 0.5) / n), z = RT.lerp(z0, z1, (k + 0.5) / n); B.add(fenceM, boxG(0.1, 0.14, len / n + 0.1), M(x, hgt(x, z) + y, z, 0, ang, 0)); }
+    };
+    for (const [x0, z0, x1, z1] of [[-24, -24, 24, -24], [24, -24, 24, 24], [24, 24, -24, 24]]) fence(x0, z0, x1, z1);
+    const pen = (cx, cz, hw, hd) => { fence(cx - hw, cz - hd, cx + hw, cz - hd); fence(cx + hw, cz - hd, cx + hw, cz + hd); fence(cx + hw, cz + hd, cx - hw, cz + hd); fence(cx - hw, cz + hd, cx - hw, cz - hd); };
+    let farmAnimals = [];
+    if (FARM) {
+      pen(FARM.cows[0], FARM.cows[1], 7, 5.5); pen(FARM.sheep[0], FARM.sheep[1], 5.5, 4.5); pen(FARM.pigs[0], FARM.pigs[1], 3.6, 3);
+      addBarn(B, FARM.barn[0], hgt(...FARM.barn) - 0.1, FARM.barn[1], Math.atan2(-FARM.barn[0], -FARM.barn[1]));
+      // water trough (cows), mud (pigs), hay bales, the chicken coop
+      const wood = RT.plastic('#8a5a34', { roughness: 0.65 }), water = RT.plastic('#4aa3d8', { roughness: 0.15, metalness: 0.1 }), hay = RT.plastic('#e4c25e', { roughness: 0.8 }), mud = RT.plastic('#6b4a2b', { roughness: 0.9 });
+      const [cx, cz] = FARM.cows; B.add(wood, boxG(2.6, 0.6, 0.8, 0.05), M(cx + 4.6, hgt(cx + 4.6, cz + 3.6) + 0.3, cz + 3.6)); B.add(water, boxG(2.3, 0.1, 0.55), M(cx + 4.6, hgt(cx + 4.6, cz + 3.6) + 0.55, cz + 3.6));
+      const [px, pz] = FARM.pigs; B.add(mud, new THREE.CylinderGeometry(2.2, 2.3, 0.06, 18), M(px - 0.6, hgt(px, pz) + 0.03, pz + 0.4));
+      for (const [hx, hz, ry] of [[-41, -4, 0.3], [-43, -2.2, 1.2], [-39.5, -1.8, 2.0], [-58, -22, 0.6], [-56.5, -24, 1.7], [cx - 8.5, cz + 1, 0.4]])
+        B.add(hay, new THREE.CylinderGeometry(0.85, 0.85, 1.3, 14), M(hx, hgt(hx, hz) + 0.85, hz, 0, ry, Math.PI / 2));
+      const [kx, kz] = FARM.coop; addHouse(B, mats, kx - 1.5, hgt(kx - 1.5, kz + 2.5) - 0.1, kz + 2.5, Math.PI / 2, 2.6, 2.2, 1.5, 2);
+      if (RT.animals) {
+        const A = RT.animals, ground = (x, z) => hgt(x, z);
+        farmAnimals = [A.herd('cow', 5, { x: cx, z: cz, r: 4.2, seed: 3, ground }), A.herd('sheep', 7, { x: FARM.sheep[0], z: FARM.sheep[1], r: 3.6, seed: 5, ground }),
+          A.herd('pig', 4, { x: px, z: pz, r: 2.2, seed: 7, ground }), A.herd('chicken', 9, { x: kx + 2.5, z: kz - 2.5, r: 3.6, seed: 9, ground }),
+          A.herd('chicken', 4, { x: 0, z: 27, r: 2.5, seed: 12, ground })];
+        const dog = A.make('dog', { seed: 2, yaw: -2.3 }); dog.position.set(-29.4, hgt(-29.4, 27.6), 27.6);
+        farmAnimals.push(Object.assign(new THREE.Group().add(dog), { update: (t) => dog.update(t) }));
+        for (const g of farmAnimals) G.add(g);
+      }
     }
     // the well
     const wx = -32, wz = 30, wy = hgt(wx, wz);
@@ -186,7 +249,9 @@
 
     // trees (instanced): outside the village ring
     const tp2 = [];
-    for (let i = 0; i < (o.trees || 1000); i++) { const a = r() * Math.PI * 2, d = 82 + Math.pow(r(), 0.7) * 560, x = Math.cos(a) * d, z = Math.sin(a) * d; tp2.push([x, hgt(x, z), z]); }
+    for (let i = 0; i < (o.trees || 1000); i++) { const a = r() * Math.PI * 2, d = 82 + Math.pow(r(), 0.7) * 560, x = Math.cos(a) * d, z = Math.sin(a) * d;
+      if (FARM && (houses.some((h) => Math.hypot(h[0] - x, h[1] - z) < 7) || !free(x, z, 3))) continue;
+      tp2.push([x, hgt(x, z), z]); }
     forest(G, tp2, { seed: 11, pineRatio: 0.4 });
 
     // distant block mountains + the Capital on the horizon
@@ -201,8 +266,8 @@
     }
     const capital = capitalSkyline(); capital.position.copy(capPos); G.add(capital);
 
-    G.update = (t) => { updateWheat(t); blades.rotation.z = t * 0.6; };
-    G.spots = { capPos, hgt };
+    G.update = (t) => { updateWheat(t); blades.rotation.z = t * 0.6; for (const g of farmAnimals) g.update(t); };
+    G.spots = { capPos, hgt, farm: FARM, houses };
     return G;
   }
 
@@ -276,7 +341,7 @@
     // crowd (instanced) facing the stage, in three sections between the ropes
     const spots = [];
     for (let row = 0; row < 9; row++) for (let k = 0; k < 18; k++) {
-      const x = -13.5 + k * 1.6 + (row % 2) * 0.6 + (r() - 0.5) * 0.3, z = -4.5 + row * 1.7 + (r() - 0.5) * 0.3;
+      const x = -13.5 + k * 1.6 + (row % 2) * 0.6 + (r() - 0.5) * 0.3, z = (o.crowdFront ?? -4.5) + row * 1.7 + (r() - 0.5) * 0.3;   // o.crowdFront: first row (further back = more room in front of the steps)
       if (Math.abs(Math.abs(x) - 3.2) < 0.8) continue;                          // keep the rope lines clear
       if (o.keepClear && o.keepClear.some(([cx, cz, rr]) => Math.hypot(x - cx, z - cz) < rr)) continue;
       spots.push([x, z, Math.atan2(-x, -12 - z)]);                                  // everyone faces the stage
@@ -285,7 +350,19 @@
     G.add(crowd);
     const stageLook = new THREE.Vector3(0, 3, -11);
     G.update = (t, u = {}) => { if (crowd.visible) crowd.update(t, { lookAt: u.lookAt || stageLook }); };   // u.lookAt: what the crowd turns to watch
-    G.spots = { bowls, mic, stage: new THREE.Vector3(0, 1.5, -12), crowd };
+    // solid parts, for the clip check (tools/qa.js): boxes {min, max} and upright cylinders {x, z, r, y0, y1}
+    const box = (name, x0, y0, z0, x1, y1, z1, allow) => ({ kind: 'box', name, min: [x0, y0, z0], max: [x1, y1, z1], allow });
+    const cyl = (name, x, z, rr, y0, y1, allow) => ({ kind: 'cyl', name, x, z, r: rr, y0, y1, allow });
+    const solids = () => {
+      const out = [box('stage', -8, 0, -15.5, 8, 1.5, -8.5), box('back wall', -8, 0.2, -15.7, 8, 8.4, -15.1)];
+      for (let k = 0; k < 3; k++) { const h = (1.4 * (3 - k)) / 3, c = -8.1 + k * 0.8; out.push(box('step ' + (k + 1), -2, 0, c - 0.4, 2, h, c + 0.4)); }
+      for (const x of [-3.2, 3.2]) { out.push(box('rope', x - 0.05, 0.9, -5, x + 0.05, 1.0, 9.4)); for (let k = 0; k < 7; k++) out.push(cyl('rope post', x, -5 + k * 2.4, 0.12, 0, 1.1)); }
+      for (const b of bowls) out.push(cyl('glass bowl', b.position.x, b.position.z, 1.15, b.position.y, b.position.y + (o.bowlPedestal ?? 1.2) + 1.55, ['handL', 'handR']));
+      out.push(cyl('mic stand', mic.position.x, mic.position.z, 0.07, mic.position.y, mic.position.y + 2.6), cyl('mic base', mic.position.x, mic.position.z, 0.4, mic.position.y, mic.position.y + 0.07));
+      for (const x of [-14, 14]) out.push(cyl('flag pole', x * 0.65, -11, 0.15, 0, 10));
+      return out;
+    };
+    G.spots = { bowls, mic, stage: new THREE.Vector3(0, 1.5, -12), crowd, solids, floorY: 1.5 };
     return G;
   }
 

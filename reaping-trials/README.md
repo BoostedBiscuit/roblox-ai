@@ -26,6 +26,7 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
 | `npm run render -- reaping-trailer --cover 1` | `trailer-thumb.png` + `trailer-with-cover.mp4` (the thumbnail is the last 0.5 s) |
 | `npm run render -- reaping-ep1` | `out/reaping-trials/ep1.mp4` (+ `ep1-no-voice.mp4`, `ep1-voice.mp3`, `--thumbs`, `--cover 1`) |
 | `npm run narrate -- trailer` | ElevenLabs narration for the NARRATION lines (cached: unchanged lines cost nothing) |
+| `npm run qa -- ep1` | **clip check** (about 30 s, no rendering): every 0.1 s it looks for the camera inside or touching anything, a face hidden behind something, and characters inside each other, the crowd or the set (bowls, steps, ropes, mic). Prints each problem with its time and shot number. Run it before every render. |
 
 **Edit a video** at the top of its scene file (e.g. `episodes/trailer.html`):
 * `=== NARRATION ===`: time, speaker, text. `*word*` makes that caption yellow. Changing only the time costs nothing; changing text re-generates that line.
@@ -59,8 +60,10 @@ Watermark any MP4 (for example a CapCut export): `node reaping-trials/tools/bran
 | `common.js` | Shared helpers (seeded random, rounded boxes, wedges, canvas-textured blocks). Load it first. |
 | `mood.js` | Lighting presets: `sunrise`, `overcast`, `capitalDay`, `arenaDay`, `arenaNight`, `storm`, `councilDark`, `studio`. Sky shader and sun glow come from the test scene. |
 | `characters.js` | One function per character: `RT.characters.rhea()`, `pip()`, `juno()`, `dax()`, `haskin()`, `vire()`, `guard()`, `citizen(seed)`, `tribute(sector, seed)`, `crowd({...})`. Colors are in each character's `COL` block. |
-| `animations.js` | Moves: idle, walk, run, jump, talk, look, point, raiseHand, kneel, wave, hug, fallOver, crossArms, facepalm, handsOnHips, cheer. Also a timeline helper (`RT.anim.seq`) and a walking path helper (`RT.anim.path`). |
-| `scenery.js` | Locations: studded baseplate, Sector 7 village, and quick trailer versions of the Choosing square and the Arena (full versions in step 5). |
+| `animations.js` | Moves: idle, walk, run, jump, talk, look, point, raiseHand, kneel, wave, hug, fallOver, crossArms, facepalm, handsOnHips, cheer. Also a timeline helper (`RT.anim.seq`), a walking path helper (`RT.anim.path`) and `RT.anim.actor` (walk / run between spots, `via:` waypoints to go round things). |
+| `scenery.js` | Locations: studded baseplate, Sector 7 village (`farm: true` adds a second ring of houses, a red barn with silos, animal pens, hay bales and a chicken coop), the Choosing square, and a quick trailer version of the Arena. |
+| `animals.js` | Blocky farm animals with idle movement: `RT.animals.make('cow' \| 'sheep' \| 'pig' \| 'chicken' \| 'dog')` and `RT.animals.herd(type, n, {x, z, r})`. |
+| `qa.js` | The clip-check helpers used by `npm run qa` (not used when a video plays or renders). |
 | `camera.js` | The shot system from the test scene: eased camera moves, handheld shake, push-ins, low angles, over-the-shoulder, orbits, drone moves, dip-to-black. |
 | `player.js` | The 9:16 frame, ▶ Play / ↺ Replay, render mode, word-by-word captions, speaker subtitles, title card, preview timer. |
 | `voice.json` | The narrator voice (no key in it). |
@@ -68,7 +71,7 @@ Watermark any MP4 (for example a CapCut export): `node reaping-trials/tools/bran
 | `fonts/` | Cinzel (titles), Montserrat Black (captions) and Inter (UI), all SIL Open Font License, stored locally so phone and MP4 look the same. |
 | `tools/browser.js` | Headless Chromium helper used by the render tools. It answers the cdnjs three.js URL with the identical local copy (`three@0.128.0` from npm). |
 | `tools/viewer-shots.js` | Screenshots of the viewer: `npm run viewer-shots -- <folder>`. |
-| `tools/render.js`, `tools/mix.js`, `tools/narrate.js`, `tools/brand.js` | Render to MP4, mix the sound, make the narration, logos + watermark (commands above). |
+| `tools/render.js`, `tools/mix.js`, `tools/narrate.js`, `tools/brand.js`, `tools/qa.js` | Render to MP4, mix the sound, make the narration, logos + watermark, clip check (commands above). |
 
 ## Body style
 

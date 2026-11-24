@@ -68,7 +68,7 @@
       for (let i = 0; i < ws.length; i++) {
         const clean = (w) => w.w.replace(/^[…."'“]+/, '').replace(/[.,…;:"”]+$/, '');
         let text = clean(ws[i]), key = !!ws[i].key, j = i;
-        if (text.replace(/[^\p{L}\p{N}]/gu, '').length <= 2 && ws[i + 1] && (text + clean(ws[i + 1])).length <= 9) { j = i + 1; text += ' ' + clean(ws[j]); key = key || !!ws[j].key; }
+        if (text.replace(/[^\p{L}\p{N}]/gu, '').length <= 2 && !/[.,!?…;:]$/.test(ws[i].w) && ws[i + 1] && (text + clean(ws[i + 1])).length <= 9) { j = i + 1; text += ' ' + clean(ws[j]); key = key || !!ws[j].key; }
         out.push({ t0: ws[i].start - 0.04, text: text.toUpperCase(), key, lineEnd: line.end });
         i = j;
       }

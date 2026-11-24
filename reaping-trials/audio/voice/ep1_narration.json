@@ -1,0 +1,1812 @@
+{
+ "video": "ep1",
+ "voice": "Adam",
+ "tempo": 1.1,
+ "lines": [
+  {
+   "at": 0.6,
+   "who": "narrator",
+   "text": "My name is Rhea Vance… and today, one kid from my town is going to disappear.",
+   "raw": "audio/voice/ep1/l01_7c5b2d9115.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l01_7c5b2d9115_t1.1_p0.5.wav",
+   "start": 0.6,
+   "end": 6.063,
+   "words": [
+    {
+     "w": "My",
+     "start": 0.6,
+     "end": 0.758
+    },
+    {
+     "w": "name",
+     "start": 0.822,
+     "end": 1.001
+    },
+    {
+     "w": "is",
+     "start": 1.033,
+     "end": 1.106
+    },
+    {
+     "w": "Rhea",
+     "start": 1.17,
+     "end": 1.402
+    },
+    {
+     "w": "Vance…",
+     "start": 1.465,
+     "end": 1.962
+    },
+    {
+     "w": "and",
+     "start": 2.384,
+     "end": 2.521
+    },
+    {
+     "w": "today,",
+     "start": 2.574,
+     "end": 2.943
+    },
+    {
+     "w": "one",
+     "start": 3.102,
+     "end": 3.345
+    },
+    {
+     "w": "kid",
+     "start": 3.407,
+     "end": 3.65
+    },
+    {
+     "w": "from",
+     "start": 3.703,
+     "end": 3.83
+    },
+    {
+     "w": "my",
+     "start": 3.893,
+     "end": 4.009
+    },
+    {
+     "w": "town",
+     "start": 4.073,
+     "end": 4.453
+    },
+    {
+     "w": "is",
+     "start": 4.885,
+     "end": 5.012
+    },
+    {
+     "w": "going",
+     "start": 5.065,
+     "end": 5.255
+    },
+    {
+     "w": "to",
+     "start": 5.286,
+     "end": 5.328
+    },
+    {
+     "w": "disappear.",
+     "key": true,
+     "start": 5.392,
+     "end": 5.93
+    }
+   ]
+  },
+  {
+   "at": 8.263,
+   "who": "narrator",
+   "text": "This is Sector 7. We grow the wheat that feeds the whole Capital.",
+   "raw": "audio/voice/ep1/l02_9ade29277b.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l02_9ade29277b_t1.1_p0.5.wav",
+   "start": 8.263,
+   "end": 12.081,
+   "words": [
+    {
+     "w": "This",
+     "start": 8.263,
+     "end": 8.485
+    },
+    {
+     "w": "is",
+     "start": 8.558,
+     "end": 8.654
+    },
+    {
+     "w": "Sector",
+     "start": 8.728,
+     "end": 9.076
+    },
+    {
+     "w": "7.",
+     "start": 9.17,
+     "end": 9.445
+    },
+    {
+     "w": "We",
+     "start": 9.899,
+     "end": 10.026
+    },
+    {
+     "w": "grow",
+     "start": 10.089,
+     "end": 10.31
+    },
+    {
+     "w": "the",
+     "start": 10.385,
+     "end": 10.448
+    },
+    {
+     "w": "wheat",
+     "start": 10.5,
+     "end": 10.701
+    },
+    {
+     "w": "that",
+     "start": 10.743,
+     "end": 10.859
+    },
+    {
+     "w": "feeds",
+     "start": 10.912,
+     "end": 11.198
+    },
+    {
+     "w": "the",
+     "start": 11.239,
+     "end": 11.303
+    },
+    {
+     "w": "whole",
+     "start": 11.345,
+     "end": 11.514
+    },
+    {
+     "w": "Capital.",
+     "start": 11.556,
+     "end": 11.947
+    }
+   ]
+  },
+  {
+   "at": 12.581,
+   "who": "narrator",
+   "text": "And every year, on the morning of the Choosing, I come out here to breathe.",
+   "raw": "audio/voice/ep1/l03_62cb918b81.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l03_62cb918b81_t1.1_p0.5.wav",
+   "start": 12.581,
+   "end": 15.862,
+   "words": [
+    {
+     "w": "And",
+     "start": 12.581,
+     "end": 12.729
+    },
+    {
+     "w": "every",
+     "start": 12.792,
+     "end": 12.993
+    },
+    {
+     "w": "year,",
+     "start": 13.056,
+     "end": 13.298
+    },
+    {
+     "w": "on",
+     "start": 13.362,
+     "end": 13.446
+    },
+    {
+     "w": "the",
+     "start": 13.478,
+     "end": 13.542
+    },
+    {
+     "w": "morning",
+     "start": 13.584,
+     "end": 13.837
+    },
+    {
+     "w": "of",
+     "start": 13.879,
+     "end": 13.921
+    },
+    {
+     "w": "the",
+     "start": 13.964,
+     "end": 14.027
+    },
+    {
+     "w": "Choosing,",
+     "start": 14.069,
+     "end": 14.438
+    },
+    {
+     "w": "I",
+     "start": 14.502,
+     "end": 14.534
+    },
+    {
+     "w": "come",
+     "start": 14.628,
+     "end": 14.786
+    },
+    {
+     "w": "out",
+     "start": 14.818,
+     "end": 14.946
+    },
+    {
+     "w": "here",
+     "start": 14.987,
+     "end": 15.114
+    },
+    {
+     "w": "to",
+     "start": 15.136,
+     "end": 15.177
+    },
+    {
+     "w": "breathe.",
+     "start": 15.241,
+     "end": 15.726
+    }
+   ]
+  },
+  {
+   "at": 16.462,
+   "who": "narrator",
+   "text": "Every year, they take one of us.",
+   "raw": "audio/voice/ep1/l04_ee5f181a1d.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l04_ee5f181a1d_t1.1_p0.5.wav",
+   "start": 16.462,
+   "end": 17.949,
+   "words": [
+    {
+     "w": "Every",
+     "start": 16.462,
+     "end": 16.705
+    },
+    {
+     "w": "year,",
+     "start": 16.757,
+     "end": 16.947
+    },
+    {
+     "w": "they",
+     "start": 17,
+     "end": 17.127
+    },
+    {
+     "w": "take",
+     "start": 17.179,
+     "end": 17.38
+    },
+    {
+     "w": "one",
+     "key": true,
+     "start": 17.423,
+     "end": 17.549
+    },
+    {
+     "w": "of",
+     "start": 17.581,
+     "end": 17.623
+    },
+    {
+     "w": "us.",
+     "start": 17.687,
+     "end": 17.845
+    }
+   ]
+  },
+  {
+   "at": 20.149,
+   "who": "narrator",
+   "text": "That's Pip. My little brother. Ten years old… and this is his first year in the bowl.",
+   "raw": "audio/voice/ep1/l05_9056b84d78.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l05_9056b84d78_t1.1_p0.5.wav",
+   "start": 20.149,
+   "end": 25.516,
+   "words": [
+    {
+     "w": "That's",
+     "start": 20.149,
+     "end": 20.434
+    },
+    {
+     "w": "Pip.",
+     "start": 20.497,
+     "end": 20.772
+    },
+    {
+     "w": "My",
+     "start": 21.226,
+     "end": 21.364
+    },
+    {
+     "w": "little",
+     "start": 21.426,
+     "end": 21.627
+    },
+    {
+     "w": "brother.",
+     "start": 21.659,
+     "end": 21.986
+    },
+    {
+     "w": "Ten",
+     "start": 22.441,
+     "end": 22.631
+    },
+    {
+     "w": "years",
+     "start": 22.684,
+     "end": 22.905
+    },
+    {
+     "w": "old…",
+     "start": 22.968,
+     "end": 23.306
+    },
+    {
+     "w": "and",
+     "start": 23.761,
+     "end": 23.898
+    },
+    {
+     "w": "this",
+     "start": 23.951,
+     "end": 24.078
+    },
+    {
+     "w": "is",
+     "start": 24.131,
+     "end": 24.204
+    },
+    {
+     "w": "his",
+     "start": 24.246,
+     "end": 24.363
+    },
+    {
+     "w": "first",
+     "start": 24.415,
+     "end": 24.637
+    },
+    {
+     "w": "year",
+     "start": 24.679,
+     "end": 24.838
+    },
+    {
+     "w": "in",
+     "start": 24.891,
+     "end": 24.944
+    },
+    {
+     "w": "the",
+     "start": 24.985,
+     "end": 25.049
+    },
+    {
+     "w": "bowl.",
+     "start": 25.091,
+     "end": 25.386
+    }
+   ]
+  },
+  {
+   "at": 26.016,
+   "who": "pip",
+   "text": "Rhea… what if they pick me?",
+   "raw": "audio/voice/ep1/l06_8b49d9c617.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l06_8b49d9c617_t1.1_p0.5.wav",
+   "start": 26.016,
+   "end": 27.837,
+   "words": [
+    {
+     "w": "Rhea…",
+     "start": 26.016,
+     "end": 26.396
+    },
+    {
+     "w": "what",
+     "start": 26.851,
+     "end": 26.999
+    },
+    {
+     "w": "if",
+     "start": 27.031,
+     "end": 27.093
+    },
+    {
+     "w": "they",
+     "start": 27.125,
+     "end": 27.231
+    },
+    {
+     "w": "pick",
+     "start": 27.294,
+     "end": 27.473
+    },
+    {
+     "w": "me?",
+     "start": 27.537,
+     "end": 27.706
+    }
+   ]
+  },
+  {
+   "at": 28.337,
+   "who": "rhea",
+   "text": "Hey. There are hundreds of names in that bowl. Yours is just one.",
+   "raw": "audio/voice/ep1/l07_e5501bcfb8.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l07_e5501bcfb8_t1.1_p0.5.wav",
+   "start": 28.337,
+   "end": 32.499,
+   "words": [
+    {
+     "w": "Hey.",
+     "start": 28.337,
+     "end": 28.622
+    },
+    {
+     "w": "There",
+     "start": 29.076,
+     "end": 29.277
+    },
+    {
+     "w": "are",
+     "start": 29.308,
+     "end": 29.403
+    },
+    {
+     "w": "hundreds",
+     "start": 29.445,
+     "end": 29.752
+    },
+    {
+     "w": "of",
+     "start": 29.783,
+     "end": 29.825
+    },
+    {
+     "w": "names",
+     "start": 29.868,
+     "end": 30.184
+    },
+    {
+     "w": "in",
+     "start": 30.237,
+     "end": 30.322
+    },
+    {
+     "w": "that",
+     "start": 30.385,
+     "end": 30.543
+    },
+    {
+     "w": "bowl.",
+     "start": 30.596,
+     "end": 30.912
+    },
+    {
+     "w": "Yours",
+     "start": 31.367,
+     "end": 31.61
+    },
+    {
+     "w": "is",
+     "start": 31.652,
+     "end": 31.725
+    },
+    {
+     "w": "just",
+     "start": 31.778,
+     "end": 31.958
+    },
+    {
+     "w": "one.",
+     "start": 32.021,
+     "end": 32.359
+    }
+   ]
+  },
+  {
+   "at": 33.499,
+   "who": "narrator",
+   "text": "I tied a bracelet of wheat around his wrist. For luck.",
+   "raw": "audio/voice/ep1/l08_70299c2a0e.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l08_70299c2a0e_t1.1_p0.5.wav",
+   "start": 33.499,
+   "end": 36.508,
+   "words": [
+    {
+     "w": "I",
+     "start": 33.499,
+     "end": 33.573
+    },
+    {
+     "w": "tied",
+     "start": 33.647,
+     "end": 33.837
+    },
+    {
+     "w": "a",
+     "start": 33.868,
+     "end": 33.89
+    },
+    {
+     "w": "bracelet",
+     "start": 33.943,
+     "end": 34.364
+    },
+    {
+     "w": "of",
+     "start": 34.396,
+     "end": 34.438
+    },
+    {
+     "w": "wheat",
+     "start": 34.491,
+     "end": 34.66
+    },
+    {
+     "w": "around",
+     "start": 34.692,
+     "end": 34.945
+    },
+    {
+     "w": "his",
+     "start": 34.987,
+     "end": 35.082
+    },
+    {
+     "w": "wrist.",
+     "start": 35.124,
+     "end": 35.504
+    },
+    {
+     "w": "For",
+     "start": 35.894,
+     "end": 36.032
+    },
+    {
+     "w": "luck.",
+     "key": true,
+     "start": 36.084,
+     "end": 36.381
+    }
+   ]
+  },
+  {
+   "at": 37.308,
+   "who": "narrator",
+   "text": "But when I looked at the Capital… I couldn't shake the feeling.",
+   "raw": "audio/voice/ep1/l09_585d21eb9d.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l09_585d21eb9d_t1.1_p0.5.wav",
+   "start": 37.308,
+   "end": 40.423,
+   "words": [
+    {
+     "w": "But",
+     "start": 37.308,
+     "end": 37.477
+    },
+    {
+     "w": "when",
+     "start": 37.498,
+     "end": 37.635
+    },
+    {
+     "w": "I",
+     "start": 37.688,
+     "end": 37.72
+    },
+    {
+     "w": "looked",
+     "start": 37.814,
+     "end": 38.047
+    },
+    {
+     "w": "at",
+     "start": 38.079,
+     "end": 38.142
+    },
+    {
+     "w": "the",
+     "start": 38.173,
+     "end": 38.237
+    },
+    {
+     "w": "Capital…",
+     "start": 38.3,
+     "end": 38.723
+    },
+    {
+     "w": "I",
+     "start": 39.177,
+     "end": 39.23
+    },
+    {
+     "w": "couldn't",
+     "start": 39.293,
+     "end": 39.525
+    },
+    {
+     "w": "shake",
+     "start": 39.557,
+     "end": 39.768
+    },
+    {
+     "w": "the",
+     "start": 39.8,
+     "end": 39.863
+    },
+    {
+     "w": "feeling.",
+     "start": 39.916,
+     "end": 40.296
+    }
+   ]
+  },
+  {
+   "at": 40.823,
+   "who": "narrator",
+   "text": "This year… it could be my brother.",
+   "raw": "audio/voice/ep1/l10_ecd4bc70ec.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l10_ecd4bc70ec_t1.1_p0.5.wav",
+   "start": 40.823,
+   "end": 42.687,
+   "words": [
+    {
+     "w": "This",
+     "start": 40.823,
+     "end": 41.045
+    },
+    {
+     "w": "year…",
+     "start": 41.108,
+     "end": 41.319
+    },
+    {
+     "w": "it",
+     "start": 41.594,
+     "end": 41.709
+    },
+    {
+     "w": "could",
+     "start": 41.752,
+     "end": 41.91
+    },
+    {
+     "w": "be",
+     "start": 41.942,
+     "end": 42.027
+    },
+    {
+     "w": "my",
+     "start": 42.079,
+     "end": 42.174
+    },
+    {
+     "w": "brother.",
+     "key": true,
+     "start": 42.238,
+     "end": 42.543
+    }
+   ]
+  },
+  {
+   "at": 45.687,
+   "who": "narrator",
+   "text": "At noon, the whole Sector walks to the square. Nobody talks. The guards make sure of that.",
+   "raw": "audio/voice/ep1/l11_4f0baef2fd.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l11_4f0baef2fd_t1.1_p0.5.wav",
+   "start": 45.687,
+   "end": 51.097,
+   "words": [
+    {
+     "w": "At",
+     "start": 45.687,
+     "end": 45.824
+    },
+    {
+     "w": "noon,",
+     "start": 45.898,
+     "end": 46.257
+    },
+    {
+     "w": "the",
+     "start": 46.458,
+     "end": 46.552
+    },
+    {
+     "w": "whole",
+     "start": 46.594,
+     "end": 46.816
+    },
+    {
+     "w": "Sector",
+     "start": 46.859,
+     "end": 47.186
+    },
+    {
+     "w": "walks",
+     "start": 47.249,
+     "end": 47.534
+    },
+    {
+     "w": "to",
+     "start": 47.587,
+     "end": 47.672
+    },
+    {
+     "w": "the",
+     "start": 47.734,
+     "end": 47.798
+    },
+    {
+     "w": "square.",
+     "start": 47.83,
+     "end": 48.315
+    },
+    {
+     "w": "Nobody",
+     "start": 48.674,
+     "end": 48.959
+    },
+    {
+     "w": "talks.",
+     "start": 49.012,
+     "end": 49.381
+    },
+    {
+     "w": "The",
+     "start": 49.708,
+     "end": 49.803
+    },
+    {
+     "w": "guards",
+     "start": 49.856,
+     "end": 50.131
+    },
+    {
+     "w": "make",
+     "start": 50.172,
+     "end": 50.331
+    },
+    {
+     "w": "sure",
+     "start": 50.373,
+     "end": 50.573
+    },
+    {
+     "w": "of",
+     "start": 50.605,
+     "end": 50.658
+    },
+    {
+     "w": "that.",
+     "start": 50.701,
+     "end": 50.964
+    }
+   ]
+  },
+  {
+   "at": 51.897,
+   "who": "narrator",
+   "text": "That's Old Haskin. Twenty-six years ago, he won the Trials. He's the only winner we've ever had…",
+   "raw": "audio/voice/ep1/l12_9c0919367a.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l12_9c0919367a_t1.1_p0.5.wav",
+   "start": 51.897,
+   "end": 56.754,
+   "words": [
+    {
+     "w": "That's",
+     "start": 51.897,
+     "end": 52.14
+    },
+    {
+     "w": "Old",
+     "start": 52.182,
+     "end": 52.319
+    },
+    {
+     "w": "Haskin.",
+     "start": 52.362,
+     "end": 52.731
+    },
+    {
+     "w": "Twenty-six",
+     "start": 53.005,
+     "end": 53.417
+    },
+    {
+     "w": "years",
+     "start": 53.459,
+     "end": 53.639
+    },
+    {
+     "w": "ago,",
+     "start": 53.67,
+     "end": 53.85
+    },
+    {
+     "w": "he",
+     "start": 53.923,
+     "end": 53.987
+    },
+    {
+     "w": "won",
+     "start": 54.05,
+     "end": 54.198
+    },
+    {
+     "w": "the",
+     "start": 54.251,
+     "end": 54.314
+    },
+    {
+     "w": "Trials.",
+     "start": 54.346,
+     "end": 54.821
+    },
+    {
+     "w": "He's",
+     "start": 55.169,
+     "end": 55.338
+    },
+    {
+     "w": "the",
+     "start": 55.37,
+     "end": 55.443
+    },
+    {
+     "w": "only",
+     "start": 55.496,
+     "end": 55.665
+    },
+    {
+     "w": "winner",
+     "start": 55.707,
+     "end": 55.887
+    },
+    {
+     "w": "we've",
+     "start": 55.918,
+     "end": 56.087
+    },
+    {
+     "w": "ever",
+     "start": 56.119,
+     "end": 56.256
+    },
+    {
+     "w": "had…",
+     "start": 56.32,
+     "end": 56.615
+    }
+   ]
+  },
+  {
+   "at": 57.054,
+   "who": "narrator",
+   "text": "…and he's been hiding in that flask ever since.",
+   "raw": "audio/voice/ep1/l13_2aa0488808.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l13_2aa0488808_t1.1_p0.5.wav",
+   "start": 57.054,
+   "end": 59.274,
+   "words": [
+    {
+     "w": "…and",
+     "start": 57.09,
+     "end": 57.196
+    },
+    {
+     "w": "he's",
+     "start": 57.239,
+     "end": 57.386
+    },
+    {
+     "w": "been",
+     "start": 57.418,
+     "end": 57.555
+    },
+    {
+     "w": "hiding",
+     "start": 57.587,
+     "end": 57.871
+    },
+    {
+     "w": "in",
+     "start": 57.903,
+     "end": 57.956
+    },
+    {
+     "w": "that",
+     "start": 57.999,
+     "end": 58.125
+    },
+    {
+     "w": "flask",
+     "start": 58.178,
+     "end": 58.505
+    },
+    {
+     "w": "ever",
+     "start": 58.558,
+     "end": 58.716
+    },
+    {
+     "w": "since.",
+     "start": 58.769,
+     "end": 59.139
+    }
+   ]
+  },
+  {
+   "at": 61.874,
+   "who": "narrator",
+   "text": "But this year, someone else walked onto our stage.",
+   "raw": "audio/voice/ep1/l14_019d517dcc.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l14_019d517dcc_t1.1_p0.5.wav",
+   "start": 61.874,
+   "end": 65.074,
+   "words": [
+    {
+     "w": "But",
+     "start": 61.874,
+     "end": 62.043
+    },
+    {
+     "w": "this",
+     "start": 62.075,
+     "end": 62.233
+    },
+    {
+     "w": "year,",
+     "start": 62.296,
+     "end": 62.539
+    },
+    {
+     "w": "someone",
+     "start": 62.993,
+     "end": 63.33
+    },
+    {
+     "w": "else",
+     "start": 63.362,
+     "end": 63.552
+    },
+    {
+     "w": "walked",
+     "start": 63.595,
+     "end": 63.859
+    },
+    {
+     "w": "onto",
+     "start": 63.922,
+     "end": 64.122
+    },
+    {
+     "w": "our",
+     "start": 64.218,
+     "end": 64.355
+    },
+    {
+     "w": "stage.",
+     "start": 64.418,
+     "end": 64.946
+    }
+   ]
+  },
+  {
+   "at": 65.474,
+   "who": "narrator",
+   "text": "High Chancellor Vire. The man who rules the Crown Council. He never comes to the Sectors. Never.",
+   "raw": "audio/voice/ep1/l15_c84b56ca03.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l15_c84b56ca03_t1.1_p0.5.wav",
+   "start": 65.474,
+   "end": 70.925,
+   "words": [
+    {
+     "w": "High",
+     "start": 65.474,
+     "end": 65.706
+    },
+    {
+     "w": "Chancellor",
+     "start": 65.738,
+     "end": 66.16
+    },
+    {
+     "w": "Vire.",
+     "start": 66.213,
+     "end": 66.603
+    },
+    {
+     "w": "The",
+     "start": 66.846,
+     "end": 66.951
+    },
+    {
+     "w": "man",
+     "start": 67.004,
+     "end": 67.247
+    },
+    {
+     "w": "who",
+     "start": 67.3,
+     "end": 67.416
+    },
+    {
+     "w": "rules",
+     "start": 67.479,
+     "end": 67.775
+    },
+    {
+     "w": "the",
+     "start": 67.817,
+     "end": 67.88
+    },
+    {
+     "w": "Crown",
+     "start": 67.912,
+     "end": 68.155
+    },
+    {
+     "w": "Council.",
+     "start": 68.219,
+     "end": 68.609
+    },
+    {
+     "w": "He",
+     "start": 68.968,
+     "end": 69.073
+    },
+    {
+     "w": "never",
+     "start": 69.137,
+     "end": 69.295
+    },
+    {
+     "w": "comes",
+     "start": 69.348,
+     "end": 69.559
+    },
+    {
+     "w": "to",
+     "start": 69.59,
+     "end": 69.664
+    },
+    {
+     "w": "the",
+     "start": 69.728,
+     "end": 69.79
+    },
+    {
+     "w": "Sectors.",
+     "start": 69.844,
+     "end": 70.319
+    },
+    {
+     "w": "Never.",
+     "key": true,
+     "start": 70.456,
+     "end": 70.793
+    }
+   ]
+  },
+  {
+   "at": 73.125,
+   "who": "vire",
+   "text": "People of Sector 7… what an honor. Let us begin.",
+   "raw": "audio/voice/ep1/l16_fdc92579eb.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l16_fdc92579eb_t1.1_p0.5.wav",
+   "start": 73.125,
+   "end": 76.504,
+   "words": [
+    {
+     "w": "People",
+     "start": 73.125,
+     "end": 73.431
+    },
+    {
+     "w": "of",
+     "start": 73.452,
+     "end": 73.505
+    },
+    {
+     "w": "Sector",
+     "start": 73.547,
+     "end": 73.811
+    },
+    {
+     "w": "7…",
+     "start": 73.874,
+     "end": 74.107
+    },
+    {
+     "w": "what",
+     "start": 74.561,
+     "end": 74.74
+    },
+    {
+     "w": "an",
+     "start": 74.772,
+     "end": 74.846
+    },
+    {
+     "w": "honor.",
+     "start": 74.91,
+     "end": 75.216
+    },
+    {
+     "w": "Let",
+     "start": 75.67,
+     "end": 75.818
+    },
+    {
+     "w": "us",
+     "start": 75.871,
+     "end": 75.934
+    },
+    {
+     "w": "begin.",
+     "start": 75.987,
+     "end": 76.367
+    }
+   ]
+  },
+  {
+   "at": 77.304,
+   "who": "narrator",
+   "text": "He reached into the bowl. The whole square held its breath.",
+   "raw": "audio/voice/ep1/l17_dfe2ca692f.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l17_dfe2ca692f_t1.1_p0.5.wav",
+   "start": 77.304,
+   "end": 80.571,
+   "words": [
+    {
+     "w": "He",
+     "start": 77.304,
+     "end": 77.43
+    },
+    {
+     "w": "reached",
+     "start": 77.494,
+     "end": 77.748
+    },
+    {
+     "w": "into",
+     "start": 77.789,
+     "end": 77.959
+    },
+    {
+     "w": "the",
+     "start": 78,
+     "end": 78.064
+    },
+    {
+     "w": "bowl.",
+     "start": 78.128,
+     "end": 78.476
+    },
+    {
+     "w": "The",
+     "start": 78.877,
+     "end": 78.993
+    },
+    {
+     "w": "whole",
+     "start": 79.035,
+     "end": 79.204
+    },
+    {
+     "w": "square",
+     "start": 79.225,
+     "end": 79.616
+    },
+    {
+     "w": "held",
+     "start": 79.669,
+     "end": 79.869
+    },
+    {
+     "w": "its",
+     "start": 79.921,
+     "end": 80.027
+    },
+    {
+     "w": "breath.",
+     "start": 80.069,
+     "end": 80.429
+    }
+   ]
+  },
+  {
+   "at": 83.171,
+   "who": "vire",
+   "text": "Pip… Vance.",
+   "raw": "audio/voice/ep1/l18_043b918ca9.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l18_043b918ca9_t1.1_p0.5.wav",
+   "start": 83.171,
+   "end": 84.43,
+   "words": [
+    {
+     "w": "Pip…",
+     "start": 83.171,
+     "end": 83.393
+    },
+    {
+     "w": "Vance.",
+     "start": 83.847,
+     "end": 84.301
+    }
+   ]
+  },
+  {
+   "at": 86.03,
+   "who": "narrator",
+   "text": "My heart stopped.",
+   "raw": "audio/voice/ep1/l19_069fd3cae8.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l19_069fd3cae8_t1.1_p0.5.wav",
+   "start": 86.03,
+   "end": 87.194,
+   "words": [
+    {
+     "w": "My",
+     "start": 86.03,
+     "end": 86.273
+    },
+    {
+     "w": "heart",
+     "start": 86.336,
+     "end": 86.557
+    },
+    {
+     "w": "stopped.",
+     "key": true,
+     "start": 86.611,
+     "end": 87.065
+    }
+   ]
+  },
+  {
+   "at": 87.794,
+   "who": "narrator",
+   "text": "Pip started walking. His legs were shaking so hard he could barely stand.",
+   "raw": "audio/voice/ep1/l20_b1ca4fe967.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l20_b1ca4fe967_t1.1_p0.5.wav",
+   "start": 87.794,
+   "end": 91.767,
+   "words": [
+    {
+     "w": "Pip",
+     "start": 87.794,
+     "end": 87.995
+    },
+    {
+     "w": "started",
+     "start": 88.058,
+     "end": 88.364
+    },
+    {
+     "w": "walking.",
+     "start": 88.428,
+     "end": 88.829
+    },
+    {
+     "w": "His",
+     "start": 89.134,
+     "end": 89.271
+    },
+    {
+     "w": "legs",
+     "start": 89.324,
+     "end": 89.536
+    },
+    {
+     "w": "were",
+     "start": 89.567,
+     "end": 89.673
+    },
+    {
+     "w": "shaking",
+     "start": 89.704,
+     "end": 89.989
+    },
+    {
+     "w": "so",
+     "start": 90.053,
+     "end": 90.189
+    },
+    {
+     "w": "hard",
+     "start": 90.264,
+     "end": 90.486
+    },
+    {
+     "w": "he",
+     "start": 90.528,
+     "end": 90.569
+    },
+    {
+     "w": "could",
+     "start": 90.612,
+     "end": 90.739
+    },
+    {
+     "w": "barely",
+     "start": 90.77,
+     "end": 91.077
+    },
+    {
+     "w": "stand.",
+     "start": 91.139,
+     "end": 91.636
+    }
+   ]
+  },
+  {
+   "at": 93.167,
+   "who": "narrator",
+   "text": "I didn't think. My feet just moved.",
+   "raw": "audio/voice/ep1/l21_021da11d00.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l21_021da11d00_t1.1_p0.5.wav",
+   "start": 93.167,
+   "end": 95.494,
+   "words": [
+    {
+     "w": "I",
+     "start": 93.167,
+     "end": 93.241
+    },
+    {
+     "w": "didn't",
+     "start": 93.304,
+     "end": 93.515
+    },
+    {
+     "w": "think.",
+     "start": 93.547,
+     "end": 93.769
+    },
+    {
+     "w": "My",
+     "start": 94.222,
+     "end": 94.339
+    },
+    {
+     "w": "feet",
+     "start": 94.402,
+     "end": 94.613
+    },
+    {
+     "w": "just",
+     "start": 94.666,
+     "end": 94.856
+    },
+    {
+     "w": "moved.",
+     "start": 94.919,
+     "end": 95.362
+    }
+   ]
+  },
+  {
+   "at": 95.894,
+   "who": "rhea",
+   "text": "I volunteer! Take me instead!",
+   "raw": "audio/voice/ep1/l22_a58ca18e21.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l22_a58ca18e21_t1.1_p0.5.wav",
+   "start": 95.894,
+   "end": 97.529,
+   "words": [
+    {
+     "w": "I",
+     "start": 95.894,
+     "end": 95.968
+    },
+    {
+     "w": "volunteer!",
+     "start": 96.063,
+     "end": 96.549
+    },
+    {
+     "w": "Take",
+     "start": 96.601,
+     "end": 96.78
+    },
+    {
+     "w": "me",
+     "start": 96.823,
+     "end": 96.908
+    },
+    {
+     "w": "instead!",
+     "start": 96.96,
+     "end": 97.403
+    }
+   ]
+  },
+  {
+   "at": 98.129,
+   "who": "pip",
+   "text": "Rhea, no!",
+   "raw": "audio/voice/ep1/l23_9b4b09fdb2.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l23_9b4b09fdb2_t1.1_p0.5.wav",
+   "start": 98.129,
+   "end": 98.741,
+   "words": [
+    {
+     "w": "Rhea,",
+     "start": 98.129,
+     "end": 98.351
+    },
+    {
+     "w": "no!",
+     "start": 98.424,
+     "end": 98.614
+    }
+   ]
+  },
+  {
+   "at": 100.541,
+   "who": "narrator",
+   "text": "I held him so tight… then the guards pulled us apart.",
+   "raw": "audio/voice/ep1/l24_09230a7ba5.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l24_09230a7ba5_t1.1_p0.5.wav",
+   "start": 100.541,
+   "end": 103.617,
+   "words": [
+    {
+     "w": "I",
+     "start": 100.541,
+     "end": 100.615
+    },
+    {
+     "w": "held",
+     "start": 100.689,
+     "end": 100.9
+    },
+    {
+     "w": "him",
+     "start": 100.942,
+     "end": 101.026
+    },
+    {
+     "w": "so",
+     "start": 101.09,
+     "end": 101.227
+    },
+    {
+     "w": "tight…",
+     "start": 101.301,
+     "end": 101.596
+    },
+    {
+     "w": "then",
+     "start": 102.051,
+     "end": 102.199
+    },
+    {
+     "w": "the",
+     "start": 102.241,
+     "end": 102.305
+    },
+    {
+     "w": "guards",
+     "start": 102.357,
+     "end": 102.716
+    },
+    {
+     "w": "pulled",
+     "start": 102.758,
+     "end": 102.98
+    },
+    {
+     "w": "us",
+     "start": 103.023,
+     "end": 103.086
+    },
+    {
+     "w": "apart.",
+     "start": 103.128,
+     "end": 103.486
+    }
+   ]
+  },
+  {
+   "at": 104.417,
+   "who": "narrator",
+   "text": "Even Old Haskin put his flask down.",
+   "raw": "audio/voice/ep1/l25_248ad0b019.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l25_248ad0b019_t1.1_p0.5.wav",
+   "start": 104.417,
+   "end": 106.375,
+   "words": [
+    {
+     "w": "Even",
+     "start": 104.417,
+     "end": 104.639
+    },
+    {
+     "w": "Old",
+     "start": 104.692,
+     "end": 104.829
+    },
+    {
+     "w": "Haskin",
+     "start": 104.882,
+     "end": 105.219
+    },
+    {
+     "w": "put",
+     "start": 105.272,
+     "end": 105.409
+    },
+    {
+     "w": "his",
+     "start": 105.441,
+     "end": 105.504
+    },
+    {
+     "w": "flask",
+     "start": 105.546,
+     "end": 105.863
+    },
+    {
+     "w": "down.",
+     "start": 105.926,
+     "end": 106.243
+    }
+   ]
+  },
+  {
+   "at": 108.175,
+   "who": "narrator",
+   "text": "I walked up those steps… and Vire leaned in close, still smiling.",
+   "raw": "audio/voice/ep1/l26_c8a3eb4bfa.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l26_c8a3eb4bfa_t1.1_p0.5.wav",
+   "start": 108.175,
+   "end": 112.532,
+   "words": [
+    {
+     "w": "I",
+     "start": 108.175,
+     "end": 108.344
+    },
+    {
+     "w": "walked",
+     "start": 108.439,
+     "end": 108.756
+    },
+    {
+     "w": "up",
+     "start": 108.809,
+     "end": 108.924
+    },
+    {
+     "w": "those",
+     "start": 108.988,
+     "end": 109.23
+    },
+    {
+     "w": "steps…",
+     "start": 109.262,
+     "end": 109.61
+    },
+    {
+     "w": "and",
+     "start": 110.065,
+     "end": 110.212
+    },
+    {
+     "w": "Vire",
+     "start": 110.276,
+     "end": 110.614
+    },
+    {
+     "w": "leaned",
+     "start": 110.677,
+     "end": 110.994
+    },
+    {
+     "w": "in",
+     "start": 111.047,
+     "end": 111.152
+    },
+    {
+     "w": "close,",
+     "start": 111.226,
+     "end": 111.553
+    },
+    {
+     "w": "still",
+     "start": 111.595,
+     "end": 111.828
+    },
+    {
+     "w": "smiling.",
+     "start": 111.88,
+     "end": 112.398
+    }
+   ]
+  },
+  {
+   "at": 113.132,
+   "who": "vire",
+   "text": "Hundreds of names in that bowl, Rhea… and I found his on the first try. Funny, isn't it?",
+   "raw": "audio/voice/ep1/l27_690a430f55.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l27_690a430f55_t1.1_p0.5.wav",
+   "start": 113.132,
+   "end": 117.894,
+   "words": [
+    {
+     "w": "Hundreds",
+     "start": 113.132,
+     "end": 113.491
+    },
+    {
+     "w": "of",
+     "start": 113.512,
+     "end": 113.554
+    },
+    {
+     "w": "names",
+     "start": 113.607,
+     "end": 113.945
+    },
+    {
+     "w": "in",
+     "start": 113.977,
+     "end": 114.039
+    },
+    {
+     "w": "that",
+     "start": 114.093,
+     "end": 114.219
+    },
+    {
+     "w": "bowl,",
+     "start": 114.272,
+     "end": 114.483
+    },
+    {
+     "w": "Rhea…",
+     "start": 114.547,
+     "end": 114.799
+    },
+    {
+     "w": "and",
+     "start": 115.254,
+     "end": 115.38
+    },
+    {
+     "w": "I",
+     "start": 115.444,
+     "end": 115.465
+    },
+    {
+     "w": "found",
+     "start": 115.538,
+     "end": 115.728
+    },
+    {
+     "w": "his",
+     "start": 115.781,
+     "end": 115.887
+    },
+    {
+     "w": "on",
+     "start": 115.939,
+     "end": 116.014
+    },
+    {
+     "w": "the",
+     "start": 116.046,
+     "end": 116.108
+    },
+    {
+     "w": "first",
+     "start": 116.14,
+     "end": 116.33
+    },
+    {
+     "w": "try.",
+     "start": 116.362,
+     "end": 116.678
+    },
+    {
+     "w": "Funny,",
+     "start": 117.133,
+     "end": 117.386
+    },
+    {
+     "w": "isn't",
+     "start": 117.428,
+     "end": 117.618
+    },
+    {
+     "w": "it?",
+     "start": 117.65,
+     "end": 117.756
+    }
+   ]
+  },
+  {
+   "at": 119.494,
+   "who": "narrator",
+   "text": "That's when I understood… Pip was never the one they wanted.",
+   "raw": "audio/voice/ep1/l28_84b30ff7ca.mp3",
+   "clip": "reaping-trials/build/ep1/voice/l28_84b30ff7ca_t1.1_p0.5.wav",
+   "start": 119.494,
+   "end": 123.025,
+   "words": [
+    {
+     "w": "That's",
+     "start": 119.494,
+     "end": 119.726
+    },
+    {
+     "w": "when",
+     "start": 119.758,
+     "end": 119.874
+    },
+    {
+     "w": "I",
+     "start": 119.916,
+     "end": 119.948
+    },
+    {
+     "w": "understood…",
+     "start": 120.043,
+     "end": 120.591
+    },
+    {
+     "w": "Pip",
+     "start": 121.046,
+     "end": 121.363
+    },
+    {
+     "w": "was",
+     "start": 121.542,
+     "end": 121.711
+    },
+    {
+     "w": "never",
+     "start": 121.774,
+     "end": 121.975
+    },
+    {
+     "w": "the",
+     "start": 122.007,
+     "end": 122.07
+    },
+    {
+     "w": "one",
+     "start": 122.133,
+     "end": 122.27
+    },
+    {
+     "w": "they",
+     "start": 122.302,
+     "end": 122.439
+    },
+    {
+     "w": "wanted.",
+     "key": true,
+     "start": 122.503,
+     "end": 122.893
+    }
+   ]
+  }
+ ]
+}

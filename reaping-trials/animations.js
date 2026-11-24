@@ -105,6 +105,46 @@
       const p = easeOut(clamp(t / 0.4, 0, 1));
       return Object.assign(MOVES.idle(t), { aLo: 0.62 * p, aRo: 0.62 * p, aLf: -0.05 * p, aRf: -0.05 * p, aLt: 1.5 * p, aRt: 1.5 * p, eL: 1.3 * p, eR: 1.3 * p, lLo: 0.06 * p, lRo: 0.06 * p, hx: -0.06 * p });
     },
+    // sitting on a low seat (about 0.6 studs): thighs level, shins down, slumped (o.slump 0..1)
+    sit(t, o = {}) {
+      const sl = o.slump ?? 0.6, b = Math.sin(t * 1.6) * 0.012;
+      return { y: -0.97 + b, lLf: 1.57, lRf: 1.5, kL: 1.57, kR: 1.5, lLo: 0.08, lRo: 0.08, wx: 0.08 + 0.2 * sl, hx: 0.1 + 0.2 * sl + Math.sin(t * 0.5) * 0.02,
+        aLf: 0.75, aRf: 0.75, eL: 0.75, eR: 0.75, aLo: 0.05, aRo: 0.05 };
+    },
+    // sitting and drinking from a flask held in the right hand
+    sitDrink(t, o = {}) {
+      const P = MOVES.sit(t, { slump: 0.3 }), up = 0.5 + 0.5 * Math.sin(t * 0.9);
+      return Object.assign(P, { aRf: 1.15 + up * 0.25, eR: 1.9 + up * 0.25, aRt: 0.55, aRo: -0.05, hx: -0.15 - up * 0.2, wx: 0.06 });
+    },
+    // reach forward and down (a hand into the glass bowl)
+    reach(t) {
+      const p = RT.ease(clamp(t / 0.8, 0, 1)), stir = Math.sin(t * 3) * 0.06 * p;
+      return Object.assign(MOVES.idle(t), { aRf: 0.95 * p + stir, eR: 0.45 * p, aRo: -0.12 * p, aRt: 0.2 * p, lean: 0.1 * p, hx: 0.3 * p, wy: -0.1 * p });
+    },
+    // hold a paper slip up and read it
+    reveal(t) {
+      const p = easeOut(clamp(t / 0.5, 0, 1));
+      return Object.assign(MOVES.idle(t), { aRf: 1.25 * p, eR: 1.25 * p, aRt: 0.55 * p, aLf: 1.1 * p, eL: 1.3 * p, aLt: 0.5 * p, hx: 0.12 * p });
+    },
+    // kneeling and tying something on someone's wrist (both hands forward)
+    kneelTie(t) {
+      const K = MOVES.kneel(Math.max(t, 0.6)), w = Math.sin(t * 6) * 0.05;
+      return Object.assign(K, { aLf: 1.05 + w, eL: 0.9, aLt: 0.35, aRf: 1.1 - w, eR: 0.95, aRt: 0.35, hx: 0.3 });
+    },
+    // holding one arm out (the wrist being tied)
+    holdOut(t) { const p = easeOut(clamp(t / 0.4, 0, 1)); return Object.assign(MOVES.idle(t), { aLf: 0.95 * p, eL: 0.25 * p, hx: 0.25 * p }); },
+    // lean in close (to whisper)
+    leanIn(t, o = {}) {
+      const p = RT.ease(clamp(t / 0.7, 0, 1));
+      return Object.assign(MOVES.talk(t, o), { lean: 0.16 * p, wx: 0.12 * p, hz: (o.tilt ?? 0.14) * p, hx: 0.12 * p, aRf: 0.3, eR: 0.5 });
+    },
+    // arms opened toward the crowd (speech)
+    present(t, o = {}) {
+      const p = easeOut(clamp(t / 0.6, 0, 1));
+      return Object.assign(MOVES.talk(t, o), { aLo: 0.45 * p, aRo: 0.45 * p, aLf: 0.55 * p, aRf: 0.55 * p, eL: 0.35, eR: 0.35 });
+    },
+    // trembling (scared, standing still)
+    tremble(t) { const s = Math.sin(t * 38) * 0.02; return Object.assign(MOVES.idle(t), { hx: 0.12 + s, aLf: 0.25 + s, aRf: 0.25 - s, eL: 0.6, eR: 0.6, aLt: 0.6, aRt: 0.6, wx: 0.06 }); },
     // crowds at the Capital: both arms up and bouncing
     cheer(t) {
       const b = Math.max(0, Math.sin(t * 7));
@@ -175,5 +215,47 @@
     };
   }
 
-  RT.anim = { MOVES, names: Object.keys(MOVES), pose, apply, mix, set, seq, path };
+  // Actor script: a character's whole performance as a list of steps (pure function of t).
+  //   const play = RT.anim.actor(pip, [
+  //     { at: 0, pos: [x, y, z], yaw: 0, move: 'idle', face: 'scared' },          // first step: where they start
+  //     { at: 12, to: [x, y, z], speed: 1.4, gait: 'walk', move: 'idle' },         // walk there from 12 s, then idle
+  //     { at: 20, move: 'wave', yaw: 1.2 },                                       // change move / facing in place
+  //   ]);   each frame: play(t);
+  const lerpAngle = (a, b, p) => { let d = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI; return a + d * p; };
+  function actor(char, steps) {
+    const segs = []; let pos = steps[0].pos.slice(), yaw = steps[0].yaw ?? 0;
+    for (const s of steps) {
+      const from = pos.slice(), startYaw = yaw;
+      if (s.to) {
+        const dx = s.to[0] - from[0], dz = s.to[2] - from[2], dist = Math.hypot(dx, dz, (s.to[1] - from[1]) * 0.5);
+        const travel = dist > 1e-3 ? Math.atan2(dx, dz) : yaw, dur = dist / (s.speed || 1.3);
+        segs.push({ s, t0: s.at, t1: s.at + dur, from, to: s.to.slice(), startYaw, travel, endYaw: s.yaw ?? travel, dist });
+        pos = s.to.slice(); yaw = s.yaw ?? travel;
+      } else { segs.push({ s, t0: s.at, t1: s.at, from, to: from, startYaw, travel: yaw, endYaw: s.yaw ?? yaw, dist: 0 }); yaw = s.yaw ?? yaw; }
+    }
+    const unit = (char.rig.unit / RT.STUD) * RT.STUD;            // world units per stud for this character
+    const evalSeg = (g, t) => {
+      const s = g.s;
+      if (t < g.t1) {               // travelling
+        const p = clamp((t - g.t0) / (g.t1 - g.t0), 0, 1), travelled = p * g.dist;
+        const P = pose(s.gait || 'walk', t, Object.assign({ phase: (travelled / (s.gait === 'run' ? 0.9 : 0.6)) * Math.PI }, s.gaitOpts || {}));
+        return { P, pos: [lerp(g.from[0], g.to[0], p), lerp(g.from[1], g.to[1], p), lerp(g.from[2], g.to[2], p)], yaw: lerpAngle(g.startYaw, g.travel, clamp((t - g.t0) / 0.25, 0, 1)) };
+      }
+      const lt = t - g.t1;
+      return { P: pose(s.move || 'idle', lt, s.opts), pos: g.to, yaw: lerpAngle(g.dist ? g.travel : g.startYaw, g.endYaw, clamp(lt / 0.35, 0, 1)) };
+    };
+    return function (t) {
+      let i = 0; for (let k = 0; k < segs.length; k++) if (t >= segs[k].t0) i = k;
+      const g = segs[i]; let r = evalSeg(g, t);
+      const since = t - g.t0;
+      if (i > 0 && since < 0.25) { const prev = evalSeg(segs[i - 1], t); r = { ...r, P: mix(prev.P, r.P, RT.smooth(0, 1, since / 0.25)) }; }
+      char.position.set(r.pos[0], r.pos[1], r.pos[2]); char.rotation.y = r.yaw;
+      apply(char, r.P);
+      let face = null; for (let k = 0; k <= i; k++) if (segs[k].s.face) face = segs[k].s.face;
+      if (face && !r.P.face) char.rig.setFace(face);
+      return r;
+    };
+  }
+
+  RT.anim = { MOVES, names: Object.keys(MOVES), pose, apply, mix, set, seq, path, actor };
 })();

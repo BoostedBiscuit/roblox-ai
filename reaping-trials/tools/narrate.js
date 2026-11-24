@@ -83,7 +83,9 @@ export async function narrate(name) {
   const tempo = cfg.tempo || 1, maxPause = cfg.max_pause ?? 99;
   const pdir = path.join(ROOT, 'reaping-trials', 'build', name, 'voice'); fs.mkdirSync(pdir, { recursive: true });
   const out = { video: name, voice: cfg.narrator.name, tempo, lines: [] };
+  let prevEnd = 0;
   jobs.forEach((j, i) => {
+    if (j.at === null) j.at = +(prevEnd + (j.gap || 0)).toFixed(3);            // "+gap" lines follow the previous line
     const { alignment } = JSON.parse(fs.readFileSync(j.meta, 'utf8'));
     const words = wordTimes(j.text, alignment), clipLen = dur(j.mp3);
     // segments of the raw clip to keep: [start, end], split where a pause is longer than maxPause
@@ -105,9 +107,9 @@ export async function narrate(name) {
     const line = { at: j.at, who: j.who, text: j.text, raw: path.relative(RT, j.mp3).split(path.sep).join('/'), clip: path.relative(ROOT, wav).split(path.sep).join('/'),
       start: j.at, end: +(j.at + len).toFixed(3),
       words: words.map((w, k) => ({ w: w.w, key: keyWords.has(k) || undefined, start: +(j.at + mapT(w.start)).toFixed(3), end: +(j.at + mapT(w.end)).toFixed(3) })) };
-    out.lines.push(line);
+    out.lines.push(line); prevEnd = line.end;
     const next = jobs[i + 1];
-    const warn = next && line.end > next.at - 0.03 ? `   ⚠ runs ${(line.end - next.at + 0.03).toFixed(2)}s into the next line: move the next line later or shorten this one` : '';
+    const warn = next && next.at !== null && line.end > next.at - 0.03 ? `   ⚠ runs ${(line.end - next.at + 0.03).toFixed(2)}s into the next line: move the next line later or shorten this one` : '';
     console.log(`  ${String(i + 1).padStart(2)}  ${line.start.toFixed(2)}–${line.end.toFixed(2)}s  [${j.who}] ${j.text}${warn}`);
   });
   fs.writeFileSync(path.join(RT, 'audio', 'voice', `${name}_narration.json`), JSON.stringify(out, null, 1));

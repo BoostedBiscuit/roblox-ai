@@ -21,3 +21,8 @@ Picked automatically from your own repos (you said yes to both). Replace any fil
 | footsteps_grass.mp3 | roblox-ai `sfx/cc0-audio/footstep/footsteps-grass-wav-81cdbf21.mp3` (CC0) |
 | fanfare.mp3 | roblox-ai `sfx/cc0-audio/notification/fanfare-mp3-c708546e.mp3` (CC0) |
 | bell_noon.mp3 | roblox-short `audio/Cathedral bell ringing 3D animation sample.mp3` (your upload for the Bell story) |
+| crowd_gasp.mp3 | your upload to roblox-short `audio/crowd_gasp.mp3` (copied here) |
+| mic_feedback.mp3 | your upload to roblox-short `audio/mic_feedback.mp3` (copied here) |
+| mic_tap.mp3 | your upload to roblox-short `audio/mic_tap.mp3` (copied here) |
+| paper_unfold.mp3 | your upload to roblox-short `audio/paper_unfold.mp3` (copied here) |
+| sob.mp3 | your upload to roblox-short `audio/sob.mp3` (copied here) |

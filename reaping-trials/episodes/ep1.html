@@ -1,0 +1,324 @@
+<!--
+=====================================================================================
+THE REAPING TRIALS · EPISODE 1 · THE CHOOSING
+1080 × 1920 · 30 fps · about 2:15 (max 3:00)
+Render:  npm run render -- reaping-ep1        → out/reaping-trials/ep1.mp4 (+ ep1-no-voice.mp4, ep1-voice.mp3)
+Voice:   npm run narrate -- ep1                (after changing NARRATION lines)
+
+=== NARRATION ===  (start: seconds, or +gap after the previous line · who: narrator = big captions, others = speaker subtitle · *word* = yellow)
+at     who       text
++0.6   narrator  My name is Rhea Vance… and today, one kid from my town is going to *disappear.*
++2.2   narrator  This is Sector 7. We grow the wheat that feeds the whole Capital.
++0.5   narrator  And every year, on the morning of the Choosing, I come out here to breathe.
++0.6   narrator  Every year, they take *one* of us.
++2.2   narrator  That's Pip. My little brother. Ten years old… and this is his first year in the bowl.
++0.5   pip       Rhea… what if they pick me?
++0.5   rhea      Hey. There are hundreds of names in that bowl. Yours is just one.
++1.0   narrator  I tied a bracelet of wheat around his wrist. For *luck.*
++0.8   narrator  But when I looked at the Capital… I couldn't shake the feeling.
++0.4   narrator  This year… it could be my *brother.*
++3.0   narrator  At noon, the whole Sector walks to the square. Nobody talks. The guards make sure of that.
++0.8   narrator  That's Old Haskin. Twenty-six years ago, he won the Trials. He's the only winner we've ever had…
++0.3   narrator  …and he's been hiding in that flask ever since.
++2.6   narrator  But this year, someone else walked onto our stage.
++0.4   narrator  High Chancellor Vire. The man who rules the Crown Council. He never comes to the Sectors. *Never.*
++2.2   vire      People of Sector 7… what an honor. Let us begin.
++0.8   narrator  He reached into the bowl. The whole square held its breath.
++2.6   vire      Pip… Vance.
++1.6   narrator  My heart *stopped.*
++0.6   narrator  Pip started walking. His legs were shaking so hard he could barely stand.
++1.4   narrator  I didn't think. My feet just moved.
++0.4   rhea      I volunteer! Take me instead!
++0.6   pip       Rhea, no!
++1.8   narrator  I held him so tight… then the guards pulled us apart.
++0.8   narrator  Even Old Haskin put his flask down.
++1.8   narrator  I walked up those steps… and Vire leaned in close, still smiling.
++0.6   vire      Hundreds of names in that bowl, Rhea… and I found his on the first try. Funny, isn't it?
++1.6   narrator  That's when I understood… Pip was never the one they *wanted.*
+=== END ===
+
+=== CUE SHEET ===  (time, sound, volume, options; music 0.50 = 50 %; see the trailer for all options)
+time    sound                     volume  options
+0.00    music:sector7_calm        0.50    from=0 fadein=1.5 fadeout=42.6-44.4 duck=0.7
+44.40   music:choosing_tension    0.50    from=0 fadein=1.0 fadeout=84.4-85.6 duck=0.7
+85.40   music:volunteer_emotional 0.50    from=0 fadein=1.2 fadeout=129.4-131.4 duck=0.7
+0.00    title_boom                1.00    align=onset dur=1.6 fadeout=0.7
+0.80    wind_wheat                0.20    dur=43 loop fadein=1.0 fadeout=1.5
+0.80    birds_morning             0.18    dur=43 fadein=1.0 fadeout=1.5
+1.00    whoosh                    0.40    align=peak
+6.20    whoosh                    0.45    align=peak
+19.80   running_steps             0.40    dur=4.8 fadeout=0.6
+44.40   whoosh                    0.40    align=peak
+44.60   bell_noon                 0.55    dur=6 fadeout=2
+45.00   footsteps_dirt            0.35    dur=6.4 loop fadeout=0.8
+51.40   crowd_murmur              0.22    dur=29 loop fadein=1.0 fadeout=1.0
+59.70   fanfare                   0.50    dur=3.6 fadeout=1.0
+72.10   mic_tap                   0.55    dur=0.6
+72.50   mic_feedback              0.30    dur=0.9 fadeout=0.3
+77.20   heartbeat                 0.55    dur=6 loop fadeout=0.5
+81.60   paper_unfold              0.55    dur=1.3 fadeout=0.3
+84.60   crowd_gasp                0.70    dur=2.5 fadeout=0.8
+85.40   heartbeat                 0.70    dur=2.2
+88.00   footsteps_dirt            0.30    dur=4.5 loop fadeout=0.5
+93.00   running_steps             0.50    dur=3.0 fadeout=0.4
+97.60   crowd_gasp                0.80    dur=2.5 fadeout=0.8
+100.60  sob                       0.35    dur=3.5 fadeout=1.0
+108.20  footsteps_dirt            0.30    dur=3.0 fadeout=0.5
+119.30  braam_hit                 0.85    align=onset dur=2.0 fadeout=0.8
+124.60  title_boom                1.00    align=onset
+=== END ===
+
+SHOTS follow the narration automatically (see the SHOTS list in the script below: L(n) = line n).
+=====================================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>The Reaping Trials · Episode 1</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../fonts/fonts.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../scenery.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../audio/voice/ep1_narration.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { clamp, lerp, ease } = RT, C = RT.characters, A = RT.anim, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const RENDER = RT.player.RENDER || !!RT.player.THUMB;
+
+  // ---------- narration timing: every shot is placed on the spoken lines (L(n) = line n of the NARRATION block) ----------
+  const NAR = window.RT_NARRATION.ep1, L = (n) => NAR.lines[n - 1], S = (n) => L(n).start, E = (n) => L(n).end;
+  const W = (n, w) => { const x = L(n).words.find((k) => k.w.toLowerCase().replace(/[^a-z']/g, '') === w); return x ? x.start : S(n); };
+  const TITLE_T = E(28) + 1.6, DURATION = +(TITLE_T + 6.4).toFixed(2);
+
+  // ---------- renderer, camera, light ----------
+  const renderer = RT.mood.renderer(null, { preserve: RENDER });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.1, 3200);
+  const env = RT.mood.create(scene, renderer, { mood: 'sunrise', shadowSize: 2048 });
+  const key = new THREE.DirectionalLight('#fff1e0', 0); scene.add(key); scene.add(key.target);   // soft face light for close-ups (no shadows)
+
+  // ---------- locations ----------
+  const village = RT.scenery.sector7Village({ clearRadius: 2.3 }), hv = village.spots.hgt;
+  const PIP_AT = [-4.3, -2.2], RHEA_AT = [4.4, 0.6];
+  const toStage = (p, d) => { const a = Math.atan2(-p[0], -12 - p[1]); return [p[0] + Math.sin(a) * d, p[1] + Math.cos(a) * d]; };
+  const square = RT.scenery.choosingSquare({ bowlPedestal: 0.55, keepClear: [[PIP_AT[0], PIP_AT[1], 1.1], [RHEA_AT[0], RHEA_AT[1], 1.1],
+    [...toStage(PIP_AT, 1.2), 1.0], [3.9, -2.0, 1.0], [3.9, 0.4, 1.0]] });
+  const SETS = { village, square };
+  for (const k in SETS) { scene.add(SETS[k]); SETS[k].visible = false; }
+  const crowd = square.spots.crowd;
+  square.spots.mic.position.x = 0.55;                      // the mic stand stands beside Vire, not in front of his face
+
+  // ---------- cast ----------
+  const yawTo = (from, to) => Math.atan2(to[0] - from[0], to[2] - from[2]);
+  const capDir = village.spots.capPos.clone().setY(0).normalize(), FACE_CAP = Math.atan2(capDir.x, capDir.z);
+  // village: Rhea in the wheat, Pip runs to her
+  const rheaV = C.rhea(), pipV = C.pip(); village.add(rheaV, pipV);
+  const PIP_V = [-1.05, hv(-1.05, 0.75), 0.75], PIP_V0 = [-14, hv(-14, 9), 9];
+  const bracelet = RT.mesh(new THREE.TorusGeometry(0.44, 0.1, 6, 18), RT.plastic('#e6b84a', { roughness: 0.6 })); bracelet.rotation.x = Math.PI / 2; bracelet.position.y = 0.04;
+  pipV.rig.handL.add(bracelet);
+  const playRheaV = A.actor(rheaV, [
+    { at: 0, pos: [0, 0, 0], yaw: 0.38, move: 'idle', face: 'determined' },
+    { at: S(5) + 1.2, yaw: yawTo([0, 0, 0], PIP_V), move: 'idle', face: 'neutral' },
+    { at: S(7) - 0.7, move: 'kneel', face: 'smiling' },
+    { at: S(8) - 0.3, move: 'kneelTie', face: 'neutral' },
+    { at: S(9) - 0.6, move: 'idle', face: 'determined' },
+    { at: S(9) + 0.3, yaw: FACE_CAP, move: 'idle' },
+  ]);
+  const playPipV = A.actor(pipV, [
+    { at: 0, pos: PIP_V0, yaw: 2.2, move: 'idle', face: 'scared' },
+    { at: S(5) - 0.6, to: PIP_V, speed: 2.8, gait: 'run', move: 'idle', yaw: yawTo(PIP_V, [0, 0, 0]) },
+    { at: S(8) - 0.4, move: 'holdOut' },
+    { at: S(9) + 0.3, yaw: FACE_CAP, move: 'idle' },
+  ]);
+  // the square
+  const haskin = C.haskin(), vire = C.vire(), rheaS = C.rhea(), pip = C.pip();
+  square.add(haskin, vire, rheaS, pip);
+  const pipBracelet = bracelet.clone(); pip.rig.handL.add(pipBracelet);
+  const crate = RT.box(0.75, 0.26, 0.62, RT.plastic('#8a5a34', { roughness: 0.7 })); crate.position.set(-4.2, 0.13, -7.3); square.add(crate);
+  const flask = haskin.rig.props.flask; flask.parent.remove(flask); haskin.rig.hold('R', flask); flask.position.set(0, -0.1, 0.05); flask.rotation.set(0, Math.PI / 2, 0);
+  const slip = RT.box(0.42, 0.04, 0.3, RT.plastic('#fbf8f0')); vire.rig.hold('R', slip); slip.position.set(0, -0.2, 0.2);
+  const HASKIN = [-4.2, 0.24, -7.3], MIC = [-0.3, 1.4, -11.3], BOWL_SPOT = [-3.6, 1.4, -11.45];
+  const playHaskin = A.actor(haskin, [
+    { at: 0, pos: HASKIN, yaw: 0.3, move: 'sitDrink', face: 'neutral' },
+    { at: S(25) - 0.5, move: 'sit', opts: { slump: 0.15 }, face: 'sad' },
+  ]);
+  const playVire = A.actor(vire, [
+    { at: 0, pos: [-7.6, 1.4, -11.8], yaw: Math.PI / 2, move: 'idle', face: 'smiling' },
+    { at: S(14) - 1.6, to: MIC, speed: 1.25, gait: 'walk', move: 'idle', yaw: 0 },
+    { at: S(16) - 0.2, move: 'present', opts: { seed: 3 } },
+    { at: E(16) + 0.1, to: BOWL_SPOT, speed: 1.4, gait: 'walk', move: 'idle', yaw: 0 },
+    { at: S(17) - 0.2, move: 'reach' },
+    { at: S(18) - 1.6, move: 'reveal' },
+    { at: E(18) + 0.6, to: MIC, speed: 1.3, gait: 'walk', move: 'idle', yaw: 0 },
+    { at: S(26) + 2.4, move: 'idle', yaw: yawTo(MIC, [0.55, 1.4, -10.2]) },
+    { at: S(27) - 0.3, move: 'leanIn', opts: { tilt: 0.16 } },
+    { at: E(27) + 0.4, move: 'idle' },
+  ]);
+  const PIP_FRONT = [-1.2, 0, -6.7], RHEA_FRONT = [0.9, 0, -6.2];
+  const playPip = A.actor(pip, [
+    { at: 0, pos: [PIP_AT[0], 0, PIP_AT[1]], yaw: Math.atan2(-PIP_AT[0], -12 - PIP_AT[1]), move: 'idle', face: 'scared' },
+    { at: S(18) + 0.4, move: 'tremble', face: 'shocked' },
+    { at: S(20) - 0.3, to: [-3.9, 0, -5.4], speed: 0.75, gait: 'walk', gaitOpts: { amp: 0.45 }, move: 'tremble', face: 'scared' },
+    { at: S(20) + 4.0, to: PIP_FRONT, speed: 0.75, gait: 'walk', gaitOpts: { amp: 0.45 }, move: 'tremble' },
+    { at: S(23) - 0.5, yaw: yawTo(PIP_FRONT, RHEA_FRONT), move: 'idle', face: 'crying' },
+    { at: S(24) + 0.3, move: 'hug' },
+    { at: S(24) + 2.0, to: [-1.8, 0, -5.2], speed: 1.0, gait: 'walk', move: 'tremble', yaw: yawTo([-1.8, 0, -5.2], [0, 0, -6.5]) },
+  ]);
+  const HUG_R = [-0.42, 0, -6.62];
+  const playRheaS = A.actor(rheaS, [
+    { at: 0, pos: [RHEA_AT[0], 0, RHEA_AT[1]], yaw: Math.atan2(-RHEA_AT[0], -12 - RHEA_AT[1]), move: 'idle', face: 'neutral' },
+    { at: S(18) + 0.4, face: 'shocked' },
+    { at: S(21) - 0.5, to: [3.9, 0, 0.2], speed: 3.0, gait: 'run', move: 'idle', face: 'determined' },
+    { at: S(21) - 0.3, to: [3.9, 0, -4.6], speed: 3.0, gait: 'run', move: 'idle' },
+    { at: S(21) + 1.3, to: RHEA_FRONT, speed: 3.0, gait: 'run', move: 'idle', yaw: Math.PI },
+    { at: S(22) - 0.15, move: 'raiseHand' },
+    { at: S(24) - 0.6, to: HUG_R, speed: 1.7, gait: 'walk', move: 'hug', yaw: yawTo(HUG_R, PIP_FRONT), face: 'sad' },
+    { at: S(24) + 2.0, move: 'idle', yaw: yawTo(HUG_R, [-1.8, 0, -5.2]), face: 'sad' },
+    { at: S(26) - 0.3, to: [0, 0, -6.1], speed: 1.3, gait: 'walk', move: 'idle', face: 'determined' },
+    { at: S(26) + 0.6, to: [0, 1.4, -8.6], speed: 1.0, gait: 'walk', move: 'idle' },
+    { at: S(26) + 3.2, to: [0.55, 1.4, -10.2], speed: 1.2, gait: 'walk', move: 'idle', yaw: yawTo([0.55, 1.4, -10.2], MIC) },
+  ]);
+  // guards: two on stage, two by the steps (one pulls Pip back), six lining the road
+  const guardSpots = [[-7.0, 1.4, -10.2, 0], [7.0, 1.4, -10.2, 0], [-2.6, 0, -8.2, 0.2], [2.6, 0, -8.2, -0.2]];
+  const guards = guardSpots.map((p, i) => { const g = C.guard({ seed: i }); g.position.set(p[0], p[1], p[2]); g.rotation.y = p[3]; square.add(g); return g; });
+  const playPuller = A.actor(guards[2], [
+    { at: 0, pos: [-2.6, 0, -8.2], yaw: 0.2, move: 'idle' },
+    { at: S(24) + 1.2, to: [-1.75, 0, -7.25], speed: 1.6, gait: 'walk', move: 'point', yaw: yawTo([-1.75, 0, -7.25], PIP_FRONT) },
+    { at: S(24) + 2.1, to: [-2.4, 0, -5.8], speed: 1.0, gait: 'walk', move: 'idle', yaw: yawTo([-2.4, 0, -5.8], [0, 0, -6.5]) },
+  ]);
+  const road = [];
+  for (let k = 0; k < 6; k++) { const g = C.guard({ seed: 10 + k }), side = k % 2 ? 1 : -1; g.position.set(side * 5.6, 0, 11 + Math.floor(k / 2) * 5); g.rotation.y = -side * Math.PI / 2; square.add(g); road.push(g); }
+  // the families walking to the square (only in the walking shot)
+  const walkers = [];
+  const walkerSpec = [[-2.2, 0], [-0.6, -0.6], [1.0, 0.3], [2.4, -0.2], [-1.6, 2.2], [0.4, 1.8], [2.0, 2.4], [-2.6, 4.3], [0.0, 4.0], [1.8, 4.6]];
+  walkerSpec.forEach(([x, dz], i) => {
+    const ch = i === 1 ? C.rhea() : i === 2 ? C.pip() : C.citizen(60 + i, { kid: i === 5 });
+    const z0 = 24 + dz, z1 = 15 + dz; square.add(ch);
+    walkers.push({ ch, play: A.actor(ch, [{ at: 0, pos: [x, 0, z0], yaw: Math.PI, move: 'idle', face: i < 3 ? 'sad' : 'neutral' }, { at: S(11) - 1.6, to: [x, 0, z1], speed: 1.15, gait: 'walk', move: 'idle', yaw: Math.PI }]) });
+  });
+
+  // who is speaking (Adam voices every line; the character's mouth moves on their own lines)
+  const SPEAK = { pip: [pipV, pip], rhea: [rheaV, rheaS], vire: [vire] };
+  function lips(t) {
+    for (const k in SPEAK) for (const ch of SPEAK[k]) ch.rig.setMouth(false);
+    const l = NAR.lines.find((x) => SPEAK[x.who] && t >= x.start && t < x.end);
+    if (!l) return;
+    const n = Math.floor(t * 7.5), open = RT.hash(n * 3.1 + l.start) > 0.3 && t * 7.5 - n < 0.72;
+    for (const ch of SPEAK[l.who]) ch.rig.setMouth(open);
+  }
+
+  // ---------- SHOTS (anchored to the narration) ----------
+  const head = (ch, dy = 0) => { const v = new THREE.Vector3(); ch.rig.head.getWorldPosition(v); v.y += dy; return v; };
+  const fwdOf = (yaw) => [Math.sin(yaw), Math.cos(yaw)];
+  const pipDir = (() => { const d = V3(PIP_V0[0], 0, PIP_V0[2]).normalize(); return d; })();
+  const pf = fwdOf(Math.atan2(-PIP_AT[0], -12 - PIP_AT[1])), HF = fwdOf(0.3);
+  const shots = RT.camera.list([
+    { t0: 0, set: 'village', mood: 'sunrise', pos: [[230, 110, 260], [70, 26, 95]], look: [[0, 22, 0], [0, 3, 0]], fov: [52, 48], ease: 'out', moveDur: 8 },
+    { t0: 8.1, set: 'village', mood: 'sunrise', pos: [[110, 26, 96], [44, 10, 40]], look: [[58, 8, 46], [0, 2, 0]], fov: [50, 46], shake: 0.003 },
+    { t0: S(3) - 0.2, set: 'village', mood: 'sunrise', pos: [[12, 1.5, 19], [4.3, 1.7, 8.6]], look: [[0, 1.6, 0], [0, 1.9, 0]], fov: [46, 42], shake: 0.012 },
+    { t0: S(4) - 0.25, set: 'village', mood: 'sunrise', pos: [[1.7, 2.02, 4.3], [0.95, 2.02, 2.45]], look: [[0, 2.0, 0]], fov: [34, 30], shake: 0.004 },
+    { t0: S(5) - 0.8, set: 'village', mood: 'sunrise', fov: [44, 40], shake: 0.006,
+      pos: [[-pipDir.x * 2.4 + pipDir.z * 1.5, 1.7, -pipDir.z * 2.4 - pipDir.x * 1.5]], look: () => head(pipV, -0.45) },   // behind Rhea's shoulder, looking at Pip running in
+    { t0: S(6) - 0.35, set: 'village', mood: 'sunrise', pos: [[0.6, 1.55, 0.95], [0.4, 1.52, 0.92]], look: () => head(pipV, -0.08), fov: [42, 38] },   // three-quarter front on Pip (Rhea just off frame)   // over Rhea's shoulder onto Pip
+    { t0: S(7) - 0.3, set: 'village', mood: 'sunrise', pos: [[-1.2, 1.3, 1.8], [-1.05, 1.3, 1.6]], look: () => head(rheaV, -0.08), fov: [42, 38] },
+    { t0: S(8) - 0.25, set: 'village', mood: 'sunrise', fov: [36, 32], pos: () => { const h = new THREE.Vector3(); pipV.rig.handL.getWorldPosition(h); return h.add(V3(0.55, 0.75, 0.7)); }, look: () => { const h = new THREE.Vector3(); pipV.rig.handL.getWorldPosition(h); return h; } },
+    { t0: S(9) - 0.4, set: 'village', mood: 'sunrise', fov: [40, 38], shake: 0.003, pos: [[0.6, 2.2, 3.1], [-0.45, 2.4, 3.3]],
+      look: (lt) => V3(-0.4, 1.8, 0.3).lerp(capDir.clone().multiplyScalar(40).setY(2.3), ease(clamp((lt - 0.8) / 1.6, 0, 1)) * 0.92) },
+    // the square
+    { t0: S(11) - 1.3, set: 'square', mood: 'overcast', pos: [[4.2, 1.1, 9.0], [3.9, 1.2, 10.0]], look: [[0, 1.6, 18], [0, 1.6, 15]], fov: [46, 44] },
+    { t0: S(12) - 0.4, set: 'square', mood: 'overcast', pos: [[HASKIN[0] + HF[0] * 3.0, 1.35, HASKIN[2] + HF[1] * 3.0], [HASKIN[0] + HF[0] * 2.0, 1.3, HASKIN[2] + HF[1] * 2.0]], look: () => head(haskin, -0.05), fov: [40, 36] },
+    { t0: S(14) - 2.0, set: 'square', mood: 'overcast', pos: [[3.0, 1.25, -3.2], [2.4, 1.4, -4.3]], look: () => head(vire, -0.7), fov: [50, 46] },
+    { t0: S(15) - 0.3, set: 'square', mood: 'overcast', pos: [[-2.4, 1.5, -6.4], [-1.6, 2.0, -8.8]], look: () => head(vire), fov: [42, 36] },
+    { t0: S(16) - 1.2, set: 'square', mood: 'overcast', pos: [[-1.3, 2.6, -2.4], [-0.9, 2.7, -3.6]], look: () => head(vire, -0.3), fov: [34, 30] },
+    { t0: S(17) - 0.4, set: 'square', mood: 'overcast', pos: [[-1.5, 3.45, -7.1], [-2.15, 3.25, -7.95]], look: [[-3.6, 2.4, -10.8]], fov: [42, 38] },
+    { t0: S(18) - 2.0, set: 'square', mood: 'overcast', pos: [[-2.85, 3.6, -8.7], [-3.15, 3.65, -9.45]], look: () => head(vire, -0.05), fov: [38, 32] },
+    { t0: E(18) + 1.0, set: 'square', mood: 'overcast', pos: [[PIP_AT[0] + pf[0] * 1.6, 1.55, PIP_AT[1] + pf[1] * 1.6], [PIP_AT[0] + pf[0] * 1.25, 1.52, PIP_AT[1] + pf[1] * 1.25]], look: () => head(pip, -0.05), fov: [38, 34], shake: 0.003 },
+    { t0: S(20) - 0.2, set: 'square', mood: 'overcast', fov: [46, 44], shake: 0.006, pos: () => pip.position.clone().add(V3(0.55, 0.95, -2.6)), look: () => head(pip, -0.2) },
+    { t0: S(21) - 0.5, set: 'square', mood: 'overcast', fov: [50, 48], shake: 0.03, pos: (lt) => rheaS.position.clone().add(V3(-0.5, 1.55, -2.5)), look: () => head(rheaS, -0.1) },
+    { t0: S(23) - 0.6, set: 'square', mood: 'overcast', pos: [[0.25, 1.45, -6.95], [0.1, 1.45, -6.9]], look: () => head(pip, -0.05), fov: [40, 38] },
+    { t0: S(24) - 0.3, set: 'square', mood: 'overcast', pos: [[-0.8, 3.35, -3.3], [-0.8, 3.2, -3.7]], look: [[-0.82, 1.2, -6.65]], fov: [44, 42], shake: 0.006 },
+    { t0: S(25) - 0.4, set: 'square', mood: 'overcast', pos: [[HASKIN[0] + HF[0] * 1.9, 1.3, HASKIN[2] + HF[1] * 1.9], [HASKIN[0] + HF[0] * 1.25, 1.3, HASKIN[2] + HF[1] * 1.25]], look: () => head(haskin, -0.05), fov: [38, 32] },
+    { t0: S(26) - 0.4, set: 'square', mood: 'overcast', pos: [[3.2, 1.0, -5.6], [2.7, 1.8, -7.4]], look: () => head(rheaS, -0.3), fov: [44, 42] },
+    { t0: S(27) - 0.5, set: 'square', mood: 'overcast', fov: [36, 33], pos: () => { const r = rheaS.position, d = V3(MIC[0] - r.x, 0, MIC[2] - r.z).normalize(); return V3(r.x - d.x * 0.6 + d.z * 0.95, r.y + 2.25, r.z - d.z * 0.6 - d.x * 0.95); }, look: () => head(vire, -0.12) },
+    { t0: S(28) - 0.6, set: 'square', mood: 'overcast', fov: [34, 28], ease: 'linear', moveDur: TITLE_T - S(28) + 0.6,
+      pos: (lt, p) => { const r = rheaS.position, d = V3(MIC[0] - r.x, 0, MIC[2] - r.z).normalize(), k = lerp(1.7, 1.0, p); return V3(r.x + d.x * k, r.y + 2.0, r.z + d.z * k); }, look: () => head(rheaS, -0.04) },
+    { t0: TITLE_T, set: 'village', mood: 'sunrise', pos: [[0, 5, 30], [0, 7, 22]], look: [[60, 70, -650], [60, 90, -650]], fov: [55, 52], moveDur: 6.4 },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+  const CUTS = shots.cuts().filter((c) => c > 9 && c < TITLE_T - 0.1 && Math.abs(c - (S(11) - 1.3)) > 0.5);
+
+  // ---------- everything that moves (pure function of t) ----------
+  let curMood = '', curSet = '';
+  function frame(t) {
+    const s = shots.at(t), lt = t - s.t0;
+    if (s.mood !== curMood) { curMood = s.mood; env.set(s.mood); }
+    if (s.set !== curSet) { for (const k in SETS) SETS[k].visible = k === s.set; curSet = s.set; }
+    key.intensity = 0;
+    if (s.set === 'village') {
+      village.update(t);
+      playRheaV(t); playPipV(t);
+      bracelet.visible = t >= W(8, 'wrist') - 0.2; bracelet.scale.setScalar(clamp((t - W(8, 'wrist') + 0.2) / 0.3, 0.01, 1));
+      rheaV.rig.update(t); pipV.rig.update(t);
+      const f = t < 8.1 || t >= TITLE_T ? [0, 0, 0, 30] : [0, 0, 0, 10]; env.shadowFocus(f[0], 0, f[2], f[3]);
+    } else {
+      const walking = t < S(12) - 0.4;
+      crowd.visible = !walking; for (const w of walkers) w.ch.visible = walking; for (const g of road) g.visible = walking;
+      let lookAt = V3(0, 3, -11);
+      if (t > E(18) && t < S(22)) lookAt = pip.position.clone().setY(1.2);
+      else if (t >= S(22) && t < S(26)) lookAt = rheaS.position.clone().setY(1.6);
+      square.update(t, { lookAt });
+      playHaskin(t); playVire(t); playPip(t); playRheaS(t); playPuller(t);
+      if (walking) for (const w of walkers) { w.play(t); w.ch.rig.update(t); }
+      guards.forEach((g, i) => { if (i !== 2) A.set(g, 'idle', t + i); g.rig.update(t); });
+      road.forEach((g, i) => { if (g.visible) { A.set(g, 'idle', t + i); g.rig.update(t); } });
+      flask.visible = true;
+      slip.visible = t > S(18) - 1.7 && t < S(26); slip.scale.set(1, 1, t > S(18) - 1.2 ? 1.6 : 1);   // unfolded slip is bigger
+      pip.rig.setEyes(t > E(18) + 0.9 && t < S(20) - 0.2 ? 'open' : null);   // no blink in his shock close-up
+      for (const ch of [haskin, vire, rheaS, pip]) ch.rig.update(t);
+      const fp = walking ? [0, 0, 16, 12] : s.t0 >= S(26) - 0.5 && s.t0 < TITLE_T ? [0, 1.4, -10, 7] : [0, 0, -7, 14];
+      env.shadowFocus(fp[0], fp[1], fp[2], fp[3]);
+      key.intensity = 0.35; key.position.copy(camera.position).add(V3(-1, 1.5, 0)); key.target.position.set(camera.position.x * 0.5, 2, camera.position.z - 3);
+    }
+    lips(t);
+    RT.camera.apply(camera, s, t);
+    env.follow(camera);
+  }
+
+  function black(t) {
+    if (t < 1.0) return 1;
+    const sc = S(11) - 1.3;                                   // dip to black between the village and the square
+    if (t > sc - 0.6 && t < sc + 0.5) return 1 - Math.abs(t - sc) / (t < sc ? 0.6 : 0.5);
+    if (t >= 6.1 && t < 8.1) return 0.45;                     // episode title over a darker drone shot
+    if (t >= TITLE_T) return Math.max(0.42, clamp((t - DURATION + 0.7) / 0.7, 0, 1));
+    return RT.camera.dips(t, CUTS, 0.1);
+  }
+  function white(t) { const fl = (c, d) => (t >= c && t < c + d ? 1 - (t - c) / d : 0); return Math.max(fl(E(18) + 1.0, 0.22), fl(TITLE_T, 0.2) * 0.6); }
+
+  RT.player.start({
+    name: 'ep1', duration: DURATION, renderer, scene, camera, frame, black, white,
+    narration: NAR,
+    speakers: { pip: 'PIP', rhea: 'RHEA', vire: 'VIRE' },
+    noCaptions: [[6.1, 8.1], [TITLE_T, 9999]],
+    hooks: [{ t0: 6.2, t1: 8.05, html: 'EPISODE 1<br><span style="font-size:.62em">THE CHOOSING</span>' }],
+    title: { t0: TITLE_T, stagger: [0, 0.6, 1.3], html: '<div class="t1">THE REAPING<br>TRIALS</div><div class="t2">EPISODE 2 · THE CAPITAL<br>COMING SOON</div><div class="t3">Follow so you don\'t miss it.</div>' },
+    audio: '../audio/mix/ep1_mix.mp3',
+    menu: { title: 'The Reaping Trials', sub: 'Episode 1 · The Choosing' },
+    idleTime: (x) => 14 + (x % 3) * 0.2,
+    stills: [0.5, 3, 7, 10, S(3) + 1.5, S(4) + 0.6, S(5) + 2.5, S(6) + 0.5, S(7) + 1.2, S(8) + 1.5, S(9) + 1, S(10) + 0.8, S(11) + 2, S(12) + 2, S(14) + 1.5, S(15) + 2, S(16) + 1.5, S(17) + 1.6, S(18) + 0.4,
+      E(18) + 1.5, S(20) + 2, S(21) + 1, S(22) + 0.6, S(23) + 0.3, S(24) + 1.0, S(24) + 2.6, S(25) + 1, S(26) + 1.5, S(26) + 3.5, S(27) + 2, S(28) + 2, TITLE_T + 2.5],
+  });
+})();
+</script>
+</body>
+</html>

@@ -82,7 +82,7 @@ export function mix(name, duration) {
     const o = c.opts, k = beds.length;
     if (c.sound.startsWith('music:')) {
       const from = parseFloat(o.from || 0), segLen = duration - c.t;
-      const seg = path.join(dir, `music_seg.wav`);
+      const seg = path.join(dir, `music_seg_${k}.wav`);
       ff(['-ss', String(from), '-t', segLen.toFixed(3), '-i', file, '-af', fmt, '-c:a', 'pcm_s16le', seg]);
       const g = 10 ** ((-16 - lufs(seg)) / 20) * c.vol, duck = parseFloat(o.duck || 1);
       // duck under every narration line (smooth 0.12 s in, 0.3 s out); mute ranges cut the music completely

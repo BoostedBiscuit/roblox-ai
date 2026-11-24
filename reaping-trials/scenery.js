@@ -132,7 +132,7 @@
     for (let i = 0; i < WN; i++) {
       let x, z;
       if (i < WN * 0.5) { x = (r() * 2 - 1) * 21; z = (r() * 2 - 1) * 21; } else { const a = r() * Math.PI * 2, rr = 0.6 + Math.pow(r(), 0.8) * 11; x = Math.cos(a) * rr; z = Math.sin(a) * rr; }
-      if (Math.hypot(x, z) < 0.7) x += 0.9;
+      const cr = o.clearRadius ?? 0.7; if (Math.hypot(x, z) < cr) { const a2 = Math.atan2(z, x) || 1; x = Math.cos(a2) * (cr + 0.2 + r() * 0.5); z = Math.sin(a2) * (cr + 0.2 + r() * 0.5); }   // a trampled spot where Rhea stands
       wd.push({ x, z, y: hgt(x, z), h: 0.85 + r() * 0.35, ph: r() * 6.28 });
       c.setHSL(0.115 + r() * 0.02, 0.72 + r() * 0.15, 0.5 + r() * 0.1); stalks.setColorAt(i, c); c.offsetHSL(0.005, 0.05, 0.08); heads.setColorAt(i, c);
     }
@@ -258,13 +258,14 @@
     const bowls = [];
     for (const x of [-3.6, 3.6]) {
       const b = new THREE.Group(); b.position.set(x, 1.5, -10.4); G.add(b);
-      b.add(RT.mesh(new THREE.CylinderGeometry(0.35, 0.5, 1.2, 12), gold).translateY(0.6));
+      const ph = o.bowlPedestal ?? 1.2;      // pedestal height (lower it so a character can reach into the bowl)
+      b.add(RT.mesh(new THREE.CylinderGeometry(0.35, 0.5, ph, 12), gold).translateY(ph / 2));
       const glassM = new THREE.MeshStandardMaterial({ color: '#dff3ff', roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false });
-      const glass = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 0.95, 1.5, 28, 1, true), glassM); glass.position.y = 1.95; glass.renderOrder = 2; b.add(glass);
-      b.add(new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 0.06, 28), glassM).translateY(1.22));
-      const rim = RT.mesh(new THREE.TorusGeometry(1.15, 0.05, 6, 32), gold); rim.rotation.x = Math.PI / 2; rim.position.y = 2.7; b.add(rim);
+      const glass = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 0.95, 1.5, 28, 1, true), glassM); glass.position.y = ph + 0.75; glass.renderOrder = 2; b.add(glass);
+      b.add(new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 0.06, 28), glassM).translateY(ph + 0.02));
+      const rim = RT.mesh(new THREE.TorusGeometry(1.15, 0.05, 6, 32), gold); rim.rotation.x = Math.PI / 2; rim.position.y = ph + 1.5; b.add(rim);
       const slips = new THREE.InstancedMesh(new THREE.BoxGeometry(0.22, 0.02, 0.14), RT.plastic('#fbf8f0'), 160), dm = new THREE.Object3D();
-      for (let i = 0; i < 160; i++) { const a = r() * 6.28, rr = Math.sqrt(r()) * 0.85; dm.position.set(Math.cos(a) * rr, 1.3 + r() * 0.6, Math.sin(a) * rr); dm.rotation.set(r() * 3, r() * 3, r() * 3); dm.updateMatrix(); slips.setMatrixAt(i, dm.matrix); }
+      for (let i = 0; i < 160; i++) { const a = r() * 6.28, rr = Math.sqrt(r()) * 0.85; dm.position.set(Math.cos(a) * rr, ph + 0.1 + r() * 0.6, Math.sin(a) * rr); dm.rotation.set(r() * 3, r() * 3, r() * 3); dm.updateMatrix(); slips.setMatrixAt(i, dm.matrix); }
       b.add(slips); bowls.push(b);
     }
     // mic stand
@@ -282,8 +283,9 @@
     }
     const crowd = RT.characters.crowd({ spots, seed: 7, faces: ['worried', 'worried', 'neutral', 'scared'] });
     G.add(crowd);
-    G.update = (t) => { crowd.update(t, { lookAt: new THREE.Vector3(0, 3, -11) }); };
-    G.spots = { bowls, stage: new THREE.Vector3(0, 1.5, -12), crowd };
+    const stageLook = new THREE.Vector3(0, 3, -11);
+    G.update = (t, u = {}) => { if (crowd.visible) crowd.update(t, { lookAt: u.lookAt || stageLook }); };   // u.lookAt: what the crowd turns to watch
+    G.spots = { bowls, mic, stage: new THREE.Vector3(0, 1.5, -12), crowd };
     return G;
   }
 

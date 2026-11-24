@@ -6,9 +6,10 @@ export function readBlock(html, name) {
 }
 export function narrationLines(html) {
   return readBlock(html, 'NARRATION').map((l) => {
-    const m = /^\s*([\d.]+)\s+(\S+)\s+(.+)$/.exec(l);
-    if (!m) throw new Error(`bad NARRATION line: "${l}"  (expected: <seconds> <who> <text>)`);
+    const m = /^\s*(\+?[\d.]+)\s+(\S+)\s+(.+)$/.exec(l);
+    if (!m) throw new Error(`bad NARRATION line: "${l}"  (expected: <seconds | +gap> <who> <text>)`);
     const raw = m[3].trim();
-    return { at: parseFloat(m[1]), who: m[2], raw, text: raw.replace(/\*/g, '').replace(/\s+/g, ' ') };
+    // "12.5" = starts at 12.5 s · "+0.6" = starts 0.6 s after the previous line ends
+    return { at: m[1].startsWith('+') ? null : parseFloat(m[1]), gap: m[1].startsWith('+') ? parseFloat(m[1]) : null, who: m[2], raw, text: raw.replace(/\*/g, '').replace(/\s+/g, ' ') };
   });
 }

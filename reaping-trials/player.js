@@ -34,7 +34,7 @@
   #sub{position:absolute;left:6%;right:6%;top:71%;text-align:center;pointer-events:none;opacity:0;transform-origin:50% 50%;}
   #sub .spk{display:inline-block;font:700 calc(var(--u)*4.4) Inter,system-ui,sans-serif;letter-spacing:.16em;color:#1a1208;background:#ffcf7a;
        padding:calc(var(--u)*.6) calc(var(--u)*2);border-radius:calc(var(--u)*1);margin-bottom:calc(var(--u)*1.4);}
-  #sub .txt{font:900 calc(var(--u)*10.5) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1.1;
+  #sub .txt{transform-origin:50% 50%;font:900 calc(var(--u)*10.5) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1.1;
        -webkit-text-stroke:calc(var(--u)*.9) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.6) 0 #000;}
   /* impact texts ("EVERY YEAR…") */
   .hook{position:absolute;left:5%;right:5%;top:45%;transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0;
@@ -76,6 +76,35 @@
     out.forEach((c, k) => { c.t1 = Math.min(out[k + 1] ? out[k + 1].t0 : 1e9, c.lineEnd + 0.3); });
     return out;
   }
+  // speaker subtitles: a character's line is shown a few words at a time (at most 2 lines on screen),
+  // broken at punctuation first, then into even parts; each piece appears when its first word is spoken
+  const SUB_MAX = 22;                                   // characters per piece (about 2 lines)
+  function subtitlePieces(line) {
+    const ws = line.words || [];
+    if (!ws.length) return [{ t0: line.start, text: line.text }];
+    const len = (p) => p.map((w) => w.w).join(' ').length;
+    let parts = [], cur = [];
+    ws.forEach((w, i) => { cur.push(w); if (/[.,!?…;:]["”]?$/.test(w.w) || i === ws.length - 1) { parts.push(cur); cur = []; } });
+    const weak = /^(of|in|on|at|to|the|a|an|and|or|that|for|with|from|my|your)$/i;   // a piece should not end on these
+    const best = (p, k) => {                            // split p into k pieces: shortest longest piece, no weak endings
+      if (k === 1) return { cost: len(p), parts: [p] };
+      let top = null;
+      for (let i = 1; i <= p.length - k + 1; i++) {
+        const head = p.slice(0, i), rest = best(p.slice(i), k - 1);
+        const cost = Math.max(len(head) + (weak.test(head[head.length - 1].w) ? 6 : 0), rest.cost);
+        if (!top || cost < top.cost) top = { cost, parts: [head, ...rest.parts] };
+      }
+      return top;
+    };
+    parts = parts.flatMap((p) => { const k = Math.min(p.length, Math.ceil(len(p) / SUB_MAX)); return k <= 1 ? [p] : best(p, k).parts; });
+    for (let i = 0; i < parts.length; i++) {            // a very short piece joins its neighbour if it fits
+      if (len(parts[i]) >= 10 || parts.length < 2) continue;
+      const prev = parts[i - 1], next = parts[i + 1], prevEnd = prev && prev[prev.length - 1].w;
+      if (prev && !/[.!?]["”]?$/.test(prevEnd) && len(prev.concat(parts[i])) <= SUB_MAX) { parts[i - 1] = prev.concat(parts[i]); parts.splice(i, 1); i--; }
+      else if (next && len(parts[i].concat(next)) <= SUB_MAX) { parts[i] = parts[i].concat(next); parts.splice(i + 1, 1); }
+    }
+    return parts.map((p) => ({ t0: p[0].start, text: p.map((w) => w.w).join(' ') }));
+  }
   const impact = (t, t0, from = 1.1, dur = 0.18) => { const p = clamp((t - t0) / dur, 0, 1); return from + (1 - from) * (1 - Math.pow(1 - p, 3)); };
 
   function start(o) {
@@ -93,7 +122,7 @@
     const playBtn = menu.querySelector('#play');
     const speakers = o.speakers || {};
     const chunks = captionChunks(o.narration, speakers);
-    const spLines = ((o.narration && o.narration.lines) || []).filter((l) => speakers[l.who]);
+    const spLines = ((o.narration && o.narration.lines) || []).filter((l) => speakers[l.who]).map((l) => Object.assign({}, l, { pieces: subtitlePieces(l) }));
     const noCap = o.noCaptions || [];
 
     // ---------- layout (9:16 box that fits the screen) ----------
@@ -123,9 +152,11 @@
       if (c) { const p = clamp((t - c.t0) / 0.1, 0, 1); cap.firstChild.style.transform = `scale(${(1.2 - 0.2 * (1 - Math.pow(1 - p, 2))).toFixed(4)})`; }
       // speaker subtitles
       const s = spLines.find((l) => t >= l.start - 0.05 && t < l.end + 0.45);
-      const sk = s ? s.start + s.text : '';
-      if (sk !== lastSub) { lastSub = sk; if (s) { sub.querySelector('.spk').textContent = speakers[s.who]; sub.querySelector('.txt').textContent = s.text; } }
+      let pc = null; if (s) for (const q of s.pieces) if (t >= q.t0 - 0.05) pc = q; if (s && !pc) pc = s.pieces[0];
+      const sk = s ? s.start + '|' + pc.t0 : '';
+      if (sk !== lastSub) { lastSub = sk; if (s) { sub.querySelector('.spk').textContent = speakers[s.who]; sub.querySelector('.txt').textContent = pc.text; } }
       sub.style.opacity = s ? (clamp((t - s.start + 0.05) / 0.1, 0, 1) * clamp((s.end + 0.45 - t) / 0.15, 0, 1)).toFixed(3) : '0';
+      sub.querySelector('.txt').style.transform = `scale(${s ? impact(t, pc.t0 - 0.05, 1.08, 0.14).toFixed(4) : 1})`;
       sub.style.transform = `scale(${s ? impact(t, s.start - 0.05).toFixed(4) : 1})`;
       // title card
       if (o.title) {

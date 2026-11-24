@@ -126,6 +126,11 @@
       const p = easeOut(clamp(t / 0.5, 0, 1));
       return Object.assign(MOVES.idle(t), { aRf: 1.25 * p, eR: 1.25 * p, aRt: 0.55 * p, aLf: 1.1 * p, eL: 1.3 * p, aLt: 0.5 * p, hx: 0.12 * p });
     },
+    // hold a paper in both hands at chest height and look down to read it
+    readSlip(t, o = {}) {
+      const p = o.hold ? 1 : easeOut(clamp(t / 0.5, 0, 1));
+      return Object.assign(MOVES.idle(t), { aRf: 0.8 * p, eR: 0.95 * p, aRt: 0.5 * p, aLf: 0.8 * p, eL: 0.95 * p, aLt: 0.5 * p, hx: 0.22 * p, wx: 0.04 * p });
+    },
     // kneeling and tying something on someone's wrist (both hands forward)
     kneelTie(t) {
       const K = MOVES.kneel(Math.max(t, 0.6)), w = Math.sin(t * 6) * 0.05;
@@ -245,10 +250,10 @@
       if (t < g.t1) {               // travelling
         const p = clamp((t - g.t0) / (g.t1 - g.t0), 0, 1), travelled = p * g.dist;
         const P = pose(s.gait || 'walk', t, Object.assign({ phase: (((g.d0 || 0) + travelled) / (s.gait === 'run' ? 0.9 : 0.6)) * Math.PI }, s.gaitOpts || {}));
-        return { P, pos: [lerp(g.from[0], g.to[0], p), lerp(g.from[1], g.to[1], p), lerp(g.from[2], g.to[2], p)], yaw: lerpAngle(g.startYaw, g.travel, clamp((t - g.t0) / 0.25, 0, 1)) };
+        return { P, pos: [lerp(g.from[0], g.to[0], p), lerp(g.from[1], g.to[1], p), lerp(g.from[2], g.to[2], p)], yaw: s.keepYaw ? g.startYaw : lerpAngle(g.startYaw, g.travel, clamp((t - g.t0) / 0.25, 0, 1)) };   // keepYaw: step back / sideways
       }
       const lt = t - g.t1;
-      return { P: pose(s.move || 'idle', lt, s.opts), pos: g.to, yaw: lerpAngle(g.dist ? g.travel : g.startYaw, g.endYaw, clamp(lt / 0.35, 0, 1)) };
+      return { P: pose(s.move || 'idle', lt, s.opts), pos: g.to, yaw: lerpAngle(g.dist && !s.keepYaw ? g.travel : g.startYaw, g.endYaw, clamp(lt / 0.35, 0, 1)) };
     };
     return function (t) {
       let i = 0; for (let k = 0; k < segs.length; k++) if (t >= segs[k].t0) i = k;

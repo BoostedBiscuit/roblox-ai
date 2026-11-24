@@ -305,6 +305,54 @@ SHOTS follow the narration automatically (see the SHOTS list in the script below
   }
   function white(t) { const fl = (c, d) => (t >= c && t < c + d ? 1 - (t - c) / d : 0); return Math.max(fl(E(18) + 1.0, 0.22), fl(TITLE_T, 0.2) * 0.6); }
 
+  // ---------- THUMBNAILS (Part 7D): npm run render -- reaping-ep1 --thumbs → out/reaping-trials/ep1-thumb-option1.png / 2.png ----------
+  function thumbnail(n) {
+    const T = Number(n) || 1, stage = document.getElementById('stage');
+    renderer.domElement.style.filter = 'saturate(1.3) contrast(1.08) brightness(1.04)';
+    frame(S(27));                                              // the square, everyone posed
+    crowd.visible = false; for (const w of walkers) w.ch.visible = false; for (const g of road) g.visible = false;
+    env.set(RT.mood.mix('overcast', 'sunrise', 0.55));
+    const placeAt = (obj, sx, sy, d, lift) => {
+      camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+      const v = V3((sx / 100) * 2 - 1, 1 - (sy / 100) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
+      const p = camera.position.clone().addScaledVector(v, d); obj.position.set(p.x, p.y - lift, p.z);
+      obj.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z);
+      return V3(p.x, p.y, p.z);
+    };
+    camera.fov = 44; camera.position.set(0, 1.95, -3.0); camera.lookAt(0, 2.25, -9); camera.updateProjectionMatrix();
+    let subject, aim;
+    if (T === 1) {   // "IT WAS RIGGED?!": Vire's smile up close, red arrow on the glass bowl
+      subject = vire; placeAt(vire, 47, 63, 2.9, 2.37); vire.rotation.y += 0.12;
+      A.set(vire, 'idle', 1); vire.rig.setFace('smirk'); vire.rig.setEyes('open'); vire.rig.setMouth(false); slip.visible = true;
+      aim = placeAt(square.spots.bowls[0], 21, 43, 10, 1.3);
+    } else {         // "I TOOK HIS PLACE": Rhea's raised hand, Pip crying behind her (red circle)
+      subject = rheaS; placeAt(rheaS, 40, 63, 3.0, 2.02);
+      A.set(rheaS, 'raiseHand', 1.3); rheaS.rig.setFace('determined'); rheaS.rig.setEyes('open'); rheaS.rig.setMouth(false);
+      aim = placeAt(pip, 78, 45, 8.5, 1.54); A.set(pip, 'tremble', 1); pip.rig.setFace('crying'); pip.rig.setEyes('open'); pip.rig.setMouth(false);
+    }
+    key.intensity = 0.6; key.position.copy(camera.position).add(V3(-1, 1, 0)); key.target.position.copy(subject.position);
+    subject.rig.update(0); env.follow(camera); env.shadowFocus(subject.position.x, 0, subject.position.z, 10);
+    renderer.render(scene, camera);
+    const proj = (v) => { const q = v.clone().project(camera); return [(q.x * 0.5 + 0.5) * 100, (-q.y * 0.5 + 0.5) * 177.8]; };
+    const [ax, ay] = proj(aim), edge = proj(aim.clone().add(V3(T === 1 ? 1.3 : 0.6, 0, 0))), rad = Math.max(7, Math.abs(edge[0] - ax) * 1.3);
+    const css = document.createElement('style'); css.textContent = `
+      .th{position:absolute;left:0;right:0;text-align:center;font-family:Montserrat,'Arial Black',sans-serif;font-weight:900;line-height:.95;color:#fff;
+          -webkit-text-stroke:calc(var(--u)*1.6) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*1) 0 #000,0 0 calc(var(--u)*4) rgba(0,0,0,.6);transform:rotate(-3deg);}
+      .th .y{color:#ffd23f;}`;
+    document.head.appendChild(css);
+    const add = (html) => { const d = document.createElement('div'); d.innerHTML = html; stage.appendChild(d.firstChild); };
+    if (T === 1) add('<div class="th" style="top:13%"><div style="font-size:calc(var(--u)*15)">IT WAS</div><div class="y" style="font-size:calc(var(--u)*17)">RIGGED?!</div></div>');
+    else add('<div class="th" style="top:13%"><div style="font-size:calc(var(--u)*15)">I TOOK</div><div class="y" style="font-size:calc(var(--u)*14)">HIS PLACE</div></div>');
+    let svg;
+    if (T === 1) {
+      const p0 = [ax + 30, ay - 14], c = [ax + 24, ay + 6], p1 = [ax + 8, ay + 2], d = [p1[0] - c[0], p1[1] - c[1]], L2 = Math.hypot(d[0], d[1]), u = [d[0] / L2, d[1] / L2], nn = [-u[1], u[0]];
+      const tip = [p1[0] + u[0] * 4, p1[1] + u[1] * 4], h1 = [p1[0] + nn[0] * 3.6, p1[1] + nn[1] * 3.6], h2 = [p1[0] - nn[0] * 3.6, p1[1] - nn[1] * 3.6], path = `M ${p0} Q ${c} ${p1}`;
+      svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><path d="${path}" fill="none" stroke="#000" stroke-width="5.6" stroke-linecap="round"/><path d="${path}" fill="none" stroke="#ff2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M ${tip} L ${h1} L ${h2} Z" fill="#ff2a2a" stroke="#000" stroke-width="1" stroke-linejoin="round"/></svg>`;
+    } else svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><ellipse cx="${ax}" cy="${ay + 4}" rx="${rad}" ry="${rad * 1.25}" fill="none" stroke="#000" stroke-width="4.6"/><ellipse cx="${ax}" cy="${ay + 4}" rx="${rad}" ry="${rad * 1.25}" fill="none" stroke="#ff2a2a" stroke-width="2.8"/></svg>`;
+    add(svg);
+    if (window.RT_BRAND !== false) add('<img src="../brand/watermark.png" style="position:absolute;left:60%;top:10.5%;width:36%;opacity:.4">');
+  }
+
   RT.player.start({
     name: 'ep1', duration: DURATION, renderer, scene, camera, frame, black, white,
     narration: NAR,
@@ -314,6 +362,7 @@ SHOTS follow the narration automatically (see the SHOTS list in the script below
     title: { t0: TITLE_T, stagger: [0, 0.6, 1.3], html: '<div class="t1">THE REAPING<br>TRIALS</div><div class="t2">EPISODE 2 · THE CAPITAL<br>COMING SOON</div><div class="t3">Follow so you don\'t miss it.</div>' },
     audio: '../audio/mix/ep1_mix.mp3',
     menu: { title: 'The Reaping Trials', sub: 'Episode 1 · The Choosing' },
+    thumbnail,
     idleTime: (x) => 14 + (x % 3) * 0.2,
     stills: [0.5, 3, 7, 10, S(3) + 1.5, S(4) + 0.6, S(5) + 2.5, S(6) + 0.5, S(7) + 1.2, S(8) + 1.5, S(9) + 1, S(10) + 0.8, S(11) + 2, S(12) + 2, S(14) + 1.5, S(15) + 2, S(16) + 1.5, S(17) + 1.6, S(18) + 0.4,
       E(18) + 1.5, S(20) + 2, S(21) + 1, S(22) + 0.6, S(23) + 0.3, S(24) + 1.0, S(24) + 2.6, S(25) + 1, S(26) + 1.5, S(26) + 3.5, S(27) + 2, S(28) + 2, TITLE_T + 2.5],

@@ -8,7 +8,8 @@
   "style": 0.45,
   "use_speaker_boost": true,
   "speed": 1.08,
-  "_post": "applied after generation, no extra credits: tempo = speed-up with the same pitch, max_pause = longest pause kept inside a line (seconds)",
+  "_post": "applied after generation, no extra credits: tempo = speed-up with the same pitch, max_pause = longest pause kept inside a line (seconds), pitch = semitones up (+) or down (-) with the same speed (done in the mix)",
   "tempo": 1.1,
-  "max_pause": 0.5
+  "max_pause": 0.5,
+  "pitch": 1.0
 }

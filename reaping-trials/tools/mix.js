@@ -67,7 +67,10 @@ export function mix(name, duration) {
   const vin = [], vf = [];
   narr.lines.forEach((l, i) => { vin.push('-i', path.join(ROOT, l.clip)); vf.push(`[${i}:a]${fmt},adelay=${Math.round(l.at * 1000)}:all=1[v${i}]`); });
   const voiceRaw = path.join(dir, 'voice_raw.wav');
-  ff([...vin, '-filter_complex', `${vf.join(';')};${narr.lines.map((_, i) => `[v${i}]`).join('')}amix=inputs=${narr.lines.length}:normalize=0:duration=longest,apad=whole_dur=${D},atrim=0:${D}[o]`, '-map', '[o]', '-c:a', 'pcm_s16le', voiceRaw]);
+  // voice.json "pitch": semitones up/down; asetrate changes pitch AND speed, atempo puts the speed back (timing stays exact)
+  const semis = parseFloat(JSON.parse(fs.readFileSync(path.join(RT, 'voice.json'), 'utf8')).pitch || 0), k = 2 ** (semis / 12);
+  const pitch = Math.abs(semis) > 0.01 ? `,asetrate=${Math.round(SR * k)},aresample=${SR},atempo=${(1 / k).toFixed(6)}` : '';
+  ff([...vin, '-filter_complex', `${vf.join(';')};${narr.lines.map((_, i) => `[v${i}]`).join('')}amix=inputs=${narr.lines.length}:normalize=0:duration=longest${pitch},apad=whole_dur=${D},atrim=0:${D}[o]`, '-map', '[o]', '-c:a', 'pcm_s16le', voiceRaw]);
   const vGain = -16 - lufs(voiceRaw);
   const voice = path.join(dir, 'voice_n.wav');
   ff(['-i', voiceRaw, '-af', `volume=${vGain.toFixed(2)}dB`, '-c:a', 'pcm_s16le', voice]);

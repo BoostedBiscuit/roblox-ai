@@ -229,7 +229,10 @@
   const lerpAngle = (a, b, p) => { let d = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI; return a + d * p; };
   function actor(char, steps) {
     const segs = []; let pos = steps[0].pos.slice(), yaw = steps[0].yaw ?? 0;
-    for (const s of steps) {
+    for (const s0 of steps) {
+      // a step never starts before the previous walk has arrived (otherwise the character would jump to its end point)
+      const busy = segs.length ? segs[segs.length - 1].t1 : -Infinity, s = s0.at < busy ? Object.assign({}, s0, { at: busy }) : s0;
+      if (s0.at < busy - 0.05 && window.RT_DEBUG_ACTOR) console.error('actor ' + (char.name || '') + ': step at ' + s0.at.toFixed(2) + ' waits ' + (busy - s0.at).toFixed(2) + ' s for the walk to end');
       const from = pos.slice(), startYaw = yaw;
       if (s.to) {
         // s.via: waypoints walked through without stopping (e.g. around a table), then s.to

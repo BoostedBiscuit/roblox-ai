@@ -66,7 +66,7 @@
       if (speakers[line.who]) continue;               // character lines use the speaker subtitle instead
       const ws = line.words;
       for (let i = 0; i < ws.length; i++) {
-        const clean = (w) => w.w.replace(/^[…."'“]+/, '').replace(/[.,…;:"”]+$/, '');
+        const clean = (w) => w.w.replace(/^[…."'“]+/, '').replace(/[.,…;:?"”]+$/, '');   // (a narrator's "?" is heard, not shown)
         let text = clean(ws[i]), key = !!ws[i].key, j = i;
         if (text.replace(/[^\p{L}\p{N}]/gu, '').length <= 2 && !/[.,!?…;:]$/.test(ws[i].w) && ws[i + 1] && (text + clean(ws[i + 1])).length <= 9) { j = i + 1; text += ' ' + clean(ws[j]); key = key || !!ws[j].key; }
         out.push({ t0: ws[i].start - 0.04, text: text.toUpperCase(), key, lineEnd: line.end });

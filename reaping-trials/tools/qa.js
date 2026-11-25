@@ -10,7 +10,7 @@ const args = process.argv.slice(2), name = args[0];
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? Number(args[i + 1]) : d; };
 if (!name) { console.error('usage: node reaping-trials/tools/qa.js <episode> [--from s] [--to s] [--step s]'); process.exit(2); }
 const server = await startServer();
-const { browser, page } = await openPage(server, `reaping-trials/episodes/${name}.html?render=1`, { width: 540, height: 960 });
+const { browser, page } = await openPage(server, `reaping-trials/episodes/${name}.html?render=1&qa=1`, { width: 540, height: 960 });
 const dur = await page.evaluate(() => window.sceneInfo.duration);
 const step = opt('--step', 0.1), from = opt('--from', 0), to = Math.min(opt('--to', dur), dur);
 const times = []; for (let t = from; t <= to + 1e-9; t += step) times.push(+t.toFixed(3));

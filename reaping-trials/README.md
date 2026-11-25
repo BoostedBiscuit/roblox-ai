@@ -10,7 +10,7 @@ Everything for the series lives in this folder.
 | 1 | Test scene copied to `reference/ep1-part1-test.html`, music copied to `audio/music/` | done |
 | 2 | Characters, moves, viewer | approved |
 | 3 | Teaser trailer: `episodes/trailer.html` → `out/reaping-trials/trailer.mp4` | rendered |
-| 4 | Episode 1 · The Choosing: `episodes/ep1.html` → `out/reaping-trials/ep1.mp4` (2:11, cover: `ep1-with-cover.mp4`) | rendered |
+| 4 | Episode 1 · The Choosing: `episodes/ep1.html` → `out/reaping-trials/ep1.mp4` (2:12, cover: `ep1-with-cover.mp4`) | rendered |
 | 5 | The other locations, one at a time | later |
 
 Preview pictures of the cast, faces, expressions and moves are in [`previews/`](previews/).
@@ -37,6 +37,9 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
 **Voice:** ElevenLabs voice **Adam** (`reaping-trials/voice.json`), sped up 10 % after generation (`tempo`), long pauses shortened (`max_pause`).
 Put your key in a local `.env` as `ELEVENLABS_API_KEY=...` (see `.env.example`; `.env` is never committed). A restricted key with only
 text-to-speech permission is enough. Characters sent are logged in `credits.json` (not committed) and capped by `MAX_CHARS`.
+
+**Every episode:** opens with the narrator saying "In this town…" (the first NARRATION line, `L(0)` in the script) and has
+`audio/music/dreamcore.mp3` (your upload) under the whole episode at 0.50 (50 %), ducking under the voice.
 
 **Audio files:** music in `audio/music/`, effects in `audio/sfx/` (see `audio/sfx/SOURCES.md`). A missing file is skipped and listed; the render still runs.
 The final mix is normalized to −14 LUFS for phones.

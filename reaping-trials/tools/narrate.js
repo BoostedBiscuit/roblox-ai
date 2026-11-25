@@ -64,6 +64,16 @@ export async function narrate(name) {
     const base = path.join(dir, `l${String(i + 1).padStart(2, '0')}_${hash}`);
     return { ...l, i, voice: v, mp3: base + '.mp3', meta: base + '.json' };
   });
+  // a line that only moved (same text and voice, new line number, e.g. after inserting a line) keeps its clip: no credits
+  const wanted = new Set(jobs.map((j) => path.basename(j.mp3)));
+  for (const j of jobs) if (!fs.existsSync(j.mp3)) {
+    const h = path.basename(j.mp3, '.mp3').split('_').pop(), old = fs.readdirSync(dir).find((f) => f.endsWith(`_${h}.mp3`));
+    if (!old) continue;
+    const move = !wanted.has(old), oldJson = path.join(dir, old.replace(/\.mp3$/, '.json'));
+    (move ? fs.renameSync : fs.copyFileSync)(path.join(dir, old), j.mp3);
+    if (fs.existsSync(oldJson)) (move ? fs.renameSync : fs.copyFileSync)(oldJson, j.meta);
+    console.log(`  line ${j.i + 1}: reusing ${old}`);
+  }
   const todo = jobs.filter((j) => !fs.existsSync(j.mp3));
   const need = todo.reduce((n, j) => n + j.text.length, 0);
   if (need && credits.used + need > max) throw new Error(`CREDIT GUARD: needs ${need} characters, credits.json shows ${credits.used} used, MAX_CHARS is ${max}. Nothing was sent.`);

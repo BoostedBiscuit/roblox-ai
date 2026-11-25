@@ -34,7 +34,7 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
   Music options: `from=` (where the song starts), `duck=` (music level while someone talks), `mute=a-b`.
 * The SHOTS list in the script: camera positions and times.
 
-**Voice:** ElevenLabs voice **Adam** by default (`reaping-trials/voice.json`); an episode can pick its own narrator with a `=== VOICE ===` block (Episode 1: **Roger**). Sped up 10 % after generation (`tempo`), long pauses shortened (`max_pause`). `pitch` (semitones, 0 = the voice as ElevenLabs makes it) is off: shifting the whole voice made it sound nasal.
+**Voice:** ElevenLabs voice **Adam** by default (`reaping-trials/voice.json`); an episode can pick its own narrator with a `=== VOICE ===` block (Episode 1: **Adam, `rant=1.3`**: sped up 1.3x by playing faster, so the pitch rises with it, the Roblox "rant" sound, no extra processing). Sped up 10 % after generation (`tempo`), long pauses shortened (`max_pause`). `pitch` (semitones, 0 = the voice as ElevenLabs makes it) is off: shifting the whole voice made it sound nasal.
 Put your key in a local `.env` as `ELEVENLABS_API_KEY=...` (see `.env.example`; `.env` is never committed). A restricted key with only
 text-to-speech permission is enough. Characters sent are logged in `credits.json` (not committed) and capped by `MAX_CHARS`.
 

@@ -57,7 +57,9 @@ export async function narrate(name) {
   if (!lines.length) throw new Error(`no === NARRATION === block in ${name}.html`);
   const cfg = JSON.parse(fs.readFileSync(path.join(RT, 'voice.json'), 'utf8'));
   // the scene file may pick its own narrator:  === VOICE ===  <name> <voice_id>  === END ===   (otherwise voice.json)
-  const vb = readBlock(html, 'VOICE')[0], narrator = vb ? { name: vb.trim().split(/\s+/)[0], voice_id: vb.trim().split(/\s+/)[1] } : cfg.narrator;
+  // options after the id:  rant=1.3  = speed up by playing faster (the pitch rises with it, like a sped-up clip) instead of voice.json tempo
+  const vt = readBlock(html, 'VOICE')[0]?.trim().split(/\s+/), narrator = vt ? { name: vt[0], voice_id: vt[1] } : cfg.narrator;
+  const vopt = Object.fromEntries((vt || []).slice(2).map((kv) => kv.split('=')));
   const dir = path.join(RT, 'audio', 'voice', name); fs.mkdirSync(dir, { recursive: true });
   const credits = readCredits(), max = parseInt(process.env.MAX_CHARS || '5000', 10);
   const jobs = lines.map((l, i) => {
@@ -92,9 +94,9 @@ export async function narrate(name) {
   for (const f of fs.readdirSync(dir)) if (!keep.has(path.join(dir, f))) fs.rmSync(path.join(dir, f));
 
   // Post-processing (no API call): trim silence, shorten long pauses inside a line (max_pause), speed up (tempo, pitch kept).
-  const tempo = cfg.tempo || 1, maxPause = cfg.max_pause ?? 99;
+  const rant = parseFloat(vopt.rant || 0), tempo = rant || cfg.tempo || 1, maxPause = cfg.max_pause ?? 99;
   const pdir = path.join(ROOT, 'reaping-trials', 'build', name, 'voice'); fs.mkdirSync(pdir, { recursive: true });
-  const out = { video: name, voice: narrator.name, tempo, lines: [] };
+  const out = { video: name, voice: narrator.name + (rant ? ` (sped up ${rant}x)` : ''), tempo, lines: [] };
   let prevEnd = 0;
   jobs.forEach((j, i) => {
     if (j.at === null) j.at = +(prevEnd + (j.gap || 0)).toFixed(3);            // "+gap" lines follow the previous line
@@ -108,10 +110,10 @@ export async function narrate(name) {
     }
     segs[segs.length - 1][1] = Math.min(clipLen, words[words.length - 1].end + 0.14);
     const mapT = (t) => { let acc = 0; for (const [a, b] of segs) { if (t <= b) return (acc + Math.max(0, t - a)) / tempo; acc += b - a; } return acc / tempo; };
-    const wav = path.join(pdir, path.basename(j.mp3).replace('.mp3', `_t${tempo}_p${maxPause}.wav`));
+    const wav = path.join(pdir, path.basename(j.mp3).replace('.mp3', `_${rant ? 'r' : 't'}${tempo}_p${maxPause}.wav`));
     if (!fs.existsSync(wav)) {
       const parts = segs.map(([a, b], k) => `[0:a]atrim=${a.toFixed(3)}:${b.toFixed(3)},asetpts=PTS-STARTPTS[s${k}]`);
-      const fc = `${parts.join(';')};${segs.map((_, k) => `[s${k}]`).join('')}concat=n=${segs.length}:v=0:a=1${tempo !== 1 ? `,atempo=${tempo}` : ''}[o]`;
+      const fc = `${parts.join(';')};${segs.map((_, k) => `[s${k}]`).join('')}concat=n=${segs.length}:v=0:a=1,aresample=44100${rant ? `,asetrate=${Math.round(44100 * rant)},aresample=44100` : tempo !== 1 ? `,atempo=${tempo}` : ''}[o]`;
       ff(['-i', j.mp3, '-filter_complex', fc, '-map', '[o]', '-ar', '44100', '-ac', '1', '-c:a', 'pcm_s16le', wav]);
     }
     const keyWords = new Set(); j.raw.split(' ').forEach((w, k) => { if (w.includes('*')) keyWords.add(k); });

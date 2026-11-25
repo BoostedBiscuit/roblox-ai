@@ -119,7 +119,7 @@ export function mix(name, duration) {
     '-map', '[full]', '-t', D, '-c:a', 'pcm_s16le', pre, '-map', '[nv]', '-t', D, '-c:a', 'pcm_s16le', preNV]);
   // 4) one shared gain to −14 LUFS + a limiter, so the three files line up exactly in an editor
   const gain = -14 - lufs(pre), lim = `volume=${gain.toFixed(2)}dB,alimiter=limit=0.84:level=0:attack=3:release=60`;
-  const out = { mix: path.join(dir, 'mix.wav'), noVoice: path.join(dir, 'no-voice.wav'), voice: path.join(dir, 'voice.wav'), sfx: path.join(dir, 'sfx-only.wav') };
+  const out = { mix: path.join(dir, 'mix.wav'), noVoice: path.join(dir, 'no-voice.wav'), voice: path.join(dir, 'voice.wav'), sfx: path.join(dir, 'sfx-only.wav'), noMusic: path.join(dir, 'no-music.wav') };
   ff(['-i', pre, '-af', lim, '-c:a', 'pcm_s16le', out.mix]);
   ff(['-i', preNV, '-af', lim, '-c:a', 'pcm_s16le', out.noVoice]);
   ff(['-i', voice, '-af', `${fmt},${lim}`, '-c:a', 'pcm_s16le', out.voice]);
@@ -128,6 +128,8 @@ export function mix(name, duration) {
   const fxMix = fx.length ? `${fx.map((i) => filters[i]).join(';')};${fx.map((i) => beds[i]).join('')}amix=inputs=${fx.length}:normalize=0:duration=longest,apad=whole_dur=${D},atrim=0:${D}[fx]` : `anullsrc=r=${SR}:cl=stereo,atrim=0:${D}[fx]`;
   ff([...inputs, '-filter_complex', fxMix, '-map', '[fx]', '-t', D, '-c:a', 'pcm_s16le', preFx]);
   ff(['-i', preFx, '-af', lim, '-c:a', 'pcm_s16le', out.sfx]);
+  // 6) narration + sound effects, no music
+  ff(['-i', voice, '-i', preFx, '-filter_complex', `[0:a]${fmt}[v];[1:a]${fmt}[f];[v][f]amix=inputs=2:normalize=0:duration=first,${lim}[o]`, '-map', '[o]', '-t', D, '-c:a', 'pcm_s16le', out.noMusic]);
   fs.writeFileSync(path.join(dir, 'placed.json'), JSON.stringify(placed, null, 1));
   console.log(`  audio: ${placed.length} sounds placed · narration ${narr.lines.length} lines (${narr.voice}) · final ${lufs(out.mix).toFixed(1)} LUFS`);
   if (missing.length) console.log(`  ⚠ missing sound files (skipped): ${[...new Set(missing)].join(', ')}`);

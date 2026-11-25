@@ -19,12 +19,12 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
 
 | Command | Output |
 |---|---|
-| `npm run render -- reaping-trailer` | `out/reaping-trials/trailer.mp4` (finished video), `trailer-no-voice.mp4` (music + effects, captions on), `trailer-sfx-only.mp4` (sound effects only: no narration, no music), `trailer-voice.mp3` (narration only, same timing): the last three are for re-voicing in an editor |
+| `npm run render -- reaping-trailer` | `out/reaping-trials/trailer.mp4` (finished video), `trailer-no-voice.mp4` (music + effects, captions on), `trailer-sfx-only.mp4` (sound effects only: no narration, no music), `trailer-no-music.mp4` (narration + effects, no music), `trailer-voice.mp3` (narration only, same timing): the last four are for re-voicing in an editor |
 | `npm run render -- reaping-trailer --stills` | one JPG per shot in `reaping-trials/build/trailer/stills/` (fast framing check) |
 | `npm run render -- reaping-trailer --audio-only` | re-mix after you change the CUE SHEET or swap a sound file, without re-rendering the picture |
 | `npm run render -- reaping-trailer --thumbs` | `out/reaping-trials/trailer-thumb-option1.png` and `-option2.png` |
 | `npm run render -- reaping-trailer --cover 1` | `trailer-thumb.png` + `trailer-with-cover.mp4` (the thumbnail is the last 0.5 s) |
-| `npm run render -- reaping-ep1` | `out/reaping-trials/ep1.mp4` (+ `ep1-no-voice.mp4`, `ep1-sfx-only.mp4`, `ep1-voice.mp3`, `--thumbs`, `--cover 1`) |
+| `npm run render -- reaping-ep1` | `out/reaping-trials/ep1.mp4` (+ `ep1-no-voice.mp4`, `ep1-sfx-only.mp4`, `ep1-no-music.mp4`, `ep1-voice.mp3`, `--thumbs`, `--cover 1`) |
 | `npm run narrate -- trailer` | ElevenLabs narration for the NARRATION lines (cached: unchanged lines cost nothing) |
 | `npm run qa -- ep1` | **clip check** (about 30 s, no rendering): every 0.1 s it looks for the camera inside or touching anything, a face hidden behind something, and characters inside each other, the crowd or the set (bowls, steps, ropes, mic). Prints each problem with its time and shot number. Run it before every render. |
 

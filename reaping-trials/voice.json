@@ -11,5 +11,7 @@
   "_post": "applied after generation, no extra credits: tempo = speed-up with the same pitch, max_pause = longest pause kept inside a line (seconds), pitch = semitones up (+) or down (-) with the same speed (done in the mix)",
   "tempo": 1.1,
   "max_pause": 0.5,
-  "pitch": 1.0
+  "pitch": 1.0,
+  "_rise": "word⬆ in a NARRATION line: the voice glides up over the marked words, up to this many semitones at the end (same recording, no credits)",
+  "rise": 8
 }

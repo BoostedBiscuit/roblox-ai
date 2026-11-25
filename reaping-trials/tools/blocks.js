@@ -10,6 +10,6 @@ export function narrationLines(html) {
     if (!m) throw new Error(`bad NARRATION line: "${l}"  (expected: <seconds | +gap> <who> <text>)`);
     const raw = m[3].trim();
     // "12.5" = starts at 12.5 s · "+0.6" = starts 0.6 s after the previous line ends
-    return { at: m[1].startsWith('+') ? null : parseFloat(m[1]), gap: m[1].startsWith('+') ? parseFloat(m[1]) : null, who: m[2], raw, text: raw.replace(/\*/g, '').replace(/\s+/g, ' ') };
+    return { at: m[1].startsWith('+') ? null : parseFloat(m[1]), gap: m[1].startsWith('+') ? parseFloat(m[1]) : null, who: m[2], raw, text: raw.replace(/[*⬆↑]/g, '').replace(/\s+/g, ' ') };   // *word* = yellow caption · word⬆ = the voice rises on that word
   });
 }

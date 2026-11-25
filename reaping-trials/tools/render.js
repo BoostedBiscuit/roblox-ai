@@ -132,7 +132,7 @@ async function main() {
     const outs = { mp4: path.join(OUTD, `${name}.mp4`), nv: path.join(OUTD, `${name}-no-voice.mp4`), sfx: path.join(OUTD, `${name}-sfx-only.mp4`), nm: path.join(OUTD, `${name}-no-music.mp4`), voice: path.join(OUTD, `${name}-voice.mp3`) };
     const framesDir = path.join(BUILD, PREVIEW ? 'preview-frames' : 'frames');
     if (has('--audio-only')) {
-      for (const [src, dst] of [[a.mix, outs.mp4], [a.noVoice, outs.nv]]) { const tmp = dst + '.tmp.mp4'; ff(['-i', dst, '-i', src, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', tmp]); fs.renameSync(tmp, dst); }
+      for (const [src, dst] of [[a.mix, outs.mp4], [a.noVoice, outs.nv]]) { const tmp = dst + '.tmp.mp4'; ff(['-i', dst, '-i', src, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', tmp]); fs.renameSync(tmp, dst); }   // (no -shortest: it cut a few frames each time)
     } else {
       const sigFile = path.join(framesDir, '.signature'), sig = signature();
       if (has('--redo')) { for (const [x, y] of process.argv[process.argv.indexOf('--redo') + 1].split(',').map((r) => r.split('-').map(Number))) for (let f = x; f <= (y ?? x); f++) fs.rmSync(path.join(framesDir, `${String(f).padStart(5, '0')}.jpg`), { force: true }); fs.writeFileSync(sigFile, sig); }
@@ -142,8 +142,8 @@ async function main() {
       encode(framesDir, total, a.mix, outs.mp4);
       encode(framesDir, total, a.noVoice, outs.nv);
     }
-    ff(['-i', outs.nv, '-i', a.sfx, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', outs.sfx]);   // same picture, effects only
-    ff(['-i', outs.mp4, '-i', a.noMusic, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', outs.nm]);   // narration + effects, no music
+    ff(['-i', outs.nv, '-i', a.sfx, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outs.sfx]);   // same picture, effects only
+    ff(['-i', outs.mp4, '-i', a.noMusic, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outs.nm]);   // narration + effects, no music
     ff(['-i', a.voice, '-c:a', 'libmp3lame', '-b:a', '192k', outs.voice]);
     // the mixed soundtrack for the ▶ Play preview on your phone
     fs.mkdirSync(path.join(RTD, 'audio', 'mix'), { recursive: true });

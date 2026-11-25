@@ -113,8 +113,27 @@ export async function narrate(name) {
       ff(['-i', j.mp3, '-filter_complex', fc, '-map', '[o]', '-ar', '44100', '-ac', '1', '-c:a', 'pcm_s16le', wav]);
     }
     const keyWords = new Set(); j.raw.split(' ').forEach((w, k) => { if (w.includes('*')) keyWords.add(k); });
+    // word⬆ in the script: the voice rises on that word (pitch bend on the same recording, formants kept, timing unchanged)
+    const riseWords = []; j.raw.split(' ').forEach((w, k) => { if (/[⬆↑]/.test(w) && words[k]) riseWords.push(k); });
+    let clipWav = wav;
+    if (riseWords.length) {
+      const st = cfg.rise ?? 6, rw = wav.replace('.wav', `_rise${riseWords.join('-')}_${st}.wav`);
+      if (!fs.existsSync(rw)) {
+        const cmds = [];
+        const spans = []; for (const k of riseWords) { const l = spans[spans.length - 1]; if (l && l[1] === k - 1) l[1] = k; else spans.push([k, k]); }   // "In⬆ this⬆ town⬆" = one rise
+        for (const [k0, k] of spans) {
+          const a = mapT(words[k0].start), b = mapT(words[k].end), n = Math.max(4, Math.round((b - a) / 0.02));
+          for (let q = 0; q <= n; q++) cmds.push(`${(a + ((b - a) * q) / n).toFixed(3)} rubberband@rb pitch ${(2 ** ((st * (q / n) ** 1.3) / 12)).toFixed(4)};`);
+          const back = words[k + 1] ? Math.min(b + 0.12, (b + mapT(words[k + 1].start)) / 2) : b + 0.12;
+          cmds.push(`${back.toFixed(3)} rubberband@rb pitch 1.0;`);
+        }
+        const cf = rw.replace('.wav', '.cmd'); fs.writeFileSync(cf, cmds.join('\n') + '\n');
+        ff(['-i', wav, '-af', `asendcmd=f=${cf},rubberband@rb=pitch=1.0:formant=preserved:pitchq=consistency:transients=smooth`, '-ar', '44100', '-ac', '1', '-c:a', 'pcm_s16le', rw]);
+      }
+      clipWav = rw;
+    }
     const len = dur(wav);
-    const line = { at: j.at, who: j.who, text: j.text, raw: path.relative(RT, j.mp3).split(path.sep).join('/'), clip: path.relative(ROOT, wav).split(path.sep).join('/'),
+    const line = { at: j.at, who: j.who, text: j.text, raw: path.relative(RT, j.mp3).split(path.sep).join('/'), clip: path.relative(ROOT, clipWav).split(path.sep).join('/'),
       start: j.at, end: +(j.at + len).toFixed(3),
       words: words.map((w, k) => ({ w: w.w, key: keyWords.has(k) || undefined, start: +(j.at + mapT(w.start)).toFixed(3), end: +(j.at + mapT(w.end)).toFixed(3) })) };
     out.lines.push(line); prevEnd = line.end;

@@ -5,9 +5,9 @@ THE REAPING TRIALS · EPISODE 1 · THE CHOOSING
 Render:  npm run render -- reaping-ep1        → out/reaping-trials/ep1.mp4 (+ ep1-no-voice.mp4, ep1-voice.mp3)
 Voice:   npm run narrate -- ep1                (after changing NARRATION lines)
 
-=== NARRATION ===  (start: seconds, or +gap after the previous line · who: narrator = big captions, others = speaker subtitle · *word* = yellow)
+=== NARRATION ===  (start: seconds, or +gap after the previous line · who: narrator = big captions, others = speaker subtitle · *word* = yellow · word⬆ = the voice rises)
 at     who       text
-+0.6   narrator  In this town… one kid is going to *disappear* today.
++0.6   narrator  In⬆ this⬆ town⬆… one kid is going to *disappear* today.
 +0.4   narrator  My name is Rhea Vance.
 +2.2   narrator  This is Sector 7. We grow the wheat that feeds the whole Capital.
 +0.5   narrator  And every year, on the morning of the Choosing, I come out here to breathe.
@@ -317,10 +317,10 @@ SHOTS follow the narration automatically (see the SHOTS list in the script below
       const walking = t < SQ_WIDE;
       crowd.visible = !walking; for (const w of walkers) w.ch.visible = walking; for (const g of road) g.visible = walking;
       let lookAt = V3(0, 3, -11);
+      playHaskin(t); playVire(t); playPip(t); playRheaS(t); playPuller(t);    // (characters first: the crowd looks at where they are NOW)
       if (t > E(18) && t < S(22)) lookAt = pip.position.clone().setY(1.2);
       else if (t >= S(22) && t < S(26)) lookAt = rheaS.position.clone().setY(1.6);
       square.update(t, { lookAt });
-      playHaskin(t); playVire(t); playPip(t); playRheaS(t); playPuller(t);
       if (walking) for (const w of walkers) { w.play(t); w.ch.rig.update(t); }
       guards.forEach((g, i) => { if (i !== 2) A.set(g, 'idle', t + i); g.rig.update(t); });
       road.forEach((g, i) => { if (g.visible) { A.set(g, 'idle', t + i); g.rig.update(t); } });

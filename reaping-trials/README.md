@@ -29,7 +29,7 @@ Preview pictures of the cast, faces, expressions and moves are in [`previews/`](
 | `npm run qa -- ep1` | **clip check** (about 30 s, no rendering): every 0.1 s it looks for the camera inside or touching anything, a face hidden behind something, and characters inside each other, the crowd or the set (bowls, steps, ropes, mic). Prints each problem with its time and shot number. Run it before every render. |
 
 **Edit a video** at the top of its scene file (e.g. `episodes/trailer.html`):
-* `=== NARRATION ===`: time, speaker, text. `*word*` makes that caption yellow. Changing only the time costs nothing; changing text re-generates that line.
+* `=== NARRATION ===`: time, speaker, text. `*word*` makes that caption yellow; `word⬆` makes the voice rise on that word (`In⬆ this⬆ town⬆…` = one rising phrase, size set by `"rise"` in `voice.json`, no credits). Changing only the time costs nothing; changing text re-generates that line.
 * `=== CUE SHEET ===`: time, sound, volume (1.0 = as loud as the narration; music 0.50 = 50 %), options like `align=peak`, `dur=`, `loop`, `fadeout=`.
   Music options: `from=` (where the song starts), `duck=` (music level while someone talks), `mute=a-b`.
 * The SHOTS list in the script: camera positions and times.

@@ -74,7 +74,7 @@ export function mix(name, duration) {
   const voiceRms = (() => { const e = envelope(voice).filter((x) => x > -40); return 10 * Math.log10(e.reduce((s, x) => s + 10 ** (x / 10), 0) / Math.max(1, e.length)); })();
 
   // 2) music + effects
-  const inputs = ['-i', voice], filters = [], beds = [], placed = [];
+  const inputs = ['-i', voice], filters = [], beds = [], placed = [], isMusic = [];
   const nIn = () => inputs.filter((x) => x === '-i').length;
   for (const c of cues) {
     const file = findSound(c.sound);
@@ -92,7 +92,7 @@ export function mix(name, duration) {
       let af = `${fmt},volume=${g.toFixed(4)},volume='${expr}':eval=frame`;
       if (o.fadein) af += `,afade=t=in:d=${o.fadein}`;
       if (o.fadeout) { const [a, b] = range(o.fadeout); af += `,afade=t=out:st=${(a - c.t).toFixed(3)}:d=${(b - a).toFixed(3)}`; }
-      inputs.push('-i', seg); filters.push(`[${nIn() - 1}:a]${af},adelay=${Math.round(c.t * 1000)}:all=1[b${k}]`); beds.push(`[b${k}]`);
+      inputs.push('-i', seg); filters.push(`[${nIn() - 1}:a]${af},adelay=${Math.round(c.t * 1000)}:all=1[b${k}]`); beds.push(`[b${k}]`); isMusic.push(true);
       placed.push({ t: c.t, sound: c.sound, from, gain: +(20 * Math.log10(g)).toFixed(1) });
       continue;
     }
@@ -109,7 +109,7 @@ export function mix(name, duration) {
     const fi = parseFloat(o.fadein || 0.008), fo = Math.min(parseFloat(o.fadeout || 0.12), len / 2);
     inputs.push(...(o.loop ? ['-stream_loop', '-1'] : []), '-ss', from.toFixed(3), '-i', file);
     filters.push(`[${nIn() - 1}:a]${fmt},atrim=0:${len.toFixed(3)},asetpts=PTS-STARTPTS,volume=${gain.toFixed(4)},afade=t=in:d=${fi},afade=t=out:st=${Math.max(0, len - fo).toFixed(3)}:d=${fo.toFixed(3)},adelay=${Math.round(at * 1000)}:all=1[b${k}]`);
-    beds.push(`[b${k}]`);
+    beds.push(`[b${k}]`); isMusic.push(false);
     placed.push({ t: c.t, sound: c.sound, start: +at.toFixed(3), len: +len.toFixed(3), gain: +(20 * Math.log10(gain)).toFixed(1) });
   }
   // 3) pre-mixes: full and without the voice
@@ -119,10 +119,15 @@ export function mix(name, duration) {
     '-map', '[full]', '-t', D, '-c:a', 'pcm_s16le', pre, '-map', '[nv]', '-t', D, '-c:a', 'pcm_s16le', preNV]);
   // 4) one shared gain to −14 LUFS + a limiter, so the three files line up exactly in an editor
   const gain = -14 - lufs(pre), lim = `volume=${gain.toFixed(2)}dB,alimiter=limit=0.84:level=0:attack=3:release=60`;
-  const out = { mix: path.join(dir, 'mix.wav'), noVoice: path.join(dir, 'no-voice.wav'), voice: path.join(dir, 'voice.wav') };
+  const out = { mix: path.join(dir, 'mix.wav'), noVoice: path.join(dir, 'no-voice.wav'), voice: path.join(dir, 'voice.wav'), sfx: path.join(dir, 'sfx-only.wav') };
   ff(['-i', pre, '-af', lim, '-c:a', 'pcm_s16le', out.mix]);
   ff(['-i', preNV, '-af', lim, '-c:a', 'pcm_s16le', out.noVoice]);
   ff(['-i', voice, '-af', `${fmt},${lim}`, '-c:a', 'pcm_s16le', out.voice]);
+  // 5) sound effects only (no narration, no music), same level as the other files
+  const fx = beds.map((b, i) => (isMusic[i] ? null : i)).filter((i) => i !== null), preFx = path.join(dir, 'pre_sfx.wav');
+  const fxMix = fx.length ? `${fx.map((i) => filters[i]).join(';')};${fx.map((i) => beds[i]).join('')}amix=inputs=${fx.length}:normalize=0:duration=longest,apad=whole_dur=${D},atrim=0:${D}[fx]` : `anullsrc=r=${SR}:cl=stereo,atrim=0:${D}[fx]`;
+  ff([...inputs, '-filter_complex', fxMix, '-map', '[fx]', '-t', D, '-c:a', 'pcm_s16le', preFx]);
+  ff(['-i', preFx, '-af', lim, '-c:a', 'pcm_s16le', out.sfx]);
   fs.writeFileSync(path.join(dir, 'placed.json'), JSON.stringify(placed, null, 1));
   console.log(`  audio: ${placed.length} sounds placed · narration ${narr.lines.length} lines (${narr.voice}) · final ${lufs(out.mix).toFixed(1)} LUFS`);
   if (missing.length) console.log(`  ⚠ missing sound files (skipped): ${[...new Set(missing)].join(', ')}`);

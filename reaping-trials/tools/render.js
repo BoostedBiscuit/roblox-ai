@@ -1,5 +1,5 @@
 // tools/render.js: renders a Reaping Trials scene to a vertical 1080 × 1920, 30 fps MP4 (adapted from roblox-short/render.js).
-//   npm run render -- reaping-trailer            → out/reaping-trials/trailer.mp4   (also: trailer-no-voice.mp4, trailer-voice.mp3)
+//   npm run render -- reaping-trailer            → out/reaping-trials/trailer.mp4   (also: trailer-no-voice.mp4, trailer-sfx-only.mp4, trailer-voice.mp3)
 //   npm run render -- reaping-ep1-part1          → out/reaping-trials/ep1-part1.mp4
 // Flags: --stills        one JPG per shot in reaping-trials/build/<video>/stills/ (fast framing check)
 //        --preview       half size, 15 fps → reaping-trials/build/<video>/preview.mp4
@@ -129,7 +129,7 @@ async function main() {
     const total = Math.round((info.duration * FPS) / STEP);
     console.log(`▶ ${name}: ${info.duration}s, ${total} frames`);
     const a = mix(name, info.duration);
-    const outs = { mp4: path.join(OUTD, `${name}.mp4`), nv: path.join(OUTD, `${name}-no-voice.mp4`), voice: path.join(OUTD, `${name}-voice.mp3`) };
+    const outs = { mp4: path.join(OUTD, `${name}.mp4`), nv: path.join(OUTD, `${name}-no-voice.mp4`), sfx: path.join(OUTD, `${name}-sfx-only.mp4`), voice: path.join(OUTD, `${name}-voice.mp3`) };
     const framesDir = path.join(BUILD, PREVIEW ? 'preview-frames' : 'frames');
     if (has('--audio-only')) {
       for (const [src, dst] of [[a.mix, outs.mp4], [a.noVoice, outs.nv]]) { const tmp = dst + '.tmp.mp4'; ff(['-i', dst, '-i', src, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', tmp]); fs.renameSync(tmp, dst); }
@@ -142,12 +142,14 @@ async function main() {
       encode(framesDir, total, a.mix, outs.mp4);
       encode(framesDir, total, a.noVoice, outs.nv);
     }
+    ff(['-i', outs.nv, '-i', a.sfx, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', outs.sfx]);   // same picture, effects only
     ff(['-i', a.voice, '-c:a', 'libmp3lame', '-b:a', '192k', outs.voice]);
     // the mixed soundtrack for the ▶ Play preview on your phone
     fs.mkdirSync(path.join(RTD, 'audio', 'mix'), { recursive: true });
     ff(['-i', a.mix, '-c:a', 'libmp3lame', '-b:a', '128k', path.join(RTD, 'audio', 'mix', `${name}_mix.mp3`)]);
     console.log(`\n✔ ${rel(outs.mp4)}  (${probe(outs.mp4).toFixed(2)} s, ${(fs.statSync(outs.mp4).size / 1048576).toFixed(1)} MB)`);
     console.log(`  ${rel(outs.nv)}  (music + sound effects, no narration)`);
+    console.log(`  ${rel(outs.sfx)}  (sound effects only: no narration, no music)`);
     console.log(`  ${rel(outs.voice)}  (narration only, same timing)`);
     if (a.missing.length) console.log(`  missing sounds were skipped: ${a.missing.join(', ')}`);
   } finally { server.close(); }

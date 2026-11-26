@@ -43,11 +43,11 @@
   .fx-card.chapter .t{font:900 calc(var(--u)*10.5) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1;letter-spacing:.02em;
      -webkit-text-stroke:calc(var(--u)*.5) #000;paint-order:stroke fill;text-shadow:0 0 calc(var(--u)*5) rgba(255,210,63,.45);}
   .fx-card.echo{top:20%;}
-  .fx-card.echo .band{display:inline-block;transform:skewX(-14deg) rotate(-4deg);padding:calc(var(--u)*2) calc(var(--u)*6);
+  .fx-card.echo .band{display:inline-block;white-space:nowrap;transform:skewX(-14deg) rotate(-4deg);padding:calc(var(--u)*2) calc(var(--u)*6);
      background:linear-gradient(90deg,rgba(0,0,0,.85),rgba(0,0,0,.6));border-left:calc(var(--u)*1.4) solid var(--c);border-right:calc(var(--u)*1.4) solid var(--c);}
   .fx-card.echo .lbl{font:900 calc(var(--u)*4.2) Montserrat,'Arial Black',sans-serif;color:var(--c);letter-spacing:.3em;text-align:left;}
-  .fx-card.echo .nm{font:900 calc(var(--u)*11) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1;letter-spacing:.04em;text-shadow:0 0 calc(var(--u)*3) var(--c);}
-  .fx-card.echo .kj{font-family:'Dela Gothic One','IPAGothic',sans-serif;font-size:calc(var(--u)*11);color:var(--c);margin-left:calc(var(--u)*2);
+  .fx-card.echo .nm{font:900 calc(var(--u)*8.6) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1;letter-spacing:.04em;text-shadow:0 0 calc(var(--u)*3) var(--c);}
+  .fx-card.echo .kj{font-family:'Dela Gothic One','IPAGothic',sans-serif;font-size:calc(var(--u)*8.6);color:var(--c);margin-left:calc(var(--u)*2);
      -webkit-text-stroke:calc(var(--u)*.4) #000;paint-order:stroke fill;vertical-align:-.05em;}
   .fx-card.name{top:15%;text-align:left;padding-left:6%;}
   .fx-card.name .nm{display:inline-block;font:900 calc(var(--u)*8.4) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1;padding:calc(var(--u)*1.2) calc(var(--u)*3);
@@ -63,7 +63,7 @@
   #fx-count div{position:absolute;right:6%;top:12%;font:900 calc(var(--u)*22) Montserrat,'Arial Black',sans-serif;color:#ffd84a;line-height:1;
      -webkit-text-stroke:calc(var(--u)*1) #6a3a00;paint-order:stroke fill;text-shadow:0 0 calc(var(--u)*5) #ffb200;transform-origin:50% 50%;}
   #fx-tbc{opacity:0;}
-  #fx-tbc .arrow{position:absolute;left:6%;bottom:21%;width:88%;height:calc(var(--u)*20);}
+  #fx-tbc .arrow{position:absolute;left:4%;bottom:22%;width:92%;height:calc(var(--u)*26);}
   #fx-tbc .follow{position:absolute;left:0;right:0;bottom:12%;text-align:center;font:900 calc(var(--u)*5.6) Montserrat,'Arial Black',sans-serif;color:#fff;
      -webkit-text-stroke:calc(var(--u)*.4) #000;paint-order:stroke fill;text-shadow:0 0 calc(var(--u)*3) rgba(255,210,63,.6);}`;
 

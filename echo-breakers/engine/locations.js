@@ -141,12 +141,12 @@
     [[-34, 6, 0, '#e23b3b'], [-34, 13, 0, '#f2c14e'], [33, 9, Math.PI, '#3d8fd6'], [-50, TOP_Y, -66, 0, '#5fbf7a'], [44, TOP_Y, -66, Math.PI, '#f08a4b'], [-25, TOP_Y, -66, 0, '#eeeeee']].forEach((c) => {
       if (c.length === 4) add(K.car(c[3]), c[0], 0, c[1], c[2]); else add(K.car(c[4]), c[0], c[1], c[2], c[3]);
     });
-    add(K.scooter('#7fd1c1'), 10, TOP_Y, -67, 0.4); add(K.scooter('#ff8fa3'), 12.5, TOP_Y, -68, 0.2);
+    add(K.scooter('#7fd1c1'), 34, TOP_Y, -67, 0.4); add(K.scooter('#ff8fa3'), 36.5, TOP_Y, -68, 0.2);
     for (let x = -28; x <= 28; x += 4) if (Math.abs(x) > 13) add(K.bollard(), x, 0, 1.5);
     for (let x = -70; x <= 70; x += 5) if (Math.abs(x) > 14) add(K.bollard(), x, TOP_Y, TOP_Z - 4.6);
     for (const f of [1, 2, 3]) for (const s of [-1, 1]) add(K.lanternPost(), s * (HALF + 0.65), f * 5 + 1.3, -(f * PITCH - 3));
     for (const s of [-1, 1]) { add(K.planter(2.4), s * 9.5, TOP_Y, TOP_Z - 1.6); add(K.planter(2.0), s * 10, 0, 3); }
-    add(K.crate(1.4), 22, TOP_Y, -71); add(K.crate(1.2), 23.4, TOP_Y, -70.6, 0.4); add(K.crate(1.1), 22.6, TOP_Y + 1.4, -71.1, 0.2);
+    add(K.crate(1.4), 52, TOP_Y, -77); add(K.crate(1.2), 53.4, TOP_Y, -76.6, 0.4); add(K.crate(1.1), 52.6, TOP_Y + 1.4, -77.1, 0.2);
     add(K.cafeSet('#2f6e9a', 2), -8, TOP_Y, -68.5); add(K.cafeSet('#c8372d', 3), 30, 0, 26);
     K.trees(G, [[-26, 0, 30], [26, 0, 36], [-12, 0, 44], [14, 0, 50]], 'pine', { seed: 3 });
     K.trees(G, [[-30, TOP_Y, TOP_Z - 3], [30, TOP_Y, TOP_Z - 3], [-66, TOP_Y, TOP_Z - 3], [66, TOP_Y, TOP_Z - 3]], 'cypress', { seed: 4, scale: 1.1 });
@@ -503,14 +503,14 @@
     const rub = []; for (let k = 0; k < 26; k++) { const a = (rn() - 0.5) * 1.2, d = 1.05 + rn() * 0.15; rub.push([Math.cos(a) * OA * d, 0.5, Math.sin(a) * OB * d, 1.5 + rn() * 2.5, rn() * 3]); } rocks(B, rub, '#a39274');
     const props = new THREE.Group(); G.add(props); const breakables = [];
     const column = (h, broken) => { const g = new THREE.Group(), m = RT.plastic('#d8ccb6', { roughness: 0.75 }); g.add(K.part(boxG(2.4, 0.8, 2.4), m, 0, 0.4, 0)); g.add(K.part(new THREE.CylinderGeometry(0.85, 0.95, h, 16), m, 0, 0.8 + h / 2, 0, broken ? 0.03 : 0, 0, 0)); if (!broken) g.add(K.part(boxG(2.2, 0.7, 2.2), m, 0, 0.8 + h + 0.35, 0)); g.userData.size = [2.4, h + 1.5, 2.4]; return K.tag(g, 'pillar'); };
-    for (let k = 0; k < 10; k++) { const a = (k / 10) * Math.PI * 2 + 0.31; if (Math.abs(Math.sin(a)) < 0.2) continue; const c = column(5 + (k % 3) * 2.5, k % 2 === 1); props.add(at(c, Math.cos(a) * FA * 0.9, 0, Math.sin(a) * FB * 0.88)); breakables.push(c); }
+    for (let k = 0; k < 10; k++) { const a = (k / 10) * Math.PI * 2 + 0.31; if (Math.abs(Math.cos(a)) < 0.3) continue; /* none at the north/south ends: that is where the fights are */ const c = column(5 + (k % 3) * 2.5, k % 2 === 1); props.add(at(c, Math.cos(a) * FA * 0.9, 0, Math.sin(a) * FB * 0.88)); breakables.push(c); }
     for (let k = 0; k < 6; k++) { const a = (k / 6) * Math.PI * 2 + 0.9, blk = K.tag(new THREE.Group(), 'block'); blk.add(K.part(boxG(2.2, 1.4, 1.6), RT.plastic('#cbbfa8', { roughness: 0.85 }), 0, 0.7, 0)); blk.userData.size = [2.2, 1.4, 1.6]; props.add(at(blk, Math.cos(a) * FA * 0.82, 0, Math.sin(a) * FB * 0.8, a)); breakables.push(blk); }
     // stage lights: four spot lights on the rim (two purple, two gold) with visible beams
     const beamT = RT.canvasTexture(16, 128, (g) => { const gr = g.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, 'rgba(255,255,255,0.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 128); });
     const spots = [], beams = [];
     [[0.6, '#9a5cff'], [2.2, '#ffc04a'], [3.6, '#9a5cff'], [5.2, '#ffc04a']].forEach(([a, col]) => {
       const p = new THREE.Vector3(Math.cos(a) * OA * 0.97, 34, Math.sin(a) * OB * 0.97), aim = new THREE.Vector3(Math.cos(a) * 12, 0, Math.sin(a) * 8);
-      const sl = new THREE.SpotLight(col, 2.4, 260, 0.32, 0.6, 1.2); sl.position.copy(p); sl.target.position.copy(aim); G.add(sl, sl.target); spots.push(sl);
+      const sl = new THREE.SpotLight(col, 1.6, 260, 0.32, 0.6, 1.2); sl.position.copy(p); sl.target.position.copy(aim); G.add(sl, sl.target); spots.push(sl);
       const L2 = p.distanceTo(aim), cone = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 18, L2, 24, 1, true), new THREE.MeshBasicMaterial({ map: beamT, color: col, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
       cone.position.copy(p).add(aim).multiplyScalar(0.5); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p.clone().sub(aim).normalize()); cone.userData.glow = false; G.add(cone); beams.push(cone);
       const lamp = RT.mesh(new THREE.CylinderGeometry(1.1, 1.5, 2, 12), RT.plastic('#222')); lamp.position.copy(p); G.add(lamp);

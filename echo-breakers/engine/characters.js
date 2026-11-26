@@ -51,7 +51,7 @@
     smirk:      { eye: 0.95, lid: 0.36, lidTilt: 0.08, low: 0.08, brow: 4, browTilt: 0.12, browAsym: -18, mouth: 'smirk', curve: 14, mw: 52, look: [-5, 0] },
     shocked:    { eye: 1.3, pupil: 0.5, lid: 0, brow: -28, browTilt: -0.1, mouth: 'o', mw: 36 },
     crying:     { eye: 0.95, pupil: 0.9, lid: 0.32, lidTilt: -0.3, brow: -8, browTilt: -0.44, mouth: 'cry', curve: -14, mw: 52, tears: 1, look: [0, 4] },
-    // Echo Breakers (anime): the "serious switch" face, battle shouts, pain, calm Mira, cold Riku
+    // Echo Breakers (anime): the "serious switch" face, battle shouts, pain, calm Aurora, cold Hale
     serious:    { eye: 0.92, pupil: 0.8, lid: 0.44, lidTilt: 0.34, low: 0.12, brow: 16, browTilt: 0.46, mouth: 'line', curve: -3, mw: 40 },
     shout:      { eye: 1.02, pupil: 0.75, lid: 0.22, lidTilt: 0.36, brow: 10, browTilt: 0.52, mouth: 'o', mw: 58 },
     pain:       { eye: 0.9, lid: 0.66, lidTilt: 0.1, low: 0.25, brow: -2, browTilt: -0.34, mouth: 'wavy', mw: 52 },

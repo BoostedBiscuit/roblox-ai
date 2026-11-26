@@ -152,7 +152,7 @@
     K.trees(G, [[-30, TOP_Y, TOP_Z - 3], [30, TOP_Y, TOP_Z - 3], [-66, TOP_Y, TOP_Z - 3], [66, TOP_Y, TOP_Z - 3]], 'cypress', { seed: 4, scale: 1.1 });
     B.build(G);
     // --- far city and sky ---
-    G.add(K.cityHill({ x: 0, y: TOP_Y, z: TOP_Z - 52, w: 700, d: 260, rise: 110, count: 240, seed: 7, yaw: Math.PI }));   // the old town climbing behind the top street
+    G.add(K.cityHill({ x: 0, y: TOP_Y, z: TOP_Z - 52, w: 700, d: 300, rise: 190, seed: 7, yaw: Math.PI }));   // the old town climbing behind the top street
     G.add(K.cityHill({ x: 0, y: 0, z: 80, w: 700, d: 200, rise: 40, count: 160, seed: 8 }));                            // the lower town behind the plaza
     daySky(G, 0, -30);
     daySky(G, 0, -30, { seed: 13, radius: 650, count: 10, size: 260, minY: 260, maxY: 520 });   // higher clouds: the stair shots look UP
@@ -224,7 +224,7 @@
   // CH2 · FOUNTAIN PIAZZA
   // A 120 × 120 open stone square. The big fountain is in the center (basin radius 9) with three marble statues.
   // North side (−z): an arched colonnade; west: café tables; south: a bell tower; edges: crates, a fruit cart, lamps.
-  // spots: center, fountainEdge (Mira's pose on the rim), west, east, north, south
+  // spots: center, fountainEdge (Aurora's pose on the rim), west, east, north, south
   // =================================================================================
   function marble(seed, move, t = 1.1) {
     const s = RT.cast.walker(seed), m = RT.plastic('#eeeae2', { roughness: 0.55 });
@@ -246,7 +246,7 @@
     B.add(stone, new THREE.CylinderGeometry(2.2, 2.8, 3.2, 20), M(0, 1.6, 0)); bowl(5, 4.4); B.add(stone, new THREE.CylinderGeometry(0.9, 1.2, 3.2, 16), M(0, 5.8, 0)); bowl(2.6, 7.6);
     B.add(stone, new THREE.CylinderGeometry(0.4, 0.6, 1.6, 12), M(0, 8.4, 0)); B.add(stone, new THREE.SphereGeometry(0.75, 14, 10), M(0, 9.6, 0));
     for (let k = 0; k < 3; k++) { const a = (k / 3) * Math.PI * 2 + 0.5; B.add(stone, boxG(2.2, 1.6, 2.2), M(Math.cos(a) * 5.6, 0.8, Math.sin(a) * 5.6, 0, -a, 0)); }
-    const statues = ['raiseHand', 'present', 'crossArms'].map((mv, k) => { const s = marble(700 + k, mv); const a = (k / 3) * Math.PI * 2 + 0.5; s.scale.setScalar(2.6); /* larger than life */ G.add(at(s, Math.cos(a) * 5.6, 1.6, Math.sin(a) * 5.6, Math.PI / 2 - a)); return s; });
+    const statues = ['raiseHand', 'present', 'crossArms'].map((mv, k) => { const s = marble(700 + k, mv); const a = (k / 3) * Math.PI * 2 + 0.5; s.scale.setScalar(2.0); /* a bit larger than life */ G.add(at(s, Math.cos(a) * 5.6, 1.6, Math.sin(a) * 5.6, Math.PI / 2 - a)); return s; });
     // water: basin + bowls + falling curtains
     const waterM = new THREE.MeshStandardMaterial({ color: '#3aa9d9', roughness: 0.12, metalness: 0.1, normalMap: K.waveNormals(), normalScale: new THREE.Vector2(0.4, 0.4), transparent: true, opacity: 0.92 });
     const pool = new THREE.Mesh(new THREE.CircleGeometry(8.3, 48), waterM); pool.rotation.x = -Math.PI / 2; pool.position.y = 1.0; G.add(pool);
@@ -293,7 +293,7 @@
     add(K.bench(), 30, 0, 52, Math.PI); add(K.bench(), 52, 0, 34, -Math.PI / 2);
     B.build(G);
     const flock = K.pigeons(G, 26, 4, 15, 6, 11);
-    G.add(K.cityHill({ x: 0, y: 0, z: -200, w: 900, d: 300, rise: 140, count: 240, seed: 21, yaw: Math.PI }));
+    G.add(K.cityHill({ x: 0, y: 0, z: -150, w: 900, d: 300, rise: 140, seed: 21, yaw: Math.PI }));   // the town climbing the hill behind the colonnade
     daySky(G, 0, 0, { seed: 4 });
     G.mood = 'halcyon';
     G.props = { statues, pool, flock };
@@ -384,7 +384,7 @@
   // The flat top is at y = 0: 72 × 72 with a 1.4-high parapet and merlons; open space 64 × 64.
   // Walls drop 24 units to the sea (y = −24). A round tower stands at the north-west corner (−x, −z),
   // the bridge leaves from the north side (+z) toward the city and the volcano. Sunset sun is in the west (−x).
-  // spots: center, rikuStart (east side), kaiStart (west side), stairsUp (north hatch), tower, seaEdge
+  // spots: center, haleStart (east side), danteStart (west side), stairsUp (north hatch), tower, seaEdge
   // =================================================================================
   function fortress() {
     const G = new THREE.Group(); G.name = 'fortress';
@@ -442,7 +442,7 @@
     G.props = { water, flag, pennant, iceTop, iceSea, volcano: volc };
     G.breakables = breakables;
     G.groundAt = () => 0;
-    G.spots = { center: [0, 0, 0], rikuStart: [18, 0, -4], kaiStart: [-18, 0, 4], stairsUp: [6, 0, S - 9], tower: [-S + 2, 17.4, -S + 2], seaEdge: [0, 0, -S + 4] };
+    G.spots = { center: [0, 0, 0], haleStart: [18, 0, -4], danteStart: [-18, 0, 4], stairsUp: [6, 0, S - 9], tower: [-S + 2, 17.4, -S + 2], seaEdge: [0, 0, -S + 4] };
     G.preview = { cam: [30, 8, 34], look: [-8, 4, -12], fov: 58 };
     G.update = (t) => { water.update(t); volc.update(t); const P = pennant.geometry.attributes.position; for (let i = 0; i < P.count; i++) { const x = P.getX(i) + 2.5; P.setZ(i, Math.sin(x * 1.4 - t * 6) * 0.25 * (x / 5)); } P.needsUpdate = true; };
     return finish(G);
@@ -454,7 +454,7 @@
   // A 5-high podium wall rings the floor; stepped stone tiers climb to the outer wall (ellipse 100 × 70):
   // three levels of arches + an attic. The east side (+x, around angle 0) is broken down (the ruin).
   // Purple and gold stage lights shine down on the floor; warm street lamps glow outside.
-  // spots: center (Vahl), kaiStart (south), friends (north: Mira, Tobi, Riku), gateS, gateN, rimCam
+  // spots: center (Vahl), danteStart (south), friends (north: Aurora, Grant, Hale), gateS, gateN, rimCam
   // =================================================================================
   function ellipsePts(A, Bz, N) {
     const S = 2000, acc = [0], P = [];
@@ -529,7 +529,7 @@
     G.props = { spots, beams, ring, lampsOut };
     G.breakables = breakables;
     G.groundAt = () => 0;
-    G.spots = { center: [0, 0, 0], kaiStart: [0, 0, 30], friends: [[-12, 0, -22], [0, 0, -26], [12, 0, -22]], gateS: [0, 0, FB], gateN: [0, 0, -FB], rimCam: [0, 40, 110] };
+    G.spots = { center: [0, 0, 0], danteStart: [0, 0, 30], friends: [[-12, 0, -22], [0, 0, -26], [12, 0, -22]], gateS: [0, 0, FB], gateN: [0, 0, -FB], rimCam: [0, 40, 110] };
     G.preview = { cam: [0, 92, 168], look: [0, 2, -12], fov: 46 };
     G.update = (t) => { ring.rotation.z = t * 0.15; beams.forEach((b, i) => (b.material.opacity = 0.13 + 0.04 * Math.sin(t * 2 + i))); };
     return finish(G);

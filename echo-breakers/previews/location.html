@@ -37,12 +37,12 @@ document.fonts.load('900 64px Montserrat').catch(() => {}).then(() => {
   // positions below are in DESIGN units (like locations.js), converted with RT.locations.SCALE
   const A = RT.anim, C = RT.cast, E = RT.echoes, SC = RT.locations.SCALE, put = (ch, p, yaw, mv, face) => { ch.position.set(...p.map((n) => n * SC)); ch.rotation.y = yaw; scene.add(ch); A.set(ch, mv || 'idle', T); if (face && ch.rig.setFace) ch.rig.setFace(face); if (ch.rig.update) ch.rig.update(T); return ch; };
   if (q.get('people') !== '0') {
-    if (LOC === 'stairway') { put(C.kai(), [1.5, 15, -46], 0.3, 'idle', 'happy'); put(C.walker(7), [-4, 10, -29], 0.2, 'walk'); put(C.walker(3), [-6, 0, 8], 2.5, 'walk'); put(C.walker(5), [5, 0, 4], -0.6, 'idle'); }
-    if (LOC === 'recordShop') { put(C.kai(), [-3.2, 0, -4.6], -1.75, 'idle', 'surprised'); put(C.walker(9), [5, 0, -1.3], 0, 'idle'); }
-    if (LOC === 'piazza') { put(C.kai(), [4, 0, 26], 3.0, 'idle', 'surprised'); put(C.mira(), [0, 1.45, 8.9], 0.1, 'crossArms', 'calm'); }
-    if (LOC === 'promenade') { put(C.kai(), [22, 0.3, -9], 1.4, 'run', 'scared'); put(C.mira(), [17, 0.3, -10.5], 1.4, 'run'); put(C.tobi(), [11, 0.3, -9.5], 1.5, 'run', 'scared'); put(C.hunter(1), [2, 0, -2], 1.5, 'run'); put(C.hunter(2), [-3, 0, 1], 1.5, 'run'); }
-    if (LOC === 'fortress') { put(C.kai(), [-6, 0, 6], 1.2, 'idle', 'determined'); put(C.riku(), [6, 0, -2], -1.9, 'handsOnHips', 'cold'); const ts = E.tsurara(); put(ts, [9, 0.7, -5], -1.9, 'idle'); ts.echo.update(T, { power: 1, light: 0.5 }); }
-    if (LOC === 'arena') { put(C.vahl(), [0, 0, 0], 0, 'present'); const sh = E.shuen(); put(sh, [0, 0.8, -8], 0, 'raiseHand'); sh.echo.update(T, { power: 1 }); put(C.kai(), [0, 0, 26], Math.PI, 'idle', 'determined'); }
+    if (LOC === 'stairway') { put(C.dante(), [1.5, 15, -46], 0.3, 'idle', 'happy'); put(C.walker(7), [-4, 10, -29], 0.2, 'walk'); put(C.walker(3), [-6, 0, 8], 2.5, 'walk'); put(C.walker(5), [5, 0, 4], -0.6, 'idle'); }
+    if (LOC === 'recordShop') { put(C.dante(), [-3.2, 0, -4.6], -1.75, 'idle', 'surprised'); put(C.walker(9), [5, 0, -1.3], 0, 'idle'); }
+    if (LOC === 'piazza') { put(C.dante(), [7, 0, 24], 3.3, 'idle', 'surprised'); put(C.aurora(), [0, 1.45, 8.9], 0.1, 'crossArms', 'calm'); }
+    if (LOC === 'promenade') { put(C.dante(), [22, 0.3, -9], 1.4, 'run', 'scared'); put(C.aurora(), [17, 0.3, -10.5], 1.4, 'run'); put(C.grant(), [11, 0.3, -9.5], 1.5, 'run', 'scared'); put(C.hunter(1), [2, 0, -2], 1.5, 'run'); put(C.hunter(2), [-3, 0, 1], 1.5, 'run'); }
+    if (LOC === 'fortress') { put(C.dante(), [-6, 0, 6], 1.2, 'idle', 'determined'); put(C.hale(), [6, 0, -2], -1.9, 'handsOnHips', 'cold'); const ts = E.tsurara(); put(ts, [9, 0.7, -5], -1.9, 'idle'); ts.echo.update(T, { power: 1, light: 0.5 }); }
+    if (LOC === 'arena') { put(C.vahl(), [0, 0, 0], 0, 'present'); const sh = E.shuen(); put(sh, [0, 0.8, -8], 0, 'raiseHand'); sh.echo.update(T, { power: 1 }); put(C.dante(), [0, 0, 26], Math.PI, 'idle', 'determined'); }
   }
   // world animation at time T (water, birds, smoke)
   loc.update(T, { smile: 1 }); scene.traverse((o) => { if (o.update && o !== loc && typeof o.update === 'function' && !o.rig && !o.echo) try { o.update(T); } catch (e) {} });

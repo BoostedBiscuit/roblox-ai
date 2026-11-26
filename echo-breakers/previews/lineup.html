@@ -28,25 +28,28 @@ document.fonts.load('400 30px "Dela Gothic One"').catch(() => {}).then(() => {
   const floor = new THREE.Mesh(new THREE.CircleGeometry(40, 48), new THREE.MeshStandardMaterial({ color: '#1c2747', roughness: 0.8 })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
   const A = RT.anim, C = RT.cast, E = RT.echoes;
   const pairs = [
-    ['KAI REYES', 'HIBIKI', '響', C.kai(), E.hibiki(), 'determined', 'idle', 'crossArms'],
-    ['MIRA SANTOS', 'KAGEROU', '陽炎', C.mira(), E.kagerou(), 'calm', 'crossArms', 'present'],
-    ['TOBI GRANT', 'OMAMORI', 'お守り', C.tobi(), E.omamori(), 'scared', 'tremble', null],
-    ['RIKU HALE', 'TSURARA', '氷柱', C.riku(), E.tsurara(), 'cold', 'handsOnHips', 'idle'],
+    ['DANTE FERRO', 'HIBIKI', '響', C.dante(), E.hibiki(), 'determined', 'idle', 'guard'],
+    ['AURORA VESPER', 'KAGEROU', '陽炎', C.aurora(), E.kagerou(), 'calm', 'crossArms', 'guard'],
+    ['GRANT AZZARDO', 'OMAMORI', 'お守り', C.grant(), E.omamori(), 'scared', 'tremble', null],
+    ['HALE INVERNO', 'TSURARA', '氷柱', C.hale(), E.tsurara(), 'cold', 'handsOnHips', 'power'],
     ['MAESTRO VAHL', 'SHŪEN', '終焉', C.vahl(), E.shuen(), null, 'present', 'raiseHand'],
   ];
   const X = [-10.5, -5.2, 0, 5.2, 10.8], T = 1.3, labels = document.getElementById('labels');
   pairs.forEach(([who, echo, kanji, ch, ec, face, mv, emv], i) => {
     ch.position.set(X[i], 0, 1.2); scene.add(ch); A.set(ch, mv, T); if (face) ch.rig.setFace(face); ch.rig.update(T);
-    ec.position.set(X[i] + (i === 2 ? 0.9 : 0), i === 2 ? 1.2 : 0.35, i === 4 ? -3.6 : -0.6); if (i === 4) ec.scale.setScalar(0.72);
+    ec.position.set(X[i] + (i === 2 ? 1.0 : 0), i === 2 ? 1.3 : 0.45, i === 4 ? -3.6 : -0.9); if (i === 4) ec.scale.setScalar(0.66);
     scene.add(ec); if (emv) A.set(ec, emv, T + i); ec.echo.update(T + i * 0.7, { power: 1 });
     if (ec.echo.orchestra) ec.echo.orchestra.visible = false;
     const el = document.createElement('div'); el.className = 'lab'; el.innerHTML = `<b>${who}</b><i>ECHO: ${echo}</i><span>${kanji}</span>`; labels.appendChild(el);
     el.style.left = ((i + 0.5) / 5 * 100) + '%';
   });
-  camera.position.set(0, 3.4, 31); camera.lookAt(0, 3.0, 0); env.follow(camera); env.shadowFocus(0, 0, 0, 16);
+  camera.position.set(0, 3.8, 33); camera.lookAt(0, 3.5, 0);
+  // ?focus=0..4 : close-up of one pair (to check details)
+  const F = new URLSearchParams(location.search).get('focus');
+  if (F !== null) { const fx = X[+F]; camera.position.set(fx + 1.5, 3.6, 11); camera.lookAt(fx, 3.4, -0.6); } env.follow(camera); env.shadowFocus(0, 0, 0, 16);
   // spread the labels under each pair (project the feet to the screen)
   [...labels.children].forEach((el, i) => { const v = new THREE.Vector3(X[i], 0, 1.2).project(camera); el.style.left = ((v.x * 0.5 + 0.5) * 100) + '%'; });
-  const glow = RT.glow.create(renderer, scene, camera, { strength: 0.9, radius: 0.6, scale: 0.5 });
+  const glow = RT.glow.create(renderer, scene, camera, { strength: 0.75, radius: 0.6, scale: 0.5 });
   glow.render(); window.sceneReady = true;
 }).catch((e) => { window.sceneError = String(e.stack || e); });
 </script></body></html>

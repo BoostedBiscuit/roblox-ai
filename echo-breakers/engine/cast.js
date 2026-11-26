@@ -1,10 +1,10 @@
 // =====================================================================================
 // cast.js: the human characters of ECHO BREAKERS (original designs), built with the Roblox-style avatar builder.
 //
-//   const kai = RT.cast.kai();  scene.add(kai);   each frame: RT.anim.apply(...) / actor(...), kai.rig.update(t)
-//   kai()  · mira()  · tobi()  · riku()  · vahl()  · hunter(seed)  · walker(seed)  (a pedestrian)
+//   const dante = RT.cast.dante();  scene.add(dante);   each frame: RT.anim.apply(...) / actor(...), dante.rig.update(t)
+//   dante()  · aurora()  · grant()  · hale()  · vahl()  · hunter(seed)  · walker(seed)  (a pedestrian)
 // Colors are in each character's COL block at the top of its function, so they are easy to change.
-// Special props: kai.rig.props.headphones (he rips them off in CH 5), tobi.rig.props.hat (the seagull takes it),
+// Special props: dante.rig.props.headphones (he rips them off in CH 5), grant.rig.props.hat (the seagull takes it),
 //                vahl.rig.props.baton, vahl.rig.crackMask(0..1) (his mask cracks in CH 5).
 // =====================================================================================
 (function () {
@@ -12,7 +12,7 @@
   const RT = window.RT, C = RT.characters, { D, H, Cone, Ball, Wedge, merged, bands, outer } = C.helpers;
   const build = C.build, faceStyle = C.faceStyle;
 
-  // paint splatters (Mira's jacket), seeded so they are the same every render
+  // paint splatters (Aurora's jacket), seeded so they are the same every render
   function splat(g, c, seed, colors, n = 9) {
     const r = RT.rng(seed);
     for (let i = 0; i < n; i++) {
@@ -24,12 +24,12 @@
     }
   }
 
-  // ---------- 1. KAI REYES (16, hero): navy hoodie, headphones around the neck, blue-tipped hair ----------
-  function kai(o = {}) {
+  // ---------- 1. DANTE FERRO (16, hero): navy hoodie, headphones around the neck, blue-tipped hair ----------
+  function dante(o = {}) {
     const COL = { skin: '#c68e62', hair: '#17161d', tips: '#3a78e0', hoodie: '#243457', tee: '#f2f3f5', wave: '#3a8dff', jeans: '#3e4756', shoes: '#f4f4f4', stripe: '#3a8dff', phones: '#eef3ff', phones2: '#3a8dff' };
     const Hd = RT.shade(COL.hoodie, -0.22), Hl = RT.shade(COL.hoodie, 0.14);
     return build({
-      name: 'Kai', skin: COL.skin, shoes: COL.shoes, seed: 21, expression: o.expression || 'neutral',
+      name: 'Dante', skin: COL.skin, shoes: COL.shoes, seed: 21, expression: o.expression || 'neutral',
       face: faceStyle({ skin: COL.skin, iris: '#3b2416', brow: COL.hair, browW: 13 }),
       clothes: {
         torso(g, f, c) {
@@ -86,12 +86,12 @@
     });
   }
 
-  // ---------- 2. MIRA SANTOS (16, street artist): paint-stained denim jacket, plum bob, teal bandana ----------
-  function mira(o = {}) {
+  // ---------- 2. AURORA VESPER (16, street artist): paint-stained denim jacket, plum bob, teal bandana ----------
+  function aurora(o = {}) {
     const COL = { skin: '#e0b089', hair: '#3a1f2d', band: '#2bb3a3', jacket: '#5d7fa8', top: '#1f1f24', jeans: '#26262c', boots: '#2b2b2b', paint: ['#ff8a3d', '#ff5fa2', '#ffd23f', '#2bb3a3', '#ffffff'] };
     const Jd = RT.shade(COL.jacket, -0.22), Jl = RT.shade(COL.jacket, 0.16);
     return build({
-      name: 'Mira', skin: COL.skin, shoes: COL.boots, seed: 33, expression: o.expression || 'calm',
+      name: 'Aurora', skin: COL.skin, shoes: COL.boots, seed: 33, expression: o.expression || 'calm',
       dims: { uw: 1.92, lw: 1.8 },
       face: faceStyle({ skin: COL.skin, iris: '#5a3a2a', brow: COL.hair, browW: 11, lashes: true }),
       clothes: {
@@ -131,11 +131,11 @@
     });
   }
 
-  // ---------- 3. TOBI GRANT (15, comic relief): striped shirt, cargo shorts, bucket hat, ginger curls ----------
-  function tobi(o = {}) {
+  // ---------- 3. GRANT AZZARDO (15, comic relief): striped shirt, cargo shorts, bucket hat, ginger curls ----------
+  function grant(o = {}) {
     const COL = { skin: '#f1c9a5', hair: '#d0662f', shirt: '#f28c28', stripe: '#fff4e0', shorts: '#6b8e4e', shoes: '#e23b3b', hat: '#c9b27c', hatBand: '#7a5a34' };
     return build({
-      name: 'Tobi', scale: 0.93, skin: COL.skin, shoes: COL.shoes, seed: 45, expression: o.expression || 'scared',
+      name: 'Grant', scale: 0.93, skin: COL.skin, shoes: COL.shoes, seed: 45, expression: o.expression || 'scared',
       dims: { uw: 2.2, ud: 1.15, lw: 2.16, ld: 1.12 },
       face: faceStyle({ skin: COL.skin, iris: '#4d7a3a', brow: RT.shade(COL.hair, -0.2), browW: 12, freckles: true, eyeSize: 1.1, blush: true }),
       clothes: {
@@ -168,11 +168,11 @@
     });
   }
 
-  // ---------- 4. RIKU HALE (17, rival): white blazer with ice-blue trim, black turtleneck, silver swept hair ----------
-  function riku(o = {}) {
+  // ---------- 4. HALE INVERNO (17, rival): white blazer with ice-blue trim, black turtleneck, silver swept hair ----------
+  function hale(o = {}) {
     const COL = { skin: '#f4dccb', hair: '#dfe5ee', blazer: '#f7f8fb', trim: '#8fdcf0', turtle: '#16181d', slacks: '#4b505a', shoes: '#111214', pin: '#bfe9f5' };
     return build({
-      name: 'Riku', skin: COL.skin, shoes: COL.shoes, seed: 57, expression: o.expression || 'cold',
+      name: 'Hale', skin: COL.skin, shoes: COL.shoes, seed: 57, expression: o.expression || 'cold',
       dims: { ul: 1.08, ll: 1.08 },
       face: faceStyle({ skin: COL.skin, iris: '#5fb8d8', brow: '#c9d1dc', browW: 11 }),
       clothes: {
@@ -328,5 +328,5 @@
   // a pedestrian of Port Halcyon (bright Italian-summer clothes)
   const walker = (seed = 1, o = {}) => C.citizen(seed, Object.assign({ palette: 'halcyon' }, o));
 
-  RT.cast = { kai, mira, tobi, riku, vahl, hunter, walker, names: ['kai', 'mira', 'tobi', 'riku', 'vahl'] };
+  RT.cast = { dante, aurora, grant, hale, vahl, hunter, walker, names: ['dante', 'aurora', 'grant', 'hale', 'vahl'] };
 })();

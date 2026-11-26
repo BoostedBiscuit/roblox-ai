@@ -149,6 +149,15 @@
       return Object.assign(MOVES.talk(t, o), { aLo: 0.45 * p, aRo: 0.45 * p, aLf: 0.55 * p, aRf: 0.55 * p, eL: 0.35, eR: 0.35 });
     },
     // trembling (scared, standing still)
+    // ECHO BREAKERS fight poses (used by the Echoes and the heroes)
+    guard(t) {      // fists up, ready to punch
+      const p = easeOut(clamp(t / 0.3, 0, 1)), b = Math.sin(t * 3) * 0.03;
+      return Object.assign(MOVES.idle(t), { aLf: 1.25 * p + b, aRf: 0.95 * p - b, aLo: -0.18 * p, aRo: -0.12 * p, eL: 1.75 * p, eR: 2.0 * p, lean: 0.07 * p, hx: 0.1 * p, lLf: 0.22 * p, lRf: -0.18 * p, lLo: 0.1 * p, lRo: 0.1 * p, wy: -0.12 * p });
+    },
+    power(t) {      // menacing stance: chest out, arms down and out, fists clenched, chin down
+      const p = easeOut(clamp(t / 0.4, 0, 1)), b = Math.sin(t * 2.2) * 0.02;
+      return Object.assign(MOVES.idle(t), { aLo: 0.42 * p + b, aRo: 0.42 * p - b, aLf: 0.18 * p, aRf: 0.18 * p, eL: 0.35 * p, eR: 0.35 * p, hx: 0.16 * p, lean: -0.04 * p, lLo: 0.16 * p, lRo: 0.16 * p });
+    },
     tremble(t) { const s = Math.sin(t * 38) * 0.02; return Object.assign(MOVES.idle(t), { hx: 0.12 + s, aLf: 0.25 + s, aRf: 0.25 - s, eL: 0.6, eR: 0.6, aLt: 0.6, aRt: 0.6, wx: 0.06 }); },
     // crowds at the Capital: both arms up and bouncing
     cheer(t) {

@@ -18,7 +18,9 @@
     composer.addPass(new THREE.RenderPass(scene, camera));
     const bloom = new THREE.UnrealBloomPass(new THREE.Vector2(w, h), o.strength ?? 0.9, o.radius ?? 0.6, o.threshold ?? 0.05);
     composer.addPass(bloom);
-    const black = new THREE.MeshBasicMaterial({ color: 0x000000 }), saved = new Map(), hidden = [];
+    // three.js r128 does not rebuild a shader when an instanced mesh with per-instance colors and one without share
+    // a material, so the glow pass keeps three separate black materials (plain, instanced, instanced + colors)
+    const black = new THREE.MeshBasicMaterial({ color: 0x000000 }), blackI = black.clone(), blackIC = black.clone(), saved = new Map(), hidden = [];
     const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
       uniforms: { tGlow: { value: null }, gain: { value: o.gain ?? 1 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
@@ -34,7 +36,7 @@
       anyGlow = false;
       scene.traverseVisible((obj) => {
         if (isGlow(obj)) { anyGlow = true; if (obj.userData.haloMat && !obj.userData.shell) { saved.set(obj, obj.material); obj.material = obj.userData.haloMat; } return; }
-        if (obj.isMesh || obj.isInstancedMesh) { saved.set(obj, obj.material); obj.material = black; }
+        if (obj.isMesh || obj.isInstancedMesh) { saved.set(obj, obj.material); obj.material = obj.isInstancedMesh ? (obj.instanceColor ? blackIC : blackI) : black; }
         else if (obj.isSprite || obj.isPoints || obj.isLine) { if (obj.visible) { obj.visible = false; hidden.push(obj); } }
       });
     }

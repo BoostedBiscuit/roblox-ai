@@ -513,33 +513,109 @@
     g.update(0);
     return g;
   }
-  // a hillside packed with small colorful houses with terracotta roofs (instanced; far background)
-  //   o: { x, z, w, d, rise, count, seed, yaw, night }  rise = how much the hill climbs from front to back
+  // ---------- the hillside towns in the background ----------
+  // One facade tile = 4 window bays × 4 floors, painted on a WHITE wall so each house can be tinted its own color
+  // (instance color). Shutters are open or closed at random, some windows have flower boxes, the ground floor is
+  // not special (these houses are seen from far away). At night the same windows glow (some lit, some dark).
+  function townTex(night, seed) {
+    return once('town' + (night ? 'N' : 'D') + seed, () => {
+      const t = RT.canvasTexture(512, 640, (g) => {
+        const r = RT.rng(seed);
+        g.fillStyle = night ? '#000000' : '#ffffff'; g.fillRect(0, 0, 512, 640);
+        if (!night) speckle(g, 512, 640, 1600, seed, 0.06, 0.05);
+        for (let fy = 0; fy < 4; fy++) for (let bx = 0; bx < 4; bx++) {
+          const ox = bx * 128, oy = fy * 160, x0 = ox + 40, x1 = ox + 88, y0 = oy + 36, y1 = oy + 122;
+          if (night) { if (r() < 0.55) { g.fillStyle = r() < 0.85 ? '#ffc56a' : '#bcd2ff'; g.fillRect(x0, y0, x1 - x0, y1 - y0); } continue; }
+          const closed = r() < 0.35, shutter = ['#4f7a62', '#7b5a3c', '#557a95', '#6a7a4a'][Math.floor(r() * 4)];
+          g.fillStyle = '#f3ede2'; g.fillRect(x0 - 6, y0 - 6, x1 - x0 + 12, y1 - y0 + 10); g.fillRect(x0 - 10, y0 - 13, x1 - x0 + 20, 6);
+          if (closed) { g.fillStyle = shutter; g.fillRect(x0, y0, x1 - x0, y1 - y0); g.fillStyle = 'rgba(0,0,0,0.22)'; for (let y = y0 + 3; y < y1; y += 6) g.fillRect(x0 + 3, y, x1 - x0 - 6, 2); g.fillRect(63 + ox, y0, 2, y1 - y0); }
+          else {
+            const gr = g.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, '#22344a'); gr.addColorStop(1, '#4f7698'); g.fillStyle = gr; g.fillRect(x0, y0, x1 - x0, y1 - y0);
+            g.fillStyle = 'rgba(255,255,255,0.18)'; g.beginPath(); g.moveTo(x0 + 6, y1); g.lineTo(x0 + 24, y0); g.lineTo(x0 + 32, y0); g.lineTo(x0 + 14, y1); g.fill();
+            for (const sx of [x0 - 28, x1 + 6]) { g.fillStyle = shutter; g.fillRect(sx, y0 - 4, 22, y1 - y0 + 6); g.fillStyle = 'rgba(0,0,0,0.2)'; for (let y = y0; y < y1; y += 6) g.fillRect(sx + 3, y, 16, 2); }
+          }
+          g.fillStyle = '#f3ede2'; g.fillRect(x0 - 10, y1 + 4, x1 - x0 + 20, 6);
+          if (r() < 0.3) { g.fillStyle = '#a9532f'; g.fillRect(x0 - 6, y1 - 6, x1 - x0 + 12, 10); for (let k = 0; k < 6; k++) { g.fillStyle = ['#e2384d', '#ff7aa8', '#ffffff', '#3f8a3a'][k % 4]; g.beginPath(); g.arc(x0 - 2 + k * 10, y1 - 9, 6, 0, 7); g.fill(); } }
+          g.fillStyle = 'rgba(0,0,0,0.06)'; g.fillRect(ox, oy + 154, 128, 6);        // a faint floor line
+        }
+      });
+      return repeatTex(t);
+    });
+  }
+  // A hillside TOWN (far background): terraces of Italian houses in the city palette, terracotta hip roofs or flat roofs
+  // with white parapets, stone terrace walls, cypresses and stone pines between the rows, a church dome and bell towers.
+  //   o: { x, z, w, d, rise, rows, seed, yaw, night }   (design units: a person is ~5 tall)
   //   The hill's FRONT edge is at (x, z) and it climbs away along local +z: yaw 0 → toward +z, yaw π → toward −z.
   function cityHill(o = {}) {
-    const g = new THREE.Group(), n = o.count || 260, r = RT.rng(o.seed || 12);
-    const wallG = boxG(1, 1, 1); wallG.translate(0, 0.5, 0);
-    const roofG = new THREE.ConeGeometry(0.75, 0.35, 4); roofG.rotateY(Math.PI / 4); roofG.translate(0, 1.17, 0);
-    // night: lit windows (a grid of warm squares, some dark) glowing from the walls
-    const wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    if (o.night) {
-      const win = RT.canvasTexture(64, 64, (g) => { g.fillStyle = '#000'; g.fillRect(0, 0, 64, 64); const rr = RT.rng(o.seed || 12); for (let y = 6; y < 60; y += 14) for (let x = 6; x < 60; x += 14) if (rr() < 0.45) { g.fillStyle = rr() < 0.8 ? '#ffc76a' : '#a9c4ff'; g.fillRect(x, y, 6, 7); } });
-      wallMat.emissive = new THREE.Color('#ffffff'); wallMat.emissiveMap = win; wallMat.emissiveIntensity = 0.9; wallMat.map = null;
+    const g = new THREE.Group(), r = RT.rng(o.seed || 12), W = o.w || 600, Dd = o.d || 220, rise = o.rise ?? 90, night = !!o.night;
+    // hill height at (x, z): climbs from the front edge (z = 0) to the back (z = Dd), lower toward the sides
+    const hy = (x, z) => { const v = RT.clamp(z / Dd, 0, 1.4); return Math.pow(Math.min(v, 1), 1.3) * rise * (1 - Math.min(1, Math.abs(x) / W) * 0.6) + (v > 1 ? (v - 1) * rise : 0); };
+    // --- ground: a hillside mesh with green / olive / ochre patches (vertex colors) ---
+    const hill = new THREE.Mesh(new THREE.PlaneGeometry(W * 1.4, Dd * 1.45, 40, 20), new THREE.MeshLambertMaterial({ vertexColors: true }));
+    hill.rotation.x = -Math.PI / 2; hill.position.z = Dd * 0.5;
+    const P = hill.geometry.attributes.position, cols = [], cc = new THREE.Color();
+    for (let i = 0; i < P.count; i++) {
+      const x = P.getX(i), z = -P.getY(i) + Dd * 0.5; P.setZ(i, hy(x, z) - 2.5);
+      const n = Math.sin(x * 0.031) * Math.cos(z * 0.043) + Math.sin(x * 0.011 + z * 0.02);
+      cc.set(night ? '#151a14' : n > 0.6 ? '#9a8a52' : n > -0.2 ? '#6f8a48' : '#58763f'); cols.push(cc.r, cc.g, cc.b);
     }
-    const walls = new THREE.InstancedMesh(wallG, wallMat, n), roofs = new THREE.InstancedMesh(roofG, new THREE.MeshLambertMaterial({ color: 0xffffff }), n);
-    const dm = new THREE.Object3D(), c = new THREE.Color(), W = o.w || 600, Dd = o.d || 220, rise = o.rise ?? 90;
-    for (let i = 0; i < n; i++) {
-      const u = r() - 0.5, v = r(), x = u * W, z = v * Dd, y = Math.pow(v, 1.3) * rise * (1 - Math.abs(u) * 0.6);
-      const sx = 10 + r() * 14, sz = 10 + r() * 12, sy = 10 + r() * 20;
-      dm.position.set(x, y - 2, z); dm.rotation.set(0, (r() - 0.5) * 0.3, 0); dm.scale.set(sx, sy, sz); dm.updateMatrix(); walls.setMatrixAt(i, dm.matrix); roofs.setMatrixAt(i, dm.matrix);
-      c.set(WALLS[Math.floor(r() * WALLS.length)]); if (o.night) c.multiplyScalar(0.3); walls.setColorAt(i, c); c.set(ROOFS[Math.floor(r() * ROOFS.length)]); if (o.night) c.multiplyScalar(0.3); roofs.setColorAt(i, c);
+    hill.geometry.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); hill.geometry.computeVertexNormals(); hill.receiveShadow = true; g.add(hill);
+    // --- house prototypes (widths 2–4 bays × 2–5 floors), each one InstancedMesh for walls + one for roofs ---
+    const protos = [];
+    for (const wb of [2, 3, 4]) for (const fl of [2, 3, 4, 5]) protos.push({ wb, fl, W: wb * BAY, H: fl * FLOOR, D: 2 * BAY, list: [] });
+    const wallMat = new THREE.MeshLambertMaterial({ map: townTex(false, (o.seed || 12) % 5) });
+    if (night) { wallMat.emissive = new THREE.Color('#ffffff'); wallMat.emissiveMap = townTex(true, (o.seed || 12) % 5); wallMat.emissiveIntensity = 1.0; }
+    const roofMat = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true }), trimMat = new THREE.MeshLambertMaterial({ color: night ? '#3b3a40' : '#f4efe4' });
+    const wallsTint = night ? 0.28 : 1;
+    // terraces: rows of houses climbing the hill, each row fronted by a stone retaining wall
+    const rows = o.rows || Math.round(Dd / 15), walls = [], treesAt = [], cyp = [], SEG = 40;
+    for (let k = 0; k < rows; k++) {
+      const z = 6 + (k / rows) * Dd * 0.95 + (r() - 0.5) * 3;
+      let x = -W / 2 + r() * 8;
+      for (let sx = -W / 2; sx < W / 2; sx += SEG) walls.push([sx + SEG / 2, hy(sx + SEG / 2, z - 7.5), z - 7.5]);   // wall segments follow the slope
+      while (x < W / 2) {
+        const pr = protos[Math.floor(r() * protos.length)], hw = pr.W / 2;
+        if (r() < 0.08) { treesAt.push([x + 4, hy(x + 4, z) - 1, z]); x += 9; continue; }        // a garden gap with a stone pine
+        if (r() < 0.06) { cyp.push([x + 2, hy(x + 2, z) - 1, z - 4]); cyp.push([x + 5, hy(x + 5, z) - 1, z - 3]); x += 7; continue; }   // cypresses
+        const cx = x + hw, y = Math.min(hy(cx - hw, z), hy(cx + hw, z)) - 6;                     // sunk into the slope so nothing floats
+        pr.list.push({ x: cx, y, z: z + (r() - 0.5) * 2.5, yaw: (r() - 0.5) * 0.08, col: WALLS[Math.floor(r() * WALLS.length)], roof: ROOFS[Math.floor(r() * ROOFS.length)], flat: r() < 0.28 });
+        x += pr.W + 0.6 + r() * 2.2;
+      }
     }
-    walls.instanceColor.needsUpdate = roofs.instanceColor.needsUpdate = true;
-    const hill = new THREE.Mesh(new THREE.PlaneGeometry(W * 1.3, Dd * 1.4, 24, 12), new THREE.MeshLambertMaterial({ color: o.night ? '#1d2218' : '#7f8f56' }));
-    hill.rotation.x = -Math.PI / 2; const P = hill.geometry.attributes.position;
-    for (let i = 0; i < P.count; i++) { const x = P.getX(i), yv = -P.getY(i), v = RT.clamp(yv / Dd + 0.5, 0, 1.4); /* same v as the houses: 0 = front edge, 1 = back */ P.setZ(i, Math.pow(Math.min(v, 1), 1.3) * rise * (1 - Math.min(1, Math.abs(x) / W) * 0.6) - 3 + (v > 1 ? (v - 1) * rise : 0)); }
-    hill.geometry.computeVertexNormals(); hill.position.z = Dd * 0.5;
-    g.add(hill, walls, roofs);
+    const dm = new THREE.Object3D(), c = new THREE.Color();
+    for (const pr of protos) {
+      const n = pr.list.length; if (!n) continue;
+      const wg = tiledBox(pr.W, pr.H + 6, pr.D, BAY * 4, FLOOR * 4); wg.translate(0, (pr.H + 6) / 2, 0);
+      const rg = new THREE.ConeGeometry(1, 1, 4); rg.rotateY(Math.PI / 4); rg.scale((pr.W + 1.4) / Math.SQRT2, 2.4 + pr.W * 0.1, (pr.D + 1.4) / Math.SQRT2); rg.translate(0, pr.H + 6 + 0.5 + (2.4 + pr.W * 0.1) / 2, 0);
+      const tg = boxG(pr.W + 0.9, 0.6, pr.D + 0.9); tg.translate(0, pr.H + 6 + 0.2, 0);                      // cornice / parapet
+      const wm = new THREE.InstancedMesh(wg, wallMat, n), rm = new THREE.InstancedMesh(rg, roofMat, n), tm = new THREE.InstancedMesh(tg, trimMat, n);
+      let roofs = 0;
+      pr.list.forEach((h, i) => {
+        dm.position.set(h.x, h.y, h.z); dm.rotation.set(0, h.yaw, 0); dm.scale.set(1, 1, 1); dm.updateMatrix();
+        wm.setMatrixAt(i, dm.matrix); tm.setMatrixAt(i, dm.matrix); c.set(h.col).multiplyScalar(wallsTint); wm.setColorAt(i, c);
+        if (!h.flat) { rm.setMatrixAt(roofs, dm.matrix); c.set(h.roof).multiplyScalar(night ? 0.3 : 1); rm.setColorAt(roofs, c); roofs++; }
+      });
+      rm.count = roofs; wm.instanceColor.needsUpdate = true; if (rm.instanceColor) rm.instanceColor.needsUpdate = true;
+      for (const m of roofs ? [wm, rm, tm] : [wm, tm]) { m.castShadow = false; m.receiveShadow = true; g.add(m); }   // (no roof mesh when every house of this size is flat)
+    }
+    // stone terrace walls in front of each row
+    const sw = new THREE.MeshLambertMaterial({ map: tex.ashlar('#cbb89a', 3), color: night ? '#444' : '#ffffff' });
+    const wseg = new THREE.InstancedMesh(tiledBox(SEG + 0.6, 8, 1.2, 6, 6), sw, walls.length);
+    walls.forEach(([x, y, z], i) => { dm.position.set(x, y - 5, z); dm.rotation.set(0, 0, 0); dm.updateMatrix(); wseg.setMatrixAt(i, dm.matrix); }); g.add(wseg);
+    // landmarks: a church with a dome and bell towers (original shapes)
+    const lm = Batch(), stone = RT.plastic(night ? '#3a3640' : '#efe3cc', { roughness: 0.8 }), dome = RT.plastic(night ? '#2e3b33' : '#6f9e7a', { roughness: 0.5 }), gold = RT.plastic('#d4b04a', { metalness: 0.6, roughness: 0.3 });
+    const nLand = Math.max(1, Math.round(W / 320));
+    for (let k = 0; k < nLand; k++) {
+      const x = -W / 2 + (k + 0.5) * (W / nLand) + (r() - 0.5) * 60, z = Dd * (0.35 + r() * 0.35), y = hy(x, z) - 4;
+      lm.add(stone, boxG(22, 26, 30), M(x, y + 13, z)); lm.add(stone, new THREE.CylinderGeometry(9, 9, 10, 20), M(x, y + 31, z));
+      lm.add(dome, new THREE.SphereGeometry(9.4, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), M(x, y + 36, z)); lm.add(stone, new THREE.CylinderGeometry(1.6, 1.6, 4, 10), M(x, y + 46.5, z)); lm.add(gold, new THREE.SphereGeometry(1.2, 10, 8), M(x, y + 49.5, z));
+      const tx = x + 18, ty = hy(tx, z) - 4; lm.add(stone, boxG(7, 40, 7), M(tx, ty + 20, z - 6));
+      for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) lm.add(stone, boxG(1.4, 6, 1.4), M(tx + sx * 2.8, ty + 43, z - 6 + sz * 2.8));
+      const pyr = new THREE.ConeGeometry(1, 1, 4); pyr.rotateY(Math.PI / 4); lm.add(RT.plastic(night ? '#3a2a24' : '#b5552f', { flatShading: true }), pyr, M(tx, ty + 49, z - 6, 0, 0, 0, 5.4, 6, 5.4));
+    }
+    lm.build(g, false);
+    trees(g, treesAt, 'pine', { seed: (o.seed || 12) + 1 }); trees(g, cyp, 'cypress', { seed: (o.seed || 12) + 2 });
+    if (night) g.traverse((m) => { if (m.isInstancedMesh && ![wallMat, roofMat, trimMat, sw].includes(m.material)) { m.material = m.material.clone(); m.material.color.multiplyScalar(0.35); } });   // darker trees at night
     g.position.set(o.x || 0, o.y || 0, o.z || 0); g.rotation.y = o.yaw || 0;
     return g;
   }

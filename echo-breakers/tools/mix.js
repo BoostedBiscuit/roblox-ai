@@ -47,25 +47,40 @@ function findSound(name) {
   for (const ext of ['mp3', 'wav', 'ogg', 'm4a']) { const f = path.join(RT, 'audio', 'sfx', `${name}.${ext}`); if (fs.existsSync(f)) return f; }
   return null;
 }
-export function cueSheet(html) {
-  return readBlock(html, 'CUE SHEET').map((l) => /^\s*([\d.]+)\s+(\S+)\s+([\d.]+)\s*(.*)$/.exec(l)).filter(Boolean).map((m) => {
+// A time in the CUE SHEET (and SHORTS CUTS) is seconds (12.5) or a NARRATION label: "what" / "what.s" = that line's start,
+// "what.e" = its end, with an optional offset: "what.e+0.4", "silent.s-1.2". Labels keep sounds glued to the lines
+// even when a voice is re-recorded with a different length.
+export function resolveTime(tok, narr) {
+  if (/^-?[\d.]+$/.test(tok)) return parseFloat(tok);
+  const m = /^([A-Za-z_]\w*)(?:\.([se]))?([+-][\d.]+)?$/.exec(tok);
+  const line = m && narr.lines.find((l) => l.label === m[1]);
+  if (!line) throw new Error(`unknown time "${tok}" (not a number or a NARRATION label)`);
+  return +((m[2] === 'e' ? line.end : line.start) + parseFloat(m[3] || 0)).toFixed(3);
+}
+export function cueSheet(html, narr) {
+  return readBlock(html, 'CUE SHEET').map((l) => /^\s*(\S+)\s+(\S+)\s+([\d.]+)\s*(.*)$/.exec(l)).filter(Boolean).map((m) => {
     const opts = {}; for (const tok of m[4].split(/\s+/).filter(Boolean)) { const [k, v] = tok.split('='); opts[k] = v === undefined ? true : v; }
-    return { t: parseFloat(m[1]), sound: m[2], vol: parseFloat(m[3]), opts };
+    for (const k of ['mute', 'fadeout']) if (typeof opts[k] === 'string') opts[k] = opts[k].split('~').map((x) => resolveTime(x, narr)).join('-');   // ranges: a~b (labels allowed)
+    return { t: resolveTime(m[1], narr), sound: m[2], vol: parseFloat(m[3]), opts };
   });
 }
 const range = (s) => s.split('-').map(Number);
 
 export function mix(name, duration) {
   const html = fs.readFileSync(path.join(RT, 'episodes', `${name}.html`), 'utf8');
-  const cues = cueSheet(html);
   const narr = JSON.parse(fs.readFileSync(path.join(RT, 'audio', 'voice', `${name}_narration.json`), 'utf8'));
+  const cues = cueSheet(html, narr);
   const dir = path.join(RT, 'build', name, 'audio'); fs.mkdirSync(dir, { recursive: true });
   const fmt = `aformat=sample_rates=${SR}:channel_layouts=stereo`, D = duration.toFixed(3);
   const missing = [];
 
-  // 1) narration track, normalized to −16 LUFS
+  // 1) narration track: every clip is first matched to the same loudness (different voices and effects come out at
+  //    different levels), then its own gain from the VOICE block (e.g. thoughts −3 dB), then the whole track → −16 LUFS
   const vin = [], vf = [];
-  narr.lines.forEach((l, i) => { vin.push('-i', path.join(ROOT, l.clip)); vf.push(`[${i}:a]${fmt},adelay=${Math.round(l.at * 1000)}:all=1[v${i}]`); });
+  narr.lines.forEach((l, i) => {
+    const g = -16 - lufs(path.join(ROOT, l.clip)) + (l.gain || 0);
+    vin.push('-i', path.join(ROOT, l.clip)); vf.push(`[${i}:a]${fmt},volume=${g.toFixed(2)}dB,adelay=${Math.round(l.at * 1000)}:all=1[v${i}]`);
+  });
   const voiceRaw = path.join(dir, 'voice_raw.wav');
   // voice.json "pitch": semitones up/down; asetrate changes pitch AND speed, atempo puts the speed back (timing stays exact)
   const semis = parseFloat(JSON.parse(fs.readFileSync(path.join(RT, 'voice.json'), 'utf8')).pitch || 0), k = 2 ** (semis / 12);
@@ -89,9 +104,9 @@ export function mix(name, duration) {
       ff(['-ss', String(from), '-t', segLen.toFixed(3), '-i', file, '-af', fmt, '-c:a', 'pcm_s16le', seg]);
       const g = 10 ** ((-16 - lufs(seg)) / 20) * c.vol, duck = parseFloat(o.duck || 1);
       // duck under every narration line (smooth 0.12 s in, 0.3 s out); mute ranges cut the music completely
-      const w = narr.lines.map((l) => `clip((t-${(l.start - c.t - 0.12).toFixed(3)})/0.12,0,1)*clip((${(l.end - c.t + 0.3).toFixed(3)}-t)/0.3,0,1)`);
+      const w = narr.lines.map((l) => `clip((t-${(l.start - c.t - 0.12).toFixed(3)})/0.12,0,1)*clip((${((l.tail || l.end) - c.t + 0.3).toFixed(3)}-t)/0.3,0,1)`);
       let expr = w.length ? `(1-${(1 - duck).toFixed(3)}*${w.reduce((a, b) => `max(${a},${b})`)})` : '1';
-      for (const m of [].concat(o.mute ? [o.mute] : [])) { const [a, b] = range(m); expr += `*(1-clip((t-${(a - c.t).toFixed(3)})/0.04,0,1)*clip((${(b - c.t).toFixed(3)}-t)/0.04,0,1))`; }
+      for (const m of [].concat(o.mute ? [o.mute] : [])) { const [a, b] = range(m); expr += `*(1-clip((t-${(a - c.t).toFixed(3)})/0.04,0,1)*clip((${(b - c.t).toFixed(3)}-t)/0.25,0,1))`; }   // (comes back over 0.25 s)
       let af = `${fmt},volume=${g.toFixed(4)},volume='${expr}':eval=frame`;
       if (o.fadein) af += `,afade=t=in:d=${o.fadein}`;
       if (o.fadeout) { const [a, b] = range(o.fadeout); af += `,afade=t=out:st=${(a - c.t).toFixed(3)}:d=${(b - a).toFixed(3)}`; }

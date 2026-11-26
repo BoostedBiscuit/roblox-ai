@@ -1,6 +1,9 @@
-// tools/render.js: renders a Reaping Trials scene to a vertical 1080 × 1920, 30 fps MP4 (adapted from roblox-short/render.js).
-//   npm run render -- reaping-trailer            → out/reaping-trials/trailer.mp4   (also: trailer-no-voice.mp4, trailer-sfx-only.mp4, trailer-no-music.mp4, trailer-voice.mp3)
-//   npm run render -- reaping-ep1-part1          → out/reaping-trials/ep1-part1.mp4
+// tools/render.js: renders an Echo Breakers scene to a vertical 1080 × 1920, 30 fps MP4 (adapted from roblox-short/render.js).
+//   node echo-breakers/tools/render.js echo-breakers-full            → out/echo-breakers/echo-breakers-full.mp4
+//        (also -no-voice.mp4, -sfx-only.mp4, -no-music.mp4, -voice.mp3)
+//   node echo-breakers/tools/render.js echo-breakers-full --shorts   → out/echo-breakers/echo-breakers-shorts.mp4
+//        (the same frames and sound with the === SHORTS CUTS === parts left out: no extra rendering, no extra credits)
+//   --thumbs → 3 thumbnail options · --cover 1|2|3 → the -with-cover MP4s of both versions
 // Flags: --stills        one JPG per shot in reaping-trials/build/<video>/stills/ (fast framing check)
 //        --preview       half size, 15 fps → reaping-trials/build/<video>/preview.mp4
 //        --audio-only    re-mix the sound (after changing the CUE SHEET or audio files) and swap it into the MP4s
@@ -14,11 +17,13 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { startServer, openPage, ROOT } from './browser.js';
-import { mix, probe } from './mix.js';
+import { mix, probe, resolveTime } from './mix.js';
+import { readBlock } from './blocks.js';
 import { settings as brandSettings } from './brand.js';
 
 const FPS = 30, W = 1080, H = 1920;
-const name = (process.argv[2] || 'echo-breakers').replace(/^eb-/, '');
+const name = (process.argv[2] || 'echo-breakers-full').replace(/^eb-/, '');
+const SHORT = name.replace(/-full$/, '') + '-shorts';                   // echo-breakers-full → echo-breakers-shorts
 const has = (f) => process.argv.includes(f);
 const PREVIEW = has('--preview'), SCALE = PREVIEW ? 0.5 : 1, STEP = PREVIEW ? 2 : 1;
 const RTD = path.join(ROOT, 'echo-breakers'), BUILD = path.join(RTD, 'build', name), OUTD = path.join(ROOT, 'out', 'echo-breakers');
@@ -30,6 +35,7 @@ function ff(args) { const r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 
 function signature() {
   const h = crypto.createHash('sha1');
   const files = [path.join(RTD, 'episodes', `${name}.html`), path.join(RTD, 'audio', 'voice', `${name}_narration.js`),
+    ...fs.readdirSync(path.join(RTD, 'episodes')).filter((f) => f.startsWith(name + '.') && f.endsWith('.js')).sort().map((f) => path.join(RTD, 'episodes', f)),   // chapter files
     ...fs.readdirSync(path.join(RTD, 'engine')).filter((f) => f.endsWith('.js')).sort().map((f) => path.join(RTD, 'engine', f))];
   for (const f of files) if (fs.existsSync(f)) h.update(fs.readFileSync(f));
   // the CUE SHEET comment only changes the sound, not the picture
@@ -53,12 +59,14 @@ async function renderFrames(server, total, dir) {
   const file = (f) => path.join(dir, `${String(f).padStart(5, '0')}.jpg`);
   const todo = [...Array(total).keys()].filter((f) => !fs.existsSync(file(f)));
   console.log(`▶ rendering ${todo.length} of ${total} frames (${Math.round(W * SCALE)}×${Math.round(H * SCALE)}, ${FPS / STEP} fps) with ${workers} browser(s)`);
-  let next = 0, done = 0; const t0 = Date.now();
-  await Promise.all(Array.from({ length: Math.min(workers, Math.max(1, todo.length)) }, async () => {
+  // each browser renders one CONTIGUOUS part of the video (so it only builds the locations of its part)
+  let done = 0; const t0 = Date.now(), nW = Math.min(workers, Math.max(1, todo.length)), per = Math.ceil(todo.length / nW);
+  await Promise.all(Array.from({ length: nW }, async (_, w) => {
+    const mine = todo.slice(w * per, (w + 1) * per); if (!mine.length) return;
     const { browser, page } = await open(server);
     try {
-      while (next < todo.length) {
-        const f = todo[next++], buf = await grab(page, (f * STEP) / FPS);
+      for (const f of mine) {
+        const buf = await grab(page, (f * STEP) / FPS);
         fs.writeFileSync(file(f) + '.tmp', buf); fs.renameSync(file(f) + '.tmp', file(f));
         if (++done % 30 === 0 || done === todo.length) { const s = (Date.now() - t0) / 1000; console.log(`  ${done}/${todo.length}  ${(done / s).toFixed(2)} fps  ETA ${Math.ceil((s / done) * (todo.length - done))} s`); }
       }
@@ -79,7 +87,7 @@ async function stills(server) {
 
 // Two thumbnail options rendered from the 3D scene (thumbnail mode of the page) → out/reaping-trials/<video>-thumb-option1.png / 2.png
 async function thumbs(server) {
-  for (const n of [1, 2]) {
+  for (const n of [1, 2, 3]) {
     const { browser, page } = await openPage(server, `echo-breakers/episodes/${name}.html?thumb=${n}`, { width: W, height: H });
     try { const f = path.join(OUTD, `${name}-thumb-option${n}.png`); await page.screenshot({ path: f, type: 'png' }); console.log(`✔ ${rel(f)}`); }
     finally { await browser.close(); }
@@ -88,11 +96,11 @@ async function thumbs(server) {
 
 // --cover 1|2: your chosen thumbnail → out/reaping-trials/<video>-thumb.png and <video>-with-cover.mp4
 // (the normal MP4 + the thumbnail as the last 0.5 s, so you can pick that frame as the cover in the YouTube / Facebook app)
-function cover(n) {
-  const src = path.join(OUTD, `${name}-thumb-option${n}.png`), mp4 = path.join(OUTD, `${name}.mp4`);
+function cover(n) { for (const v of [name, SHORT]) if (fs.existsSync(path.join(OUTD, `${v}.mp4`))) coverOne(n, v); }
+function coverOne(n, video) {
+  const src = path.join(OUTD, `${name}-thumb-option${n}.png`), mp4 = path.join(OUTD, `${video}.mp4`);
   if (!fs.existsSync(src)) throw new Error(`${rel(src)} not found: run  node echo-breakers/tools/render.js ${name} --thumbs  first`);
-  if (!fs.existsSync(mp4)) throw new Error(`${rel(mp4)} not found: render the video first`);
-  const thumb = path.join(OUTD, `${name}-thumb.png`), out = path.join(OUTD, `${name}-with-cover.mp4`);
+  const thumb = path.join(OUTD, `${name}-thumb.png`), out = path.join(OUTD, `${video}-with-cover.mp4`);
   fs.copyFileSync(src, thumb);
   ff(['-i', mp4, '-loop', '1', '-framerate', String(FPS), '-t', '0.5', '-i', thumb, '-f', 'lavfi', '-t', '0.5', '-i', 'anullsrc=r=44100:cl=stereo',
     '-filter_complex', `[0:v]setsar=1[a];[1:v]scale=${W}:${H},format=yuv420p,setsar=1[t];[a][0:a][t][2:a]concat=n=2:v=1:a=1[v][au]`,
@@ -107,6 +115,25 @@ function watermarkFilter() {
   if (!b.onRender || process.env.NOWM === '1' || !fs.existsSync(f)) return null;
   const w = Math.round(W * SCALE * b.width), x = Math.round(W * SCALE * b.x), y = Math.round(H * SCALE * b.y);
   return { input: f, filter: `[2:v]scale=${w}:-1,format=rgba,colorchannelmixer=aa=${b.opacity}[wm];[0:v][wm]overlay=${x}:${y}:format=auto,format=yuv420p[v]` };
+}
+
+// The Shorts version: keep everything except the SHORTS CUTS ranges (cut at the same moments in picture and sound,
+// with 20 ms sound fades so nothing clicks), then the watermark. Must stay ≤ 178 s (YouTube Shorts limit is 3:00).
+function shorts(framesDir, total, audio) {
+  const html = fs.readFileSync(path.join(RTD, 'episodes', `${name}.html`), 'utf8');
+  const narr = JSON.parse(fs.readFileSync(path.join(RTD, 'audio', 'voice', `${name}_narration.json`), 'utf8'));
+  const D = total / FPS, cuts = readBlock(html, 'SHORTS CUTS').map((l) => l.trim().split(/\s+/).map((x) => resolveTime(x, narr))).sort((a, b) => a[0] - b[0]);
+  const keep = []; let at = 0;
+  for (const [a, b] of cuts) { if (a > at) keep.push([at, a]); at = Math.max(at, b); }
+  if (at < D) keep.push([at, D]);
+  const fr = (x) => Math.round(x * FPS) / FPS, segs = keep.map(([a, b]) => [fr(a), fr(b)]).filter(([a, b]) => b - a > 0.05);
+  const len = segs.reduce((n, [a, b]) => n + b - a, 0);
+  const parts = segs.map(([a, b], k) => `[0:v]trim=${a.toFixed(4)}:${b.toFixed(4)},setpts=PTS-STARTPTS[v${k}];[1:a]atrim=${a.toFixed(4)}:${b.toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.02,afade=t=out:st=${(b - a - 0.02).toFixed(4)}:d=0.02[a${k}]`);
+  const wm = watermarkFilter(), out = path.join(OUTD, `${SHORT}.mp4`);
+  const fc = `${parts.join(';')};${segs.map((_, k) => `[v${k}][a${k}]`).join('')}concat=n=${segs.length}:v=1:a=1[cv][ca]` + (wm ? `;${wm.filter.replace('[0:v]', '[cv]')}` : ';[cv]format=yuv420p[v]');
+  ff(['-framerate', String(FPS), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input] : []), '-filter_complex', fc, '-map', '[v]', '-map', '[ca]',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-movflags', '+faststart', out]);
+  console.log(`✔ ${rel(out)}  (${probe(out).toFixed(2)} s from ${segs.length} parts; planned ${len.toFixed(2)} s${len > 178 ? '  ⚠ OVER 2:58!' : ''})`);
 }
 
 function encode(framesDir, total, audio, out) {
@@ -139,6 +166,7 @@ async function main() {
       else if (!fs.existsSync(sigFile) || fs.readFileSync(sigFile, 'utf8') !== sig) { fs.rmSync(framesDir, { recursive: true, force: true }); fs.mkdirSync(framesDir, { recursive: true }); fs.writeFileSync(sigFile, sig); }
       await renderFrames(server, total, framesDir);
       if (PREVIEW) { const p = path.join(BUILD, 'preview.mp4'); encode(framesDir, total, a.mix, p); console.log(`✔ ${rel(p)}`); return; }
+      if (has('--shorts')) return shorts(framesDir, total, a.mix);
       encode(framesDir, total, a.mix, outs.mp4);
       encode(framesDir, total, a.noVoice, outs.nv);
     }

@@ -57,13 +57,25 @@
   #play:focus-visible{outline:3px solid #fff;outline-offset:3px;}
   #timer{position:absolute;left:calc(var(--u)*3);top:calc(var(--u)*3);font:700 calc(var(--u)*3.2) ui-monospace,Menlo,monospace;color:#7CFC00;
        background:rgba(0,0,0,.55);padding:calc(var(--u)*.6) calc(var(--u)*1.5);border-radius:calc(var(--u)*1);pointer-events:none;}
+  /* ECHO lines: big Japanese text (glowing in the Echo's color) with the English underneath */
+  #echo{position:absolute;left:3%;right:3%;top:57%;transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0;}
+  #echo .tag{display:inline-block;font:900 calc(var(--u)*3.6) Montserrat,'Arial Black',sans-serif;letter-spacing:.22em;color:#fff;
+       padding:calc(var(--u)*.5) calc(var(--u)*2);border-radius:calc(var(--u)*.8);margin-bottom:calc(var(--u)*1.6);}
+  #echo .jp{font-family:'Dela Gothic One','IPAGothic',sans-serif;line-height:1.08;color:#fff;transform-origin:50% 60%;
+       -webkit-text-stroke:calc(var(--u)*.9) #000;paint-order:stroke fill;white-space:nowrap;}
+  #echo .en{margin-top:calc(var(--u)*2);font:900 calc(var(--u)*5.6) Montserrat,'Arial Black',sans-serif;color:#fff;line-height:1.1;
+       -webkit-text-stroke:calc(var(--u)*.7) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.5) 0 #000;}
+  /* THOUGHTS (inner voice): italic, glowing, no speaker tag */
+  #think{position:absolute;left:7%;right:7%;top:66%;transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0;
+       font:italic 800 calc(var(--u)*6.6) Montserrat,'Arial Black',sans-serif;line-height:1.15;color:#eaf6ff;
+       -webkit-text-stroke:calc(var(--u)*.45) rgba(10,30,60,.9);paint-order:stroke fill;}
   .hidden{display:none !important;}`;
 
   // word captions: one word at a time; 1–2 letter words join the next word ("MY TOWN", "OF US")
-  function captionChunks(narr, speakers) {
+  function captionChunks(narr, speakers, skip = () => false) {
     const out = [];
     for (const line of (narr && narr.lines) || []) {
-      if (speakers[line.who]) continue;               // character lines use the speaker subtitle instead
+      if (speakers[line.who] || skip(line)) continue;   // character / Echo / thought lines have their own captions
       const ws = line.words;
       for (let i = 0; i < ws.length; i++) {
         const clean = (w) => w.w.replace(/^[…."'“]+/, '').replace(/[.,…;:?"”]+$/, '');   // (a narrator's "?" is heard, not shown)
@@ -118,10 +130,19 @@
     const sub = el('<div id="sub"><div class="spk"></div><div class="txt"></div></div>');
     const title = el(`<div id="title">${(o.title && o.title.html) || ''}</div>`);
     const timer = el('<div id="timer" class="hidden">0.0s</div>');
+    (o.overlayLayers || []).forEach((html) => el(html));                                 // extra overlay layers from the scene (fx.js)
     const menu = el(`<div id="menu"><h1>${o.menu.title}</h1><p>${o.menu.sub}</p><button id="play">▶ Play</button></div>`);
     const playBtn = menu.querySelector('#play');
-    const speakers = o.speakers || {};
-    const chunks = captionChunks(o.narration, speakers);
+    const speakers = o.speakers || {}, echoes = o.echoes || {}, thinkers = o.thinkers || {};
+    const echoEl = el('<div id="echo"><div class="tag"></div><div class="jp"></div><div class="en"></div></div>');
+    const thinkEl = el('<div id="think"></div>');
+    const allLines = (o.narration && o.narration.lines) || [];
+    const chunks = captionChunks(o.narration, speakers, (l) => echoes[l.who] || thinkers[l.who]);
+    // Japanese lines: break after 、！？ so no line has more than ~9 characters; the font size fits the longest line
+    const jpLines = (txt) => { const parts = txt.match(/[^、！？。]+[、！？。]*/g) || [txt], out = []; for (const p of parts) { if (out.length && (out[out.length - 1] + p).length <= 9) out[out.length - 1] += p; else out.push(p); } return out; };
+    const ecLines = allLines.filter((l) => echoes[l.who]).map((l) => Object.assign({}, l, { jl: jpLines(l.text) }));
+    const thLines = allLines.filter((l) => thinkers[l.who]).map((l) => Object.assign({}, l, { pieces: subtitlePieces(l) }));
+    let lastEcho = '', lastThink = '';
     const spLines = ((o.narration && o.narration.lines) || []).filter((l) => speakers[l.who]).map((l) => Object.assign({}, l, { pieces: subtitlePieces(l) }));
     const noCap = o.noCaptions || [];
 
@@ -158,6 +179,33 @@
       sub.style.opacity = s ? (clamp((t - s.start + 0.05) / 0.1, 0, 1) * clamp((s.end + 0.45 - t) / 0.15, 0, 1)).toFixed(3) : '0';
       sub.querySelector('.txt').style.transform = `scale(${s ? impact(t, pc.t0 - 0.05, 1.08, 0.14).toFixed(4) : 1})`;
       sub.style.transform = `scale(${s ? impact(t, s.start - 0.05).toFixed(4) : 1})`;
+      // Echo lines: name tag + big Japanese text + English
+      const e = ecLines.find((l) => t >= l.start - 0.05 && t < (l.tail || l.end) + 0.5);
+      const ek = e ? String(e.start) : '';
+      if (ek !== lastEcho) {
+        lastEcho = ek;
+        if (e) {
+          const cfg = echoes[e.who], n = Math.max(...e.jl.map((x) => x.length)), fs = Math.min(12.5, 92 / Math.max(1, n));
+          const tag = echoEl.querySelector('.tag'); tag.textContent = cfg.name; tag.style.background = cfg.color; tag.style.color = cfg.ink || '#fff';
+          const jp = echoEl.querySelector('.jp'); jp.innerHTML = e.jl.map((x) => `<div>${x}</div>`).join(''); jp.style.fontSize = `calc(var(--u)*${fs.toFixed(2)})`;
+          jp.style.textShadow = `0 0 calc(var(--u)*2.5) ${cfg.color}, 0 0 calc(var(--u)*6) ${cfg.color}, 0 calc(var(--u)*.7) 0 #000`;
+          echoEl.querySelector('.en').textContent = e.en || '';
+        }
+      }
+      if (e) {
+        const a = clamp((t - e.start + 0.05) / 0.08, 0, 1) * clamp(((e.tail || e.end) + 0.5 - t) / 0.2, 0, 1);
+        echoEl.style.opacity = a.toFixed(3);
+        const sh = t - e.start < 0.25 ? Math.sin(t * 90) * (0.25 - (t - e.start)) * 2.4 : 0;     // a short shake when it lands
+        echoEl.querySelector('.jp').style.transform = `translateX(${sh.toFixed(2)}%) rotate(-3deg) scale(${impact(t, e.start - 0.05, 1.35, 0.16).toFixed(4)})`;
+      } else echoEl.style.opacity = '0';
+      // thoughts: italic glowing pieces
+      const th = thLines.find((l) => t >= l.start - 0.05 && t < l.end + 0.4);
+      let tp = null; if (th) for (const q of th.pieces) if (t >= q.t0 - 0.05) tp = q; if (th && !tp) tp = th.pieces[0];
+      const tk = th ? th.start + '|' + tp.t0 : '';
+      if (tk !== lastThink) { lastThink = tk; if (th) { thinkEl.textContent = tp.text; const c = thinkers[th.who].color || '#7fc8ff'; thinkEl.style.textShadow = `0 0 calc(var(--u)*1.6) ${c}, 0 0 calc(var(--u)*4) ${c}`; } }
+      thinkEl.style.opacity = th ? (clamp((t - th.start + 0.05) / 0.15, 0, 1) * clamp((th.end + 0.4 - t) / 0.2, 0, 1)).toFixed(3) : '0';
+      thinkEl.style.transform = `translateY(-50%) scale(${th ? (1 + 0.04 * Math.sin((t - th.start) * 2)).toFixed(4) : 1})`;
+      if (o.overlays) o.overlays(t);                                                    // the scene's own overlays (fx.js)
       // title card
       if (o.title) {
         const on = t >= o.title.t0;
@@ -169,7 +217,8 @@
         });
       }
     }
-    function renderFrame(t) { o.frame(t); overlays(t); o.renderer.render(o.scene, o.camera); return true; }
+    const draw = () => (o.draw ? o.draw() : o.renderer.render(o.scene, o.camera));   // o.draw: e.g. the glow (bloom) pass
+    function renderFrame(t) { o.frame(t); overlays(t); draw(); return true; }
 
     // ---------- render mode: the renderer calls window.renderFrame(frame / 30) ----------
     window.sceneInfo = { name: o.name, duration: o.duration, fps: 30, stills: o.stills || [] };
@@ -198,8 +247,8 @@
         timer.textContent = t.toFixed(1) + 's';
       }
       if (!playing) t = o.idleTime ? o.idleTime(now / 1000) : 3;
-      o.frame(t); if (playing) overlays(t); else { black.style.opacity = '0'; white.style.opacity = '0'; cap.innerHTML = ''; sub.style.opacity = '0'; title.style.opacity = '0'; hooks.forEach((h) => (h.el.style.opacity = '0')); }
-      o.renderer.render(o.scene, o.camera);
+      o.frame(t); if (playing) overlays(t); else { black.style.opacity = '0'; white.style.opacity = '0'; cap.innerHTML = ''; sub.style.opacity = '0'; echoEl.style.opacity = '0'; thinkEl.style.opacity = '0'; title.style.opacity = '0'; hooks.forEach((h) => (h.el.style.opacity = '0')); }
+      draw();
       requestAnimationFrame(loop);
     })(performance.now());
     return { renderFrame };

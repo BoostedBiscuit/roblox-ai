@@ -154,6 +154,53 @@
       const p = easeOut(clamp(t / 0.3, 0, 1)), b = Math.sin(t * 3) * 0.03;
       return Object.assign(MOVES.idle(t), { aLf: 1.25 * p + b, aRf: 0.95 * p - b, aLo: -0.18 * p, aRo: -0.12 * p, eL: 1.75 * p, eR: 2.0 * p, lean: 0.07 * p, hx: 0.1 * p, lLf: 0.22 * p, lRf: -0.18 * p, lLo: 0.1 * p, lRo: 0.1 * p, wy: -0.12 * p });
     },
+    punch(t) {      // one big right straight (0.18 s out), then held
+      const p = easeOut(clamp(t / 0.18, 0, 1));
+      return Object.assign(MOVES.idle(t), { aRf: 1.58 * p, eR: 0.15 * (1 - p) + 0.05, aRt: 0.1, aLf: 1.0 * p, eL: 1.9 * p, aLo: -0.2 * p, lean: 0.22 * p, wy: 0.35 * p, hx: 0.1 * p, lLf: 0.35 * p, lRf: -0.3 * p, kL: 0.3 * p });
+    },
+    barrage(t) {    // rapid alternating punches (use with RT.fx.barrage for the storm of fists)
+      const k = t * 13, l = Math.max(0, Math.sin(k)), r = Math.max(0, Math.sin(k + Math.PI)), p = easeOut(clamp(t / 0.15, 0, 1));
+      return { aLf: (1.0 + 0.58 * l) * p, aRf: (1.0 + 0.58 * r) * p, eL: (1.6 - 1.5 * l) * p, eR: (1.6 - 1.5 * r) * p, aLo: -0.15 * p, aRo: -0.15 * p,
+        lean: 0.18 * p, wy: Math.sin(k) * 0.12, hx: 0.12 * p, lLf: 0.3 * p, lRf: -0.25 * p, kL: 0.35 * p, kR: 0.1 * p, y: -0.08 * p };
+    },
+    block(t) {      // forearms crossed in front of the face
+      const p = easeOut(clamp(t / 0.15, 0, 1));
+      return Object.assign(MOVES.idle(t), { aLf: 1.45 * p, aRf: 1.35 * p, aLo: -0.35 * p, aRo: -0.3 * p, eL: 1.75 * p, eR: 1.85 * p, aLt: 0.6 * p, aRt: 0.6 * p, lean: 0.12 * p, hx: 0.2 * p, lLf: 0.25 * p, kL: 0.3 * p, y: -0.1 * p });
+    },
+    knockback(t) {  // hit hard: thrown backward, arms flung forward
+      const p = easeOut(clamp(t / 0.25, 0, 1));
+      return { lean: -0.45 * p, fallX: -0.25 * p, aLf: 1.3 * p, aRf: 1.1 * p, aLo: 0.5 * p, aRo: 0.6 * p, eL: 0.3, eR: 0.4, lLf: 0.6 * p, lRf: 0.25 * p, kL: 0.4 * p, hx: -0.35 * p, face: 'pain' };
+    },
+    shout(t) {      // all-out scream: chest out, fists down and back, head up
+      const p = easeOut(clamp(t / 0.2, 0, 1)), tr = Math.sin(t * 40) * 0.015;
+      return { aLo: 0.55 * p, aRo: 0.55 * p, aLf: -0.35 * p, aRf: -0.35 * p, eL: 0.5 * p, eR: 0.5 * p, lean: -0.12 * p + tr, hx: -0.28 * p, lLo: 0.2 * p, lRo: 0.2 * p, kL: 0.2 * p, kR: 0.2 * p, y: -0.12 * p, face: 'shout', mouth: 1 };
+    },
+    conduct(t) {    // Maestro Vahl conducting: baton arm beating a pattern, the other hand rising
+      const b = t * 2.6, x = Math.sin(b * Math.PI) * 0.35, y = Math.abs(Math.cos(b * Math.PI)) * 0.4;
+      return Object.assign(MOVES.idle(t), { aRf: 1.7 + y, aRo: 0.35 + x, eR: 0.55, aLf: 1.2 + Math.sin(t * 1.3) * 0.2, aLo: 0.55, eL: 0.4, hx: -0.12, lean: -0.04, wy: x * 0.2 });
+    },
+    puppet(t) {     // pulled by strings: jerky steps, arms yanked up, head lolling
+      const k = Math.floor(t * 4.2), j = (n) => RT.hash(k * 7.3 + n) - 0.5, s = 1 - Math.pow(1 - ((t * 4.2) % 1), 4);
+      return { aLf: 2.2 + j(1) * 1.2 * s, aRf: 2.0 + j(2) * 1.2 * s, aLo: 0.5 + j(3) * 0.6, aRo: 0.5 + j(4) * 0.6, eL: 0.4 + j(5), eR: 0.4 + j(6),
+        lLf: j(7) * 0.9 * s, lRf: j(8) * 0.9 * s, kL: 0.3 + j(9) * 0.5, kR: 0.3 + j(10) * 0.5, hx: 0.35 + j(11) * 0.3, hz: j(12) * 0.6, lean: j(13) * 0.25, y: -0.1 + j(14) * 0.15 };
+    },
+    slip(t) {       // cartoon slip: feet fly up, lands flat on the back
+      const a = t < 0.45 ? Math.PI / 2 * Math.pow(t / 0.45, 1.5) : Math.PI / 2 - 0.12 * Math.abs(Math.sin((t - 0.45) * 10)) * Math.exp(-(t - 0.45) * 6);
+      const p = clamp(t / 0.25, 0, 1);
+      return { fallX: a, lift: 0.9 * Math.sin(Math.min(Math.PI, t * 5)) + 0.45 * Math.sin(a), lLf: 1.3 * p, lRf: 0.9 * p, aLf: 2.6 * p, aRf: 2.2 * p, aLo: 0.5, aRo: 0.5, hx: -0.3 * p, face: 'shocked' };
+    },
+    reachUp(t) {    // both arms up, reaching for something above
+      const p = easeOut(clamp(t / 0.25, 0, 1)), w = Math.sin(t * 9) * 0.15;
+      return Object.assign(MOVES.idle(t), { aLf: 2.85 * p + w, aRf: 2.95 * p - w, aLo: 0.12, aRo: 0.12, eL: 0.15, eR: 0.15, hx: -0.4 * p, y: Math.max(0, Math.sin(t * 6)) * 0.12 });
+    },
+    headphonesOff(t) {   // hands grab the headphones at the neck (0–0.4 s), rip them up and throw them down (0.4–0.8 s)
+      const g = easeOut(clamp(t / 0.35, 0, 1)), th = easeOut(clamp((t - 0.45) / 0.25, 0, 1));
+      return { aLf: 2.1 * g * (1 - th) + 0.2 * th, aRf: 2.1 * g * (1 - th) + 1.2 * th, aLo: -0.3 * g, aRo: -0.3 * g + 0.2 * th, eL: 2.0 * g * (1 - th), eR: 2.0 * g * (1 - th) + 0.1, hx: 0.25 * th - 0.1 * g, lean: 0.18 * th, wy: -0.2 * th, face: th > 0 ? 'shout' : 'serious' };
+    },
+    frozen(t) {     // stuck in ice to the knees: upper body straining, arms pulling
+      const s = Math.sin(t * 3.2);
+      return { lean: 0.12 + s * 0.05, wy: s * 0.15, aLf: 0.6 + s * 0.3, aRf: 0.9 - s * 0.3, eL: 1.2, eR: 1.0, aLo: 0.3, aRo: 0.35, hx: 0.12, y: -0.05, face: 'pain' };
+    },
     power(t) {      // menacing stance: chest out, arms down and out, fists clenched, chin down
       const p = easeOut(clamp(t / 0.4, 0, 1)), b = Math.sin(t * 2.2) * 0.02;
       return Object.assign(MOVES.idle(t), { aLo: 0.42 * p + b, aRo: 0.42 * p - b, aLf: 0.18 * p, aRf: 0.18 * p, eL: 0.35 * p, eR: 0.35 * p, hx: 0.16 * p, lean: -0.04 * p, lLo: 0.16 * p, lRo: 0.16 * p });

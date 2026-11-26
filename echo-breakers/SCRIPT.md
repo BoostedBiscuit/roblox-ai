@@ -3,7 +3,7 @@
 Narrator and all humans: ElevenLabs **Adam, sped up 1.3x** (rant style). Echoes: Japanese voices (see the voice test), with big Japanese text and an English subtitle.
 Times are estimates from Adam's speed in Reaping Trials ep1; they settle once the voices are recorded. ✂ = cut from the Shorts version. ★ = a line I added (not in your brief).
 
-**Full: about 3:42.1** (target 3:30–4:00) · **Shorts: about 2:50.7** (max 2:58) · about 2711 ElevenLabs characters (the Shorts reuse the same recordings).
+**Full: about 3:42.1** (target 3:30–4:00) · **Shorts: about 2:50.7** (max 2:58) · about 2199 ElevenLabs characters (the Shorts reuse the same recordings).
 
 
 ## CH 1 · THE SILENT RECORD — Old Town Stairway

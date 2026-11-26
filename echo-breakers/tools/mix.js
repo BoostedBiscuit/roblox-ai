@@ -149,7 +149,7 @@ export function mix(name, duration) {
   // 6) narration + sound effects, no music
   ff(['-i', voice, '-i', preFx, '-filter_complex', `[0:a]${fmt}[v];[1:a]${fmt}[f];[v][f]amix=inputs=2:normalize=0:duration=first,${lim}[o]`, '-map', '[o]', '-t', D, '-c:a', 'pcm_s16le', out.noMusic]);
   fs.writeFileSync(path.join(dir, 'placed.json'), JSON.stringify(placed, null, 1));
-  console.log(`  audio: ${placed.length} sounds placed · narration ${narr.lines.length} lines (${narr.voice}) · final ${lufs(out.mix).toFixed(1)} LUFS`);
+  console.log(`  audio: ${placed.length} sounds placed · narration ${narr.lines.length} lines · final ${lufs(out.mix).toFixed(1)} LUFS`);
   if (missing.length) console.log(`  ⚠ missing sound files (skipped): ${[...new Set(missing)].join(', ')}`);
   return { ...out, missing: [...new Set(missing)], placed };
 }

@@ -37,12 +37,12 @@ function ff(args) { const r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 
 
 function signature() {
   const h = crypto.createHash('sha1');
-  const files = [path.join(RTD, 'episodes', `${name}.html`), path.join(RTD, 'audio', 'voice', `${name}_narration.js`),
+  const files = [path.join(RTD, 'audio', 'voice', `${name}_narration.js`),
     ...fs.readdirSync(path.join(RTD, 'episodes')).filter((f) => f.startsWith(name + '.') && f.endsWith('.js')).sort().map((f) => path.join(RTD, 'episodes', f)),   // chapter files
     ...fs.readdirSync(path.join(RTD, 'engine')).filter((f) => f.endsWith('.js')).sort().map((f) => path.join(RTD, 'engine', f))];
   for (const f of files) if (fs.existsSync(f)) h.update(fs.readFileSync(f));
-  // the CUE SHEET comment only changes the sound, not the picture
-  h.update(String(fs.readFileSync(path.join(RTD, 'episodes', `${name}.html`), 'utf8').replace(/=== CUE SHEET ===[\s\S]*?=== END ===/, '')));
+  // the page itself, without the CUE SHEET and SHORTS CUTS blocks (they only change the sound / the Shorts edit, not the picture)
+  h.update(String(fs.readFileSync(path.join(RTD, 'episodes', `${name}.html`), 'utf8').replace(/=== CUE SHEET ===[\s\S]*?=== END ===/, '').replace(/=== SHORTS CUTS ===[\s\S]*?=== END ===/, '')));
   h.update(`${SCALE}|${STEP}`);
   return h.digest('hex');
 }
@@ -165,7 +165,9 @@ async function main() {
       for (const [src, dst] of [[a.mix, outs.mp4], [a.noVoice, outs.nv]]) { const tmp = dst + '.tmp.mp4'; ff(['-i', dst, '-i', src, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', tmp]); fs.renameSync(tmp, dst); }   // (no -shortest: it cut a few frames each time)
     } else {
       const sigFile = path.join(framesDir, '.signature'), sig = signature();
-      if (has('--redo')) { for (const [x, y] of process.argv[process.argv.indexOf('--redo') + 1].split(',').map((r) => r.split('-').map(Number))) for (let f = x; f <= (y ?? x); f++) fs.rmSync(path.join(framesDir, `${String(f).padStart(5, '0')}.jpg`), { force: true }); fs.writeFileSync(sigFile, sig); }
+      // --adopt-frames: the frames on disk are already right (e.g. after a change in how the signature is computed): keep them
+      if (has('--adopt-frames')) { fs.writeFileSync(sigFile, sig); console.log('  frames adopted (signature updated)'); }
+      else if (has('--redo')) { for (const [x, y] of process.argv[process.argv.indexOf('--redo') + 1].split(',').map((r) => r.split('-').map(Number))) for (let f = x; f <= (y ?? x); f++) fs.rmSync(path.join(framesDir, `${String(f).padStart(5, '0')}.jpg`), { force: true }); fs.writeFileSync(sigFile, sig); }
       else if (!fs.existsSync(sigFile) || fs.readFileSync(sigFile, 'utf8') !== sig) { fs.rmSync(framesDir, { recursive: true, force: true }); fs.mkdirSync(framesDir, { recursive: true }); fs.writeFileSync(sigFile, sig); }
       await renderFrames(server, total, framesDir);
       if (PREVIEW) { const p = path.join(BUILD, 'preview.mp4'); encode(framesDir, total, a.mix, p); console.log(`✔ ${rel(p)}`); return; }

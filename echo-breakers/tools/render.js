@@ -22,6 +22,9 @@ import { readBlock } from './blocks.js';
 import { settings as brandSettings } from './brand.js';
 
 const FPS = 30, W = 1080, H = 1920;
+// Video quality: CRF 19, but never above 3.2 Mbit/s, so even the 3:40 version stays under GitHub's 100 MB per-file limit
+// (YouTube and Facebook re-encode uploads anyway). VIDEO_CAP=0 turns the cap off (larger files).
+const VQ = process.env.VIDEO_CAP === '0' ? ['-crf', '18'] : ['-crf', '19', '-maxrate', '3.2M', '-bufsize', '6.4M'];
 const name = (process.argv[2] || 'echo-breakers-full').replace(/^eb-/, '');
 const SHORT = name.replace(/-full$/, '') + '-shorts';                   // echo-breakers-full → echo-breakers-shorts
 const has = (f) => process.argv.includes(f);
@@ -104,7 +107,7 @@ function coverOne(n, video) {
   fs.copyFileSync(src, thumb);
   ff(['-i', mp4, '-loop', '1', '-framerate', String(FPS), '-t', '0.5', '-i', thumb, '-f', 'lavfi', '-t', '0.5', '-i', 'anullsrc=r=44100:cl=stereo',
     '-filter_complex', `[0:v]setsar=1[a];[1:v]scale=${W}:${H},format=yuv420p,setsar=1[t];[a][0:a][t][2:a]concat=n=2:v=1:a=1[v][au]`,
-    '-map', '[v]', '-map', '[au]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', out]);
+    '-map', '[v]', '-map', '[au]', '-c:v', 'libx264', '-preset', 'medium', ...VQ, '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', out]);
   console.log(`✔ ${rel(thumb)}\n✔ ${rel(out)}  (${probe(out).toFixed(2)} s: the last 0.5 s is the cover)`);
 }
 
@@ -132,14 +135,14 @@ function shorts(framesDir, total, audio) {
   const wm = watermarkFilter(), out = path.join(OUTD, `${SHORT}.mp4`);
   const fc = `${parts.join(';')};${segs.map((_, k) => `[v${k}][a${k}]`).join('')}concat=n=${segs.length}:v=1:a=1[cv][ca]` + (wm ? `;${wm.filter.replace('[0:v]', '[cv]')}` : ';[cv]format=yuv420p[v]');
   ff(['-framerate', String(FPS), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input] : []), '-filter_complex', fc, '-map', '[v]', '-map', '[ca]',
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-movflags', '+faststart', out]);
+    '-c:v', 'libx264', '-preset', 'medium', ...VQ, '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-movflags', '+faststart', out]);
   console.log(`✔ ${rel(out)}  (${probe(out).toFixed(2)} s from ${segs.length} parts; planned ${len.toFixed(2)} s${len > 178 ? '  ⚠ OVER 2:58!' : ''})`);
 }
 
 function encode(framesDir, total, audio, out) {
   const wm = watermarkFilter();
   ff(['-framerate', String(FPS / STEP), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input, '-filter_complex', wm.filter, '-map', '[v]'] : ['-map', '0:v']), '-map', '1:a',
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100',
+    '-c:v', 'libx264', '-preset', 'medium', ...VQ, '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100',
     '-t', String((total * STEP) / FPS), '-movflags', '+faststart', out]);
 }
 

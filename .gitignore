@@ -3,3 +3,7 @@ node_modules/
 .env
 credits.json
 reaping-trials/build/
+# Echo Breakers: the extra mixes are made locally but not committed (about 93 MB each); ask for them if needed
+out/echo-breakers/*-no-voice.mp4
+out/echo-breakers/*-sfx-only.mp4
+out/echo-breakers/*-no-music.mp4

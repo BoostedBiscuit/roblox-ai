@@ -36,7 +36,7 @@
       m.userData.noSpirit = true;    // (already a spirit: a parent Echo leaves it alone)
     }
     root.traverse((m) => { m.userData.glow = true; });
-    return { shellMat, materials: [...cache.values()] };
+    return { shellMat, haloMat, materials: [...cache.values()] };
   }
 
   // soft round sprite texture (aura puffs and particles)
@@ -64,18 +64,18 @@
     const seeds = Array.from({ length: N }, (_, i) => [RT.hash(i * 1.7 + 3), RT.hash(i * 2.3 + 7), RT.hash(i * 5.1 + 1)]);
     return {
       aura, pts,
-      update(t, power = 1) {
+      update(t, power = 1, light = 1) {
         puffs.forEach((sp, i) => {
           const d = sp.userData, f = 0.75 + 0.25 * Math.sin(t * 5 + i * 1.9);
           sp.position.set(Math.cos(d.a + t * 0.6) * w * 0.35, d.y + Math.sin(t * 2.2 + i) * 0.15, Math.sin(d.a + t * 0.6) * w * 0.2 - w * 0.15);
-          sp.scale.setScalar(d.s * f * (0.6 + 0.5 * power)); sp.material.opacity = 0.26 * power;
+          sp.scale.setScalar(d.s * f * (0.6 + 0.5 * power)); sp.material.opacity = 0.26 * power * light * light;   // additive puffs turn white in sunlight: fade them
         });
         for (let i = 0; i < N; i++) {
           const [a, b, c] = seeds[i], life = (t * (0.35 + b * 0.4) + c) % 1;
           const ang = a * Math.PI * 2 + t * 0.4;
           pos[i * 3] = Math.cos(ang) * w * (0.45 + 0.35 * b); pos[i * 3 + 1] = life * h * 1.15; pos[i * 3 + 2] = Math.sin(ang) * w * (0.35 + 0.3 * b);
         }
-        pg.attributes.position.needsUpdate = true; pts.material.opacity = 0.85 * power;
+        pg.attributes.position.needsUpdate = true; pts.material.opacity = 0.85 * power * (0.5 + 0.5 * light);
       },
     };
   }
@@ -83,15 +83,19 @@
   // wrap: spirit materials + aura + an update(t) that bobs and pulses
   function finish(root, o) {
     const sp = spiritify(root, o), ap = auraAndParticles(root, o);
+    const bases = sp.materials.map((m) => m.color.clone()), haloBase = sp.haloMat.color.clone();
     const echo = {
       color: o.color, glow: o.glow, name: o.name, kanji: o.kanji, aura: ap.aura, particles: ap.pts, power: 1,
+      // light: 1 at night / in the studio; about 0.5 in strong sunlight, so the spirit keeps its color instead of washing out to white
+      light: 1,
       setPower(p) { echo.power = p; },
       update(t, u = {}) {
-        const p = u.power ?? echo.power;
-        ap.update(t, p);
+        const p = u.power ?? echo.power, L = u.light ?? echo.light;
+        ap.update(t, p, L);
+        sp.haloMat.color.copy(haloBase).multiplyScalar(L);
         const pulse = 0.85 + 0.15 * Math.sin(t * 3.1);
-        for (const m of sp.materials) { m.emissiveIntensity = (o.emissive ?? 0.32) * (0.6 + 0.4 * p) * pulse; m.opacity = (o.opacity ?? 0.86) * Math.min(1, p * 1.5); }
-        sp.shellMat.opacity = (o.shell ?? 0.22) * p * (0.8 + 0.2 * Math.sin(t * 7));
+        sp.materials.forEach((m, i) => { m.color.copy(bases[i]).multiplyScalar(0.4 + 0.6 * L); m.emissiveIntensity = (o.emissive ?? 0.32) * (0.6 + 0.4 * p) * pulse * L; m.opacity = (o.opacity ?? 0.86) * Math.min(1, p * 1.5); });
+        sp.shellMat.opacity = (o.shell ?? 0.22) * p * (0.8 + 0.2 * Math.sin(t * 7)) * (0.5 + 0.5 * L);
         if (root.rig) root.rig.update(t);
         if (o.onUpdate) o.onUpdate(t, p);
       },

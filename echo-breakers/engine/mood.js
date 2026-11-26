@@ -42,6 +42,27 @@
     councilDark: { top: '#140b10', horizon: '#3a1f1a', sunCol: '#ffb560', sunDir: [0.55, 0.35, 0.3], sunDisc: 0,
       fog: '#1c0f0e', fogNear: 30, fogFar: 260, hemiSky: '#5a3a3a', hemiGround: '#1a0c0c', hemi: 0.55,
       sun: '#ffc67a', sunI: 1.6, fill: '#a03a3a', fillI: 0.35, exposure: 1.3 },
+    // ---------- ECHO BREAKERS (Port Halcyon) ----------
+    // sunny Italian harbor noon: deep blue sky, strong warm sun, light haze far away (stairway, piazza, promenade)
+    halcyon: { top: '#1a5fd6', horizon: '#b4dcfb', sunCol: '#fff1cf', sunDir: [0.62, 0.62, 0.45], sunDisc: 1,
+      fog: '#c6e2f6', fogNear: 260, fogFar: 2600, hemiSky: '#cfe3ff', hemiGround: '#8a7656', hemi: 0.6,
+      sun: '#fff0d2', sunI: 1.7, fill: '#d6e8ff', fillI: 0.32, exposure: 1.0 },
+    // sunset over the sea (the Sea Fortress): orange-pink horizon, violet sky, low golden sun from the west (-x)
+    sunset: { top: '#3a3f8c', horizon: '#ff9c5e', sunCol: '#ffb36b', sunDir: [-0.86, 0.13, -0.33], sunDisc: 1,
+      fog: '#f0a77e', fogNear: 220, fogFar: 2400, hemiSky: '#ffc7a2', hemiGround: '#4c3b5a', hemi: 0.72,
+      sun: '#ffb46e', sunI: 2.0, fill: '#9d8ad8', fillI: 0.45, exposure: 1.22 },
+    // the Ancient Arena at night: deep blue-violet sky, cold moonlight; purple and gold stage lights do the rest
+    arenaPurple: { top: '#05071a', horizon: '#2b2058', sunCol: '#b8c6ff', sunDir: [0.35, 0.42, -0.62], sunDisc: 0.55, moon: 1,
+      fog: '#120f2a', fogNear: 120, fogFar: 900, hemiSky: '#4a4c9a', hemiGround: '#151020', hemi: 0.5,
+      sun: '#b9c8ff', sunI: 0.75, fill: '#6a50c0', fillI: 0.3, exposure: 1.3 },
+    // dawn over the promenade (the ending): soft peach light from the east, pale sky
+    dawn: { top: '#5f86c9', horizon: '#ffd3ab', sunCol: '#ffc58f', sunDir: [0.75, 0.12, -0.65], sunDisc: 1,
+      fog: '#f2cdb0', fogNear: 240, fogFar: 2400, hemiSky: '#d9dcff', hemiGround: '#7a6a5a', hemi: 0.8,
+      sun: '#ffcf9e', sunI: 1.55, fill: '#c8d4ff', fillI: 0.4, exposure: 1.2 },
+    // a dark room at night (the TO BE CONTINUED teaser): cold moonlight through one window
+    darkRoom: { top: '#05060c', horizon: '#0c1020', sunCol: '#8fa8ff', sunDir: [-0.55, 0.45, 0.7], sunDisc: 0,
+      fog: '#05060b', fogNear: 14, fogFar: 70, hemiSky: '#38406a', hemiGround: '#08080c', hemi: 0.32,
+      sun: '#9fb4ff', sunI: 0.75, fill: '#2a2f48', fillI: 0.12, exposure: 1.25 },
     // neutral bright light for the character viewer
     studio: { top: '#4f8fe8', horizon: '#dceeff', sunCol: '#fff5e0', sunDir: [0.45, 0.75, 0.55], sunDisc: 0.6,
       fog: '#dceeff', fogNear: 80, fogFar: 600, hemiSky: '#e4f0ff', hemiGround: '#8c8a7a', hemi: 0.55,

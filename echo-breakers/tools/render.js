@@ -131,11 +131,23 @@ function shorts(framesDir, total, audio) {
   if (at < D) keep.push([at, D]);
   const fr = (x) => Math.round(x * FPS) / FPS, segs = keep.map(([a, b]) => [fr(a), fr(b)]).filter(([a, b]) => b - a > 0.05);
   const len = segs.reduce((n, [a, b]) => n + b - a, 0);
-  const parts = segs.map(([a, b], k) => `[0:v]trim=${a.toFixed(4)}:${b.toFixed(4)},setpts=PTS-STARTPTS[v${k}];[1:a]atrim=${a.toFixed(4)}:${b.toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.02,afade=t=out:st=${(b - a - 0.02).toFixed(4)}:d=0.02[a${k}]`);
-  const wm = watermarkFilter(), out = path.join(OUTD, `${SHORT}.mp4`);
-  const fc = `${parts.join(';')};${segs.map((_, k) => `[v${k}][a${k}]`).join('')}concat=n=${segs.length}:v=1:a=1[cv][ca]` + (wm ? `;${wm.filter.replace('[0:v]', '[cv]')}` : ';[cv]format=yuv420p[v]');
-  ff(['-framerate', String(FPS), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input] : []), '-filter_complex', fc, '-map', '[v]', '-map', '[ca]',
-    '-c:v', 'libx264', '-preset', 'medium', ...VQ, '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-movflags', '+faststart', out]);
+  // (each part is encoded on its own and the parts are joined without re-encoding: one big filter graph over the
+  //  whole image sequence needs too much memory. The sound is cut in one go from the WAV, so it stays in sync.)
+  const tmp = path.join(BUILD, 'shorts'); fs.rmSync(tmp, { recursive: true, force: true }); fs.mkdirSync(tmp, { recursive: true });
+  const wav = path.join(tmp, 'audio.wav');
+  const afc = segs.map(([a, b], k) => `[0:a]atrim=${a.toFixed(4)}:${b.toFixed(4)},asetpts=PTS-STARTPTS,afade=t=in:d=0.02,afade=t=out:st=${(b - a - 0.02).toFixed(4)}:d=0.02[a${k}]`).join(';')
+    + `;${segs.map((_, k) => `[a${k}]`).join('')}concat=n=${segs.length}:v=0:a=1[ca]`;
+  ff(['-i', audio, '-filter_complex', afc, '-map', '[ca]', '-c:a', 'pcm_s16le', wav]);
+  const wm = watermarkFilter(), list = [];
+  segs.forEach(([a, b], k) => {
+    const f0 = Math.round(a * FPS), n = Math.round(b * FPS) - f0, seg = path.join(tmp, `part${String(k).padStart(2, '0')}.mp4`);
+    ff(['-framerate', String(FPS), '-start_number', String(f0), '-i', path.join(framesDir, '%05d.jpg'), ...(wm ? ['-i', wm.input, '-filter_complex', wm.filter.replace('[2:v]', '[1:v]'), '-map', '[v]'] : ['-map', '0:v']),
+      '-frames:v', String(n), '-c:v', 'libx264', '-preset', 'medium', ...VQ, '-pix_fmt', 'yuv420p', '-r', String(FPS), '-an', seg]);
+    list.push(`file '${seg.replace(/'/g, "'\\''")}'`);
+  });
+  fs.writeFileSync(path.join(tmp, 'list.txt'), list.join('\n') + '\n');
+  const out = path.join(OUTD, `${SHORT}.mp4`);
+  ff(['-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-movflags', '+faststart', out]);
   console.log(`✔ ${rel(out)}  (${probe(out).toFixed(2)} s from ${segs.length} parts; planned ${len.toFixed(2)} s${len > 178 ? '  ⚠ OVER 2:58!' : ''})`);
 }
 

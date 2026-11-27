@@ -6,7 +6,7 @@
 // =====================================================================================
 (function () {
   'use strict';
-  const { S, E, WD, V, F, fx3, A, dante, aurora, grant, hale, put, pose, echoAt, beside, ramp, head, lookYaw } = EB;
+  const { S, E, WD, V, F, fx3, A, dante, aurora, grant, hale, put, pose, echoAt, beside, ramp, head, lookYaw } = EB;   // (thumbnails use these too)
   const { clamp, lerp, ease, easeOut } = RT;
 
   const DAWN_T = E('stopped', 0.2), ROOM_T = WD('another', 'somewhere') - 0.1, SPIN_T = WD('another', 'spin') - 0.15;
@@ -57,27 +57,49 @@
     EB.F.ev.sfx.length = 0; EB.F.ev.card.length = 0; EB.F.ev.grade.length = 0; EB.F.ev.vig.length = 0; EB.F.ev.lines.length = 0; EB.F.ev.flash.length = 0; EB.F.ev.impact.length = 0;
     document.getElementById('cap').style.display = 'none'; document.getElementById('sub').style.display = 'none';
     ['echo', 'think'].forEach((id) => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
-    const cam = EB.camera, R = EB.renderer;
-    R.domElement.style.filter = 'saturate(1.3) contrast(1.08) brightness(1.04)';
+    const cam = EB.camera, R = EB.renderer, FX3 = Object.values(fx3).flat();
+    R.domElement.style.filter = 'saturate(1.25) contrast(1.08) brightness(1.03)';
+    // each option: load the place at a moment of the story, then stage the characters by hand for a clear picture
+    const stage3D = (t) => { EB.renderAt(t); FX3.forEach((o) => (o.visible = false)); EB.PEOPLE.forEach((o) => (o.visible = false)); EB.ECHOES.forEach((o) => (o.visible = false)); EB.player.visible = false; };
+    const shoot = (pos, look, fov, bloom = 0.5) => { R.domElement.style.filter = 'saturate(1.25) contrast(1.08) brightness(1.03)'; cam.fov = fov; cam.position.set(...pos); cam.lookAt(...look); cam.updateProjectionMatrix(); EB.env.follow(cam); EB.env.shadowFocus(look[0], 0, look[2], 16); EB.glow.strength = bloom; EB.glow.render(); };
+    const faceCam = (p) => Math.atan2(cam.position.x - p[0], cam.position.z - p[2]);
     if (T === 1) {
-      // the clash, seen from the side, Dante in front looking up in shock
-      EB.renderAt(S('muda', 0.6));
-      const D2 = [7.6, 0, 3.4]; put(dante, D2, Math.PI / 2 + 0.5); pose(dante, 'guard', 0.6, { face: 'shocked', mod: { hx: -0.25, hy: -0.4 } }); dante.rig.setEyes('open'); dante.rig.update(0);
-      cam.fov = 54; cam.position.set(11.2, 2.6, 3.9); cam.lookAt(0.3, 3.4, 0.4); cam.updateProjectionMatrix(); EB.env.follow(cam);
-      EB.key.intensity = 0.7; EB.key.position.copy(cam.position); EB.key.target.position.set(7.6, 2, 3.4);
-      EB.glow.render();
-      add('<div class="th" style="top:7%"><div style="font-size:calc(var(--u)*14)">MY SPIRIT</div><div class="b" style="font-size:calc(var(--u)*12)">CAN PUNCH</div><div class="y" style="font-size:calc(var(--u)*16)">SOUND?!</div></div>');
+      // HIBIKI (blue, left) and SHŪEN (purple, right) punch each other: the two barrages meet in a burst; Dante in front, shocked
+      stage3D(S('muda', 0.5));
+      cam.position.set(8.6, 2.0, 7.2);
+      const HP = [1.6, 0, 2.6], SP = [-1.8, 0.4, -4.2], MEET = V(-0.1, 3.4, -0.9);
+      echoAt(EB.hibiki, HP, Math.atan2(SP[0] - HP[0], SP[2] - HP[2]), 1.0, { move: 'punch', lt: 0.5, float: 0.2 });
+      echoAt(EB.shuen, SP, Math.atan2(HP[0] - SP[0], HP[2] - SP[2]), 1.0, { move: 'punch', lt: 0.5, float: 0.2, orchestra: false });
+      const hc = head(EB.hibiki, -1.3), sc = head(EB.shuen, -2.5);
+      fx3.barrage.set(0.37, hc, MEET.clone().sub(hc), 0.85, 1.2, hc.distanceTo(MEET) - 0.3); fx3.barrage2.set(0.61, sc, MEET.clone().sub(sc), 0.85, 1.6, sc.distanceTo(MEET) - 0.3);
+      fx3.wave3.set(MEET, V(0.6, 0.1, 1), 0.35, 4); fx3.sparks.set(MEET, 0.12, 0.6, 0.6);
+      const DP = [6.0, 0, 5.2]; put(dante, DP, 0); dante.rotation.y = faceCam(DP) - 0.35; pose(dante, 'guard', 0.6, { face: 'shocked', mod: { hy: -0.5, hx: -0.15 } }); dante.rig.setEyes('open'); dante.rig.setMouth(true); dante.rig.update(0);
+      EB.key.intensity = 0.8; EB.key.position.set(9, 4, 9); EB.key.target.position.set(6, 2, 5);
+      shoot([8.6, 2.0, 7.2], [0.6, 3.2, -1.0], 56, 0.45);
+      add('<div class="th" style="top:6%"><div style="font-size:calc(var(--u)*14)">MY SPIRIT</div><div class="b" style="font-size:calc(var(--u)*12)">CAN PUNCH</div><div class="y" style="font-size:calc(var(--u)*16)">SOUND?!</div></div>');
     } else if (T === 2) {
-      EB.renderAt(S('puppets', 1.5));
-      cam.fov = 56; cam.position.set(0.6, 1.1, 9.5); cam.lookAt(0, 5.2, -4); cam.updateProjectionMatrix(); EB.env.follow(cam);
-      const D2 = [0.9, 0, 7.2]; put(dante, D2, Math.PI - 0.3); pose(dante, 'guard', 0.6, { face: 'scared' }); dante.rig.update(0);
-      EB.glow.render();
+      // Vahl conducts, SHŪEN looms with the shadow orchestra, the three friends hang on glowing strings; Dante in the corner
+      stage3D(S('puppets', 1.5));
+      cam.position.set(1.8, 1.0, 13.5);
+      put(EB.vahl, [0, 0, -2.5], 0); pose(EB.vahl, 'conduct', 0.9);
+      echoAt(EB.shuen, [0, 0.4, -7.2], 0, 1.0, { move: 'raiseHand', lt: 2, orchestra: true });
+      const FR = [[EB.aurora, [-3.4, 0, 2.4]], [EB.grant, [3.4, 0, 2.2]], [EB.hale, [0.2, 0, 3.6]]], pts = [];
+      FR.forEach(([ch, p], i) => { put(ch, p, faceCam(p)); pose(ch, 'puppet', 1.3 + i * 0.37, { face: 'sad' }); ch.rig.setEyes('closed'); ch.rig.update(0); const h = head(ch, 0.35); pts.push(h, h.clone().add(V(-0.7, -0.9, 0.2)), h.clone().add(V(0.7, -0.9, 0.2))); });
+      fx3.strings.set(pts, 26, 1, 1.0); fx3.notes.set(2.0, V(0, 1.5, -5), 7, 1, 8);
+      const DP = [2.6, 0, 10.6]; put(dante, DP, Math.PI - 0.25); pose(dante, 'guard', 0.6, { face: 'shocked' }); dante.rig.update(0);
+      shoot([1.8, 1.0, 13.5], [0, 4.4, -2.5], 58, 0.55);
       add('<div class="th" style="top:6%"><div style="font-size:calc(var(--u)*13)">HE TURNED</div><div class="p" style="font-size:calc(var(--u)*12.5)">MY FRIENDS</div><div class="y" style="font-size:calc(var(--u)*12)">INTO PUPPETS</div></div>');
     } else {
-      EB.renderAt(26.95);
-      cam.fov = 58; cam.position.set(-0.2, 8.4, -21.6); cam.lookAt(-2.8, 12.6, -29.4); cam.updateProjectionMatrix(); EB.env.follow(cam);
-      EB.glow.render();
-      add('<div class="th" style="top:60%"><div style="font-size:calc(var(--u)*13)">ONE NOTE</div><div class="y" style="font-size:calc(var(--u)*15)">WOKE IT UP</div></div>');
+      // the first night: HIBIKI bursts out of Dante and punches the falling sign to pieces
+      stage3D(26.9);
+      cam.position.set(3.4, 8.4, -21.8);
+      const DP = [-2.6, 10, -30.4]; put(dante, DP, 0.15); pose(dante, 'block', 1, { face: 'shocked', mod: { hx: -0.62 } }); dante.rig.setEyes('open'); dante.rig.update(0);
+      put(EB.player, [-1.25, 10, -29.65], 0.3);
+      const ec = echoAt(EB.hibiki, beside(dante, 0.25, 0.55, 0.7), 0.15, 1.0, { move: 'punch', lt: 0.6 }); ec.rotation.order = 'YXZ'; ec.rotation.x = -0.75;
+      const chest = head(EB.hibiki, -1.2), HIT = V(-2.6, 12.9, -30.3);
+      fx3.barrage.set(0.33, chest, HIT.clone().sub(chest), 0.8, 1.2, 2.4); fx3.debris.set(HIT, 0.22, 1.2, 1.4, 10.05);
+      shoot([3.4, 8.4, -21.8], [-2.4, 12.2, -29.5], 56, 0.4);
+      add('<div class="th" style="top:6%"><div style="font-size:calc(var(--u)*13)">ONE NOTE</div><div class="y" style="font-size:calc(var(--u)*15)">WOKE IT UP</div></div>');
     }
     if (window.RT_BRAND !== false) add('<img src="../brand/watermark.png" style="position:absolute;left:60%;top:91%;width:36%;opacity:.4">');
   };

@@ -336,6 +336,72 @@
     for (let k = 0; k < 10; k++) treePos.push([BARN.x - 14 - r() * 8, 0, BARN.z - 20 + k * 4]);
     for (let k = 0; k < 6; k++) treePos.push([HOUSE.x + 8 + r() * 4, 0, HOUSE.z - 10 + k * 4]);
     RT.scenery.forest(G, treePos, { seed: 17, pineRatio: 0.35, scale: 1.25 });
+    // ---- big old shade trees (thick trunks, spreading limbs, full leafy crowns): behind the house rows, by the barn and
+    //      Rhea's house, a windbreak along the west edge of the field, and a few standing alone in the wheat ----
+    const bigT = [];   // [x, z, scale, kind 0 = broad oak, 1 = tall elm]
+    const clearOfRoads = (x, z) => [[0, 0], [3.5, 0], [-3.5, 0], [0, 3.5], [0, -3.5]].every(([a, b]) => !onRoad(x + a, z + b));
+    for (const hh of houses) {
+      if (r() > 0.5) continue;
+      const fx = Math.sin(hh.yaw), fz = Math.cos(hh.yaw), sd = r() < 0.5 ? -1 : 1, back = 10.5 + r() * 2, side = 7 + r() * 2;
+      const x = hh.x - fx * back + fz * sd * side, z = hh.z - fz * back - fx * sd * side;
+      if (!clearOfRoads(x, z) || inField(x, z) || houses.some((o) => Math.hypot(o.x - x, o.z - z) < 7.5) || Math.hypot(x, z) < 24) continue;
+      bigT.push([x, z, 1.0 + r() * 0.4, r() < 0.7 ? 0 : 1]);
+    }
+    bigT.push([HOUSE.x + 11, HOUSE.z + 8, 1.35, 0], [HOUSE.x + 3, HOUSE.z + 16, 1.15, 1]);                   // Rhea's yard
+    bigT.push([BARN.x - 4, BARN.z + 16, 1.4, 0], [BARN.x + 4, BARN.z - 17, 1.15, 1]);                          // beside the barn
+    for (let z = 30; z <= 180; z += 24) bigT.push([-107 + (r() - 0.5) * 3, z + (r() - 0.5) * 6, 1.05 + r() * 0.35, z % 48 ? 1 : 0]);   // west windbreak
+    bigT.push([-45, 140, 1.5, 0], [-5, 165, 1.35, 0], [-72, 46, 1.25, 0]);                                     // alone in the wheat
+    bigT.push([-24, 9, 1.45, 0]);                                                                              // the town's old tree, by the square
+    bigT.push([46, 100, 1.2, 1], [46, 150, 1.25, 0], [45.5, 180, 1.15, 1]);                                     // along the Farm Road
+    const barkTex = RT.canvasTexture(64, 128, (g) => {
+      g.fillStyle = '#6e4d35'; g.fillRect(0, 0, 64, 128);
+      for (let i = 0; i < 26; i++) { g.fillStyle = `rgba(32,20,12,${0.25 + r() * 0.35})`; g.fillRect(r() * 64, 0, 1 + r() * 2.5, 128); }
+      for (let i = 0; i < 50; i++) { g.fillStyle = 'rgba(160,130,100,0.22)'; g.fillRect(r() * 64, r() * 128, 2 + r() * 4, 1); }
+    });
+    barkTex.wrapS = barkTex.wrapT = THREE.RepeatWrapping;
+    const leafTex = RT.canvasTexture(128, 128, (g) => {
+      g.fillStyle = '#b8b8b8'; g.fillRect(0, 0, 128, 128);
+      for (let i = 0; i < 320; i++) { const v = (140 + r() * 115) | 0; g.fillStyle = `rgb(${v},${v},${v})`; g.beginPath(); g.ellipse(r() * 128, r() * 128, 2 + r() * 4, 1.5 + r() * 2.5, r() * 3, 0, 6.3); g.fill(); }
+    });
+    leafTex.wrapS = leafTex.wrapT = THREE.RepeatWrapping;
+    const UPV = new THREE.Vector3(0, 1, 0);
+    const limb = (items, x0, y0, z0, yaw, tilt, len, r0, r1) => {
+      const d = new THREE.Vector3(Math.sin(tilt) * Math.cos(yaw), Math.cos(tilt), Math.sin(tilt) * Math.sin(yaw));
+      const c = new THREE.Vector3(x0, y0, z0).addScaledVector(d, len / 2);
+      items.push({ geo: new THREE.CylinderGeometry(r1, r0, len, 7), matrix: new THREE.Matrix4().compose(c, new THREE.Quaternion().setFromUnitVectors(UPV, d), new THREE.Vector3(1, 1, 1)) });
+      return new THREE.Vector3(x0, y0, z0).addScaledVector(d, len);
+    };
+    const treeKind = (k) => {
+      const wood = [], leaves = [], tr = RT.rng(40 + k), H = k ? 8.0 : 6.0;
+      wood.push({ geo: new THREE.CylinderGeometry(k ? 0.5 : 0.62, k ? 0.78 : 0.92, H, 10), matrix: M(0, H / 2, 0) });
+      wood.push({ geo: new THREE.CylinderGeometry(0.9, 1.45, 0.9, 10), matrix: M(0, 0.45, 0) });                // root flare
+      const tips = [];
+      for (let i = 0; i < 4; i++) tips.push(limb(wood, 0, H - 1.4 + tr() * 1.0, 0, (i / 4) * 6.28 + tr() * 0.6, k ? 0.45 : 0.85, k ? 3.4 : 4.0, 0.38, 0.2));
+      const cy = H + (k ? 3.4 : 2.6);
+      leaves.push({ geo: new THREE.IcosahedronGeometry(k ? 3.4 : 4.1, 1), matrix: M(0, cy + 0.6, 0) });
+      for (const t of tips) leaves.push({ geo: new THREE.IcosahedronGeometry((k ? 2.6 : 3.1) + tr() * 0.6, 1), matrix: M(t.x * 1.1, t.y + 0.9, t.z * 1.1) });
+      for (let i = 0; i < 5; i++) { const a = tr() * 6.28, rr = (k ? 1.8 : 3.0) + tr() * 1.2; leaves.push({ geo: new THREE.IcosahedronGeometry(2.3 + tr() * 0.8, 1), matrix: M(Math.cos(a) * rr, cy - 0.6 + tr() * 2.4, Math.sin(a) * rr) }); }
+      leaves.push({ geo: new THREE.IcosahedronGeometry(k ? 2.6 : 3.0, 1), matrix: M(0.4, cy + (k ? 3.2 : 2.8), -0.3) });
+      return { wood: RT.mergeGeometries(wood), leaves: RT.mergeGeometries(leaves) };
+    };
+    const barkM = new THREE.MeshStandardMaterial({ map: barkTex, roughness: 0.95 });
+    const crownM = new THREE.MeshStandardMaterial({ map: leafTex, roughness: 0.9 });
+    crownM.onBeforeCompile = (sh) => {                       // the crowns move gently in the wind
+      sh.uniforms.uSway = sway;
+      sh.vertexShader = 'uniform float uSway;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n float ph = instanceMatrix[3].x * 0.21 + instanceMatrix[3].z * 0.17; transformed.x += sin(uSway * 1.1 + ph) * 0.012 * position.y; transformed.z += cos(uSway * 0.9 + ph) * 0.008 * position.y;');
+    };
+    const tdm = new THREE.Object3D(), tcol = new THREE.Color();
+    for (const kd of [0, 1]) {
+      const list = bigT.filter((b) => b[3] === kd); if (!list.length) continue;
+      const geo = treeKind(kd), wm = new THREE.InstancedMesh(geo.wood, barkM, list.length), lm = new THREE.InstancedMesh(geo.leaves, crownM, list.length);
+      list.forEach((b, i) => {
+        tdm.position.set(b[0], ground(b[0], b[1]) - 0.1, b[1]); tdm.rotation.set(0, r() * 6.28, 0); tdm.scale.setScalar(b[2]); tdm.updateMatrix();
+        wm.setMatrixAt(i, tdm.matrix); lm.setMatrixAt(i, tdm.matrix);
+        tcol.setHSL(0.25 + r() * 0.07, 0.5 + r() * 0.15, 0.36 + r() * 0.1); lm.setColorAt(i, tcol);
+      });
+      lm.instanceColor.needsUpdate = true;
+      for (const m of [wm, lm]) { m.castShadow = m.receiveShadow = true; m.frustumCulled = false; G.add(m); }
+    }
     // ---- mountains on the horizon ----
     const mMat = new THREE.MeshStandardMaterial({ color: '#7f94b8', flatShading: true, roughness: 1 }), snow = new THREE.MeshStandardMaterial({ color: '#f2f4f8', flatShading: true, roughness: 1 });
     for (let i = 0; i < 30; i++) { const a = (i / 30) * 6.28 + r() * 0.15, d = 950 + r() * 250, rad = 190 + r() * 110, h = 150 + r() * 140;
@@ -370,7 +436,7 @@
       const nt = u.netT ?? -1; wire.visible = nt < 0;
       net.visible = nt < 0.25; net.position.y = nt < 0 ? BH - 0.55 : BH - 0.55 - (BH - 1.2) * Math.min(1, (nt / 0.25) ** 2);
     };
-    G.spots = { SQUARE, PLATFORMS, plats, PILE: new THREE.Vector3(0, 0, 0), bags, BELL, bell, FIELD, DITCH, FARM_ROAD: { x: 38 }, MAIN_Z: -6, BARN, BW, BD, BH, BARN_WIRE, net, HOUSE, HOUSE_YAW, WINDOW, MILL, roads, onRoad, ground, houses, dome, domeM };
+    G.spots = { SQUARE, PLATFORMS, plats, PILE: new THREE.Vector3(0, 0, 0), bags, BELL, bell, FIELD, DITCH, FARM_ROAD: { x: 38 }, MAIN_Z: -6, BARN, BW, BD, BH, BARN_WIRE, net, HOUSE, HOUSE_YAW, WINDOW, MILL, roads, onRoad, ground, houses, dome, domeM, bigTrees: bigT };
     return G;
   }
 

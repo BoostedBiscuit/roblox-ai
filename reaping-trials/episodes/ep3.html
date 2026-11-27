@@ -230,6 +230,14 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
   const J_HIDE = [BX - 2.0, 0, BZ - 3.8], J_STAND = [WIRE.x - 2.6, 0, BZ + 1.6];
   // the night: both sit on hay bales outside the barn door, looking across the field
   const N_RHEA = [DOOR_X + 2.6, 0, BZ - 1.0], N_JUNO = [DOOR_X + 2.4, 0, BZ + 1.2], HOUSE_LIGHT = W(25, 'light') - 0.05;
+  // at night they sit on two hay bales dragged out to the barn door (the sit pose wants a seat about 0.6 high)
+  const seatM = RT.plastic('#d9b85a', { roughness: 0.85 }), twineM = RT.plastic('#8a6a2a', { roughness: 0.9 });
+  const seats = [N_RHEA, N_JUNO].map((p, i) => { const g = new THREE.Group(); g.position.set(p[0] - 0.3, 0, p[2]); g.rotation.y = i ? -0.15 : 0.15;
+    g.add(RT.mesh(new THREE.BoxGeometry(1.05, 0.62, 1.55), seatM)).children[0].position.y = 0.31;
+    for (const z of [-0.42, 0.42]) { const tw = RT.mesh(new THREE.BoxGeometry(1.07, 0.64, 0.05), twineM); tw.position.set(0, 0.31, z); g.add(tw); }
+    scene.add(g); return g; });
+  // Juno steps out from behind the hay at a walking pace with her feet locked to the ground, then turns to face the net
+  const J_T0 = S(19) - 1.2, J_WALK = A.path([[J_HIDE[0], J_HIDE[2]], [J_STAND[0], J_STAND[2]]], 2.0, J_T0);
 
   function castDay(t) {
     playRhea(t); playDax(t); playJunoA(t); playOthers.forEach((p) => p(t));
@@ -282,10 +290,11 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
       }
       dustNet.set(V3(WIRE.x - 0.6, 0.1, BZ), t - CLICK - 0.3, 1.0);
       // Juno: hidden behind the hay, steps out at her line, talks, pulls the rope to let Rhea down
-      const jo = clamp((t - (S(19) - 0.6)) / 1.6, 0, 1);
-      juno.position.set(lerp(J_HIDE[0], J_STAND[0], ease(jo)), 0, lerp(J_HIDE[2], J_STAND[2], ease(jo))); juno.rotation.y = yawTo(P3(juno.position), [WIRE.x - 0.6, 0, BZ]);
-      if (jo > 0 && jo < 1) A.set(juno, 'walk', 0, { phase: jo * 9 }); else if (t > LOWER - 0.3 && t < LOWER + 0.9) A.apply(juno, Object.assign(A.pose('idle', t), { aRf: 2.4 - 1.6 * clamp((t - LOWER) / 0.8, 0, 1), aLf: 2.3 - 1.5 * clamp((t - LOWER) / 0.8, 0, 1), eR: 0.3, eL: 0.3, lean: -0.1 }));
-      else A.set(juno, t > S(19) ? 'crossArms' : 'idle', t); juno.rig.setFace(t > S(21) ? 'smiling' : 'smirk'); juno.visible = t > S(19) - 0.8;
+      const jp = J_WALK(t), faceNet = yawTo([jp.x, 0, jp.z], [WIRE.x - 0.6, 0, BZ]), jArrive = J_T0 + jp.length / 2.0;
+      const jk = ease(clamp((t - jArrive) / 0.45, 0, 1)), dYaw = ((faceNet - jp.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      juno.position.set(jp.x, 0, jp.z); juno.rotation.y = jp.yaw + dYaw * jk;
+      if (jp.moving) A.set(juno, 'walk', t, { phase: jp.phase }); else if (t > LOWER - 0.3 && t < LOWER + 0.9) A.apply(juno, Object.assign(A.pose('idle', t), { aRf: 2.4 - 1.6 * clamp((t - LOWER) / 0.8, 0, 1), aLf: 2.3 - 1.5 * clamp((t - LOWER) / 0.8, 0, 1), eR: 0.3, eL: 0.3, lean: -0.1 }));
+      else A.set(juno, t > S(19) ? 'crossArms' : 'idle', t); juno.rig.setFace(t > S(21) ? 'smiling' : 'smirk'); juno.visible = t > J_T0;
     } else {
       netBag.visible = netRope.visible = false;
       rhea.position.set(...N_RHEA); rhea.rotation.y = Math.PI / 2 + 0.15; juno.position.set(...N_JUNO); juno.rotation.y = Math.PI / 2 - 0.15;
@@ -358,6 +367,7 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
     A.apply(holo, Object.assign(A.pose(t > S(5) ? 'present' : 'idle', t - S(5)), {})); holo.rig.setFace('smiling'); holo.rig.update(t);
     AR.update(t, { rise: ease(clamp((t - RISE0) / (RISE1 - RISE0), 0, 1)), bell: t > BELL_T ? t - BELL_T : -1, roads: t > BELL_T && t < BELL_T + 14 ? Math.min(1, (t - BELL_T) / 0.3) * (1 - clamp((t - BELL_T - 12) / 2, 0, 1)) : 0,
       sweep: t > BELL_T ? (t - BELL_T) * SWEEP : 0, night: night ? 1 : 0, houseLight: night ? clamp((t - HOUSE_LIGHT) / 0.25, 0, 1) : 0, lantern: night ? 1 : 0 });
+    for (const st of seats) st.visible = !!night;
     if (night || sunset) castBarn(t, night); else castDay(t);
     if (!(night || sunset)) { netBag.visible = netRope.visible = false; }
     lips(t);

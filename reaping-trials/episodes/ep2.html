@@ -312,7 +312,7 @@ Places (capital.js): the city + station (morning), the training court (morning),
     if (k >= 1) { const q = t - t0 - dur, w = Math.sin(q * 45) * 0.06 * Math.exp(-q * 7); a.rotateX(w); a.rotateY(w * 0.6); st.visible = false; }
     else st.set(from.clone().lerp(to, Math.max(0, k - 0.22)), p, 0.55);
   };
-  const nockArrow = (a, nock, grip) => { const dir = grip.clone().sub(nock).normalize(); a.visible = true; a.userData.streak.visible = false; a.position.copy(nock).addScaledVector(dir, 0.72); a.lookAt(nock.clone().addScaledVector(dir, 3)); };
+  const nockArrow = (a, nock, grip) => { if (!nock) return; const dir = grip.clone().sub(nock).normalize(); a.visible = true; a.userData.streak.visible = false; a.position.copy(nock).addScaledVector(dir, 0.72); a.lookAt(nock.clone().addScaledVector(dir, 3)); };
   // archery: the bow arm stays up; the right hand draws back to the cheek, snaps on the release, follows through
   const BOW_ARM = { aLf: 1.55, aLo: -0.05, aLt: 0.2, eL: 0.05, wy: 0.32, lLo: 0.12, lRo: 0.12, hx: -0.04 };
   const NOCK = Object.assign({}, BOW_ARM, { aRf: 1.52, aRo: 0.08, eR: 0.35 }), DRAWN = Object.assign({}, BOW_ARM, { aRf: 1.47, aRo: -0.32, eR: 2.0, hx: -0.06 }), FOLLOW = Object.assign({}, BOW_ARM, { aRf: 1.3, aRo: -0.8, eR: 1.25 });

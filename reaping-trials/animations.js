@@ -9,6 +9,7 @@
 //
 // Moves: idle, walk, run, jump, talk, look, point, raiseHand, kneel, wave, hug, fallOver,
 //        crossArms, facepalm, handsOnHips, cheer
+//        Episode 2: swordSwing, bowDraw, slingSpin, climb, hang, laugh, tinker, shakyHands, sitTalk
 //
 // A POSE is a plain object of joint angles (radians) and offsets (studs). Missing keys = 0.
 //   y        hips up/down          lean / turn / tilt   whole body forward / turn left / sideways
@@ -150,6 +151,55 @@
     },
     // trembling (scared, standing still)
     tremble(t) { const s = Math.sin(t * 38) * 0.02; return Object.assign(MOVES.idle(t), { hx: 0.12 + s, aLf: 0.25 + s, aRf: 0.25 - s, eL: 0.6, eR: 0.6, aLt: 0.6, aRt: 0.6, wx: 0.06 }); },
+    // ---- Episode 2 (the Capital) ----
+    // a clumsy sword swing at a dummy (right hand), every o.every seconds
+    swordSwing(t, o = {}) {
+      const T = o.every || 1.1, k = (t % T) / T, up = k < 0.45 ? ease(k / 0.45) : 1 - easeOut((k - 0.45) / 0.25);
+      return Object.assign(MOVES.idle(t), { aRf: 0.4 + 2.3 * clamp(up, 0, 1), aRo: 0.25 - 0.35 * clamp(up, 0, 1), eR: 0.35, wy: -0.25 + 0.5 * clamp(up, 0, 1), lean: 0.06, lLf: 0.25, lRf: -0.15, aLf: 0.35, eL: 0.6, hx: 0.1 });
+    },
+    // drawing a bow: left arm straight out holding the bow, right hand pulled back to the cheek; o.release: when the arrow flies
+    bowDraw(t, o = {}) {
+      const p = easeOut(clamp(t / 0.6, 0, 1)), rel = o.release !== undefined && t > o.release ? easeOut(clamp((t - o.release) / 0.15, 0, 1)) : 0;
+      return { aLf: 1.55 * p, aLo: -0.05, aLt: 0.2, eL: 0.05, aRf: 1.5 * p - 0.5 * rel, aRo: -0.35 * p + 0.6 * rel, eR: (2.0 - 1.5 * rel) * p, wy: 0.35 * p, hy: (o.look ?? 0.55) * p, hx: -0.04, lLo: 0.12, lRo: 0.12, y: Math.sin(t * 2) * 0.01 };
+    },
+    // spinning a sling over the head, then whipping it forward at o.throwAt
+    slingSpin(t, o = {}) {
+      const th = o.throwAt ?? 99;
+      if (t < th) { const p = easeOut(clamp(t / 0.4, 0, 1)), a = t * 14; return Object.assign(MOVES.idle(t), { aRf: (2.6 + Math.sin(a) * 0.25) * p, aRo: (0.2 + Math.cos(a) * 0.25) * p, eR: 0.3, aLf: 0.5, aLo: 0.2, eL: 0.4, wy: 0.1, hx: -0.05, lLf: 0.25, lRf: -0.2 }); }
+      const q = easeOut(clamp((t - th) / 0.18, 0, 1));
+      return Object.assign(MOVES.idle(t), { aRf: 2.6 - 1.4 * q, aRo: 0.1, eR: 0.1, aLf: 0.5, aLo: 0.2, eL: 0.4, wy: 0.1 - 0.35 * q, lean: 0.12 * q, lLf: 0.25 + 0.15 * q, lRf: -0.2 - 0.2 * q, hx: -0.05 });
+    },
+    // climbing: arms reach up in turn, legs step up (place the character against the wall and raise o.y over time)
+    climb(t) {
+      const s = Math.sin(t * 5);
+      return { aLf: 2.75 + s * 0.3, aRf: 2.75 - s * 0.3, eL: 0.4 + Math.max(0, s) * 0.5, eR: 0.4 + Math.max(0, -s) * 0.5, lLf: 0.7 + s * 0.5, lRf: 0.7 - s * 0.5, kL: 0.9 + s * 0.4, kR: 0.9 - s * 0.4, hx: -0.35, lean: -0.05 };
+    },
+    // hanging on a rope with both hands, legs dangling and kicking
+    hang(t) {
+      const s = Math.sin(t * 6);
+      return { aLf: 3.0, aRf: 2.85, eL: 0.25, eR: 0.35, lLf: 0.35 + s * 0.3, lRf: 0.25 - s * 0.3, kL: 0.5, kR: 0.6, hx: -0.4, lean: 0.05 };
+    },
+    // laughing: leaning back, a hand on the belly, shoulders bouncing
+    laugh(t, o = {}) {
+      const b = Math.abs(Math.sin(t * 9)), p = easeOut(clamp(t / 0.3, 0, 1));
+      return Object.assign(MOVES.idle(t), { lean: -0.1 * p, hx: (-0.3 - b * 0.08) * p, y: b * 0.06, aLf: 0.6 * p, aLt: 0.7 * p, eL: 1.2 * p, aRf: (0.4 + b * 0.25) * p, aRo: 0.2 * p, eR: 0.6 * p, mouth: b > 0.4 ? 1 : 0, face: o.face || 'smiling' });
+    },
+    // tinkering at a workbench: both hands forward and low, small busy movements, eyes down
+    tinker(t) {
+      const a = Math.sin(t * 7), b = Math.sin(t * 5.3 + 1);
+      return Object.assign(MOVES.idle(t), { aLf: 0.95 + a * 0.08, aRf: 1.0 + b * 0.1, eL: 0.8, eR: 0.75, aLt: 0.3, aRt: 0.3, aLo: -0.12, aRo: -0.12, hx: 0.42, lean: 0.08, wx: 0.05 });
+    },
+    // hands clasped in front of the chest, trembling (nervous); o.seated: on a chair
+    shakyHands(t, o = {}) {
+      const s = Math.sin(t * 40) * 0.04 + Math.sin(t * 23) * 0.025, B = o.seated ? MOVES.sit(t, { slump: 0.15 }) : MOVES.idle(t);
+      if (o.seated) return Object.assign(B, { aLf: 0.7 + s, aRf: 0.7 - s, aLo: -0.2, aRo: -0.2, aLt: 0.5, aRt: 0.5, eL: 0.85, eR: 0.85, hx: 0.3 });   // hands together on the knees
+      return Object.assign(B, { aLf: 0.95 + s, aRf: 0.95 - s, aLo: -0.32, aRo: -0.32, aLt: 0.6, aRt: 0.6, eL: 1.05, eR: 1.05, hx: 0.15 });
+    },
+    // sitting up straight on a chair and talking (the interview); o.silent: listening
+    sitTalk(t, o = {}) {
+      const P = MOVES.sit(t, { slump: 0.05 }), T = MOVES.talk(t, o);
+      return Object.assign(P, { hx: T.hx * 0.6, hy: T.hy * 0.6 + (o.turn || 0), hz: T.hz, aRf: 0.85 + (o.silent ? 0 : Math.sin(t * 2.2) * 0.15), eR: 0.9, mouth: T.mouth });
+    },
     // crowds at the Capital: both arms up and bouncing
     cheer(t) {
       const b = Math.max(0, Math.sin(t * 7));

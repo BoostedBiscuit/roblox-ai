@@ -914,7 +914,7 @@
       people.forEach((p, i) => {
         const ph = t * 1.6 + p.phase, bob = Math.sin(ph * 1.3) * 0.025 + cheer * Math.max(0, Math.sin(t * 7 + p.phase * 3)) * 0.35;
         // body
-        q.setFromEuler(e.set(0, p.yaw, 0)); B.compose(v.set(p.x, 0, p.z), q, sc.setScalar(p.s));
+        q.setFromEuler(e.set(0, p.yaw, 0)); B.compose(v.set(p.x, p.y || 0, p.z), q, sc.setScalar(p.s));   // (p.y: people standing on steps / tiers)
         M.copy(B).multiply(J.makeTranslation(0, d.ul + d.ll, 0)); parts.legs.setMatrixAt(i, M); parts.shoes.setMatrixAt(i, M);
         M.copy(B).multiply(J.makeTranslation(0, d.ul + d.ll + bob, 0)); parts.torso.setMatrixAt(i, M);
         const top = d.ul + d.ll + d.lh + bob;

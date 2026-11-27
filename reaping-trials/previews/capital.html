@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- Capital preview (Episode 2 locations): previews/capital.html?set=station&cam=x,y,z&look=x,y,z&fov=50&mood=capitalMorning&night=0
+     Used by tools/capital-shots.js to check the places before the episode is built. -->
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}</style></head><body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script><script src="../mood.js"></script><script src="../characters.js"></script><script src="../animations.js"></script>
+<script src="../scenery.js"></script><script src="../capital.js"></script>
+<script>
+(function () {
+  try {
+    const q = new URLSearchParams(location.search), W = innerWidth, H = innerHeight;
+    const renderer = RT.mood.renderer(null, { preserve: true }); renderer.setSize(W, H); document.body.appendChild(renderer.domElement);
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 4000);
+    const env = RT.mood.create(scene, renderer, { mood: 'studio', shadowSize: 2048 });
+    const city = RT.capital.skyline(); scene.add(city);
+    const sets = { station: RT.capital.station(), court: RT.capital.trainingCourt(), show: RT.capital.showStage(), roof: RT.capital.rooftop() };
+    for (const k in sets) { scene.add(sets[k]); sets[k].visible = false; }
+    window.view = (o) => {
+      for (const k in sets) sets[k].visible = k === o.set;
+      env.set(RT.capital.MOODS[o.mood] || o.mood);
+      city.setNight(o.night || 0);
+      const s = sets[o.set]; if (s && s.update) s.update(o.t || 1, o.u || {});
+      camera.fov = o.fov || 50; camera.position.set(...o.cam); camera.lookAt(...o.look); camera.updateProjectionMatrix();
+      env.follow(camera); env.shadowFocus(o.look[0], 0, o.look[2], o.shadow || 30);
+      renderer.render(scene, camera);
+    };
+    window.sceneReady = true;
+  } catch (e) { window.sceneError = String(e.stack || e); console.error(e); }
+})();
+</script></body></html>

@@ -26,3 +26,22 @@ Picked automatically from your own repos (you said yes to both). Replace any fil
 | mic_tap.mp3 | your upload to roblox-short `audio/mic_tap.mp3` (copied here) |
 | paper_unfold.mp3 | your upload to roblox-short `audio/paper_unfold.mp3` (copied here) |
 | sob.mp3 | your upload to roblox-short `audio/sob.mp3` (copied here) |
+
+## Added for Episode 2 (The Capital)
+
+| File | Source |
+|---|---|
+| train_doors.mp3 | roblox-ai `sfx/cc0-audio/door-open/train-door-opening-b32a7f92.mp3` (CC0) |
+| train_glide.mp3 | roblox-ai `sfx/cc0-audio/swoosh/car-swoosh-1-4af59c7b.mp3` (CC0, via echo-breakers car_pass.mp3) |
+| sword_swing.mp3 | roblox-ai `sfx/cc0-audio/sword-slash/fx-015-sword-swing-1-wav-e0bdf640.mp3` (CC0) |
+| arrow_whoosh.mp3 | roblox-ai `sfx/cc0-audio/whoosh/arrow-whoosh-1-3ebb7873.mp3` (CC0) |
+| arrow_thunk.mp3 | roblox-ai `sfx/cc0-audio/impact-hit/arrow-impact-4-486cbd39.mp3` (CC0) |
+| trap_click.mp3 | roblox-ai `cc0-audio/chest-open/metallic-latch-release-wav-84802707.mp3` (CC0) |
+| net_drop.mp3 | roblox-ai `sfx/cc0-audio/land-thud/bag-drop-soft-surface-1-3743c134.mp3` (CC0) |
+| camera_shutter.mp3 | roblox-ai `sfx/cc0-audio/button-press/minolta-camera-shutter-wav-472b175b.mp3` (CC0) |
+| sling_whoosh.mp3 | roblox-ai `sfx/cc0-audio/swoosh/air-cutting-14-7209dfad.mp3` (CC0) |
+| body_thump.mp3 | roblox-ai `sfx/cc0-audio/land-thud/bag-drop-hard-surface-1-7fcc4d17.mp3` (CC0) |
+| crowd_cheer.mp3 | your upload to roblox-short `audio/cheer.mp3` (copied here) |
+| city_hum.mp3 | your upload to roblox-short `audio/crowd_murmur.mp3` (via echo-breakers city_murmur.mp3) |
+| footsteps_stone.mp3 | roblox-ai `sfx/cc0-audio/footstep/footsteps-on-stone-patio-wav-8dc39bbc.mp3` (CC0) |
+| wind_night.mp3 | roblox-short `audio/wind.mp3` (your upload for The Plague) |

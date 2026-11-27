@@ -50,8 +50,8 @@
       fog: '#d8e9fb', fogNear: 260, fogFar: 1600, hemiSky: '#d6e6ff', hemiGround: '#968a74', hemi: 0.75,
       sun: '#fff6e8', sunI: 1.7, fill: '#e2efff', fillI: 0.42, exposure: 0.98 },
     capitalShow: { top: '#060818', horizon: '#241a4a', sunCol: '#9fb0ff', sunDir: [0.3, 0.5, 0.75], sunDisc: 0, moon: 1,
-      fog: '#120f2a', fogNear: 160, fogFar: 900, hemiSky: '#5a52a8', hemiGround: '#1a1426', hemi: 0.7,
-      sun: '#ffe2b8', sunI: 1.25, fill: '#b48cff', fillI: 0.55, exposure: 1.3 },
+      fog: '#120f2a', fogNear: 160, fogFar: 900, hemiSky: '#5a52a8', hemiGround: '#1a1426', hemi: 0.6,
+      sun: '#ffe2b8', sunI: 1.0, fill: '#b48cff', fillI: 0.4, exposure: 1.05 },
     capitalNight: { top: '#050b22', horizon: '#1e2f5c', sunCol: '#a9c0ff', sunDir: [-0.55, 0.32, -0.6], sunDisc: 0.6, moon: 1,
       fog: '#0d1834', fogNear: 200, fogFar: 1100, hemiSky: '#6078c0', hemiGround: '#1a2030', hemi: 0.85,
       sun: '#b6c8ff', sunI: 0.85, fill: '#8aa0e0', fillI: 0.45, exposure: 1.35 },
@@ -431,37 +431,106 @@
     G.spots = { train, TRACK_Z, fountain: new THREE.Vector3(0, 0, FZ), doorX: train.doorX };
     return G;
   }
+  // The train: three cars with REAL door openings on the platform side (+z), so people walk out of the car, not
+  // through its wall. Car floor = platform level (y 0). Doors slide outward along the side (setDoors 0 … 1).
   function makeTrain(P) {
     const T = new THREE.Group(); T.name = 'train'; T.position.set(0, 0, TRACK_Z);
     const white = RT.plastic('#fbfbfd', { roughness: 0.3, metalness: 0.15 }), stripe = RT.metal('#e2b54a', { roughness: 0.3 }), win = RT.plastic('#2a4f7a', { roughness: 0.1, metalness: 0.5 }), dark = RT.plastic('#2a2f38');
-    const B = new Batch(), CAR = 16, W = 3.6, H = 3.9, Y0 = -0.45, doors = [];
+    const inner = RT.plastic('#dfe3ea', { roughness: 0.6 }), floorM = RT.plastic('#9aa3b0', { roughness: 0.7 }), seatM = RT.plastic('#2f5fa8', { roughness: 0.6 }), lightM = new THREE.MeshBasicMaterial({ color: '#fff6dc' });
+    const B = new Batch(), CAR = 16, W = 3.6, Y0 = -0.45, WALL = 2.72, DOOR_W = 1.7, doors = [];
     for (let c = 0; c < 3; c++) {
       const cx = (c - 1) * (CAR + 0.6);
-      B.add(white, boxG(CAR, H, W, 0.45), M(cx, Y0 + H / 2, 0));
-      B.add(stripe, boxG(CAR + 0.02, 0.28, W + 0.04), M(cx, Y0 + 1.1, 0));
-      B.add(win, boxG(CAR - 1.6, 1.25, W + 0.04), M(cx, Y0 + 2.45, 0));
-      B.add(dark, boxG(CAR - 0.6, 0.5, W - 0.6), M(cx, Y0 - 0.1, 0));
-      if (c < 2) B.add(dark, boxG(1.0, H - 0.6, W - 0.8), M(cx + CAR / 2 + 0.3, Y0 + H / 2, 0));
-      for (const dxn of [-0.25, 0.25]) {                                                     // two doors per car on the platform side (+z)
-        const dg = new THREE.Group(); dg.position.set(cx + dxn * CAR, Y0, W / 2 + 0.03); T.add(dg);
-        const d = RT.mesh(boxG(1.5, 2.9, 0.08, 0.04), RT.plastic('#e9edf2', { roughness: 0.35 })); d.position.y = 1.45 + 0.45; dg.add(d);
-        const dw = RT.mesh(boxG(1.0, 1.0, 0.1), win); dw.position.y = 2.6; d.add(dw); dw.position.set(0, 0.7, 0.01);
-        const gap = RT.mesh(boxG(1.5, 2.9, 0.04), RT.plastic('#1d2026')); gap.position.set(0, 1.9, -0.05); dg.add(gap);
+      B.add(white, boxG(CAR, -Y0, W), M(cx, Y0 / 2, 0));                                          // lower body (below the floor)
+      B.add(dark, boxG(CAR - 0.6, 0.5, W - 0.6), M(cx, Y0 - 0.1, 0));                             // under-frame
+      B.add(white, boxG(CAR, 0.75, W, 0.3), M(cx, WALL + 0.36, 0));                               // roof
+      B.add(white, boxG(CAR, WALL, 0.14), M(cx, WALL / 2, -W / 2 + 0.07));                        // far side wall
+      for (const s of [-1, 1]) B.add(white, boxG(0.14, WALL, W), M(cx + s * (CAR / 2 - 0.07), WALL / 2, 0));   // end walls
+      B.add(win, boxG(CAR - 1.6, 1.1, 0.05), M(cx, 1.95, -W / 2 - 0.01)); B.add(stripe, boxG(CAR + 0.02, 0.26, 0.05), M(cx, 0.75, -W / 2 - 0.02));
+      // platform side: wall pieces between the two door openings (at −4 and +4)
+      const segs = [[-CAR / 2, -4 - DOOR_W / 2], [-4 + DOOR_W / 2, 4 - DOOR_W / 2], [4 + DOOR_W / 2, CAR / 2]];
+      for (const [a, b] of segs) {
+        const L = b - a, mx = cx + (a + b) / 2;
+        B.add(white, boxG(L, WALL, 0.14), M(mx, WALL / 2, W / 2 - 0.07));
+        if (L > 1.2) B.add(win, boxG(L - 0.6, 1.1, 0.05), M(mx, 1.95, W / 2 + 0.01));
+        B.add(stripe, boxG(L, 0.26, 0.05), M(mx, 0.75, W / 2 + 0.02));
+      }
+      for (const dx of [-4, 4]) B.add(white, boxG(DOOR_W + 0.1, 0.3, 0.16), M(cx + dx, WALL - 0.15, W / 2 - 0.07));   // door head
+      // inside: floor, seats along the far wall, ceiling lights (seen through the open doors)
+      B.add(floorM, boxG(CAR - 0.3, 0.04, W - 0.3), M(cx, 0.02, 0));
+      B.add(inner, boxG(CAR - 0.3, 0.04, W - 0.3), M(cx, WALL - 0.03, 0));
+      for (let k = -3; k <= 3; k++) if (Math.abs(k * 2.1) > 1) { B.add(seatM, boxG(1.3, 0.5, 0.8), M(cx + k * 2.1, 0.45, -W / 2 + 0.6)); B.add(seatM, boxG(1.3, 0.9, 0.18), M(cx + k * 2.1, 0.95, -W / 2 + 0.25)); }
+      for (let k = -3; k <= 3; k++) B.add(lightM, boxG(1.4, 0.05, 0.4), M(cx + k * 2.1, WALL - 0.07, 0));
+      if (c < 2) B.add(dark, boxG(1.0, WALL + 0.3, W - 0.8), M(cx + CAR / 2 + 0.3, WALL / 2, 0));
+      for (const dx of [-4, 4]) {                                                                  // the sliding door panels (outside)
+        const dg = new THREE.Group(); dg.position.set(cx + dx, 0, W / 2 + 0.1); T.add(dg);
+        const d = RT.mesh(boxG(DOOR_W, WALL - 0.3, 0.08, 0.04), RT.plastic('#e9edf2', { roughness: 0.35 })); d.position.y = (WALL - 0.3) / 2; dg.add(d);
+        const dw = RT.mesh(boxG(1.0, 1.0, 0.1), win); dw.position.set(0, 0.55, 0.01); d.add(dw);
         doors.push(d);
       }
     }
     // noses at both ends
     for (const s of [-1, 1]) {
-      const nose = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2), white); nose.scale.set(H / 2, 5.5, W / 2);
-      nose.rotation.z = -s * Math.PI / 2; nose.position.set(s * (1.5 * CAR + 0.6), Y0 + H / 2, 0); nose.castShadow = true; T.add(nose);
-      B.add(win, boxG(2.2, 1.0, W * 0.62), M(s * (1.5 * CAR + 2.4), Y0 + 2.6, 0, 0, 0, s * 0.45));
-      B.add(stripe, boxG(3.6, 0.28, W * 0.9), M(s * (1.5 * CAR + 1.6), Y0 + 1.1, 0, 0, 0, s * 0.2));
+      const nose = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14, 0, Math.PI * 2, 0, Math.PI / 2), white); nose.scale.set((WALL - Y0 + 0.4) / 2, 5.5, W / 2);
+      nose.rotation.z = -s * Math.PI / 2; nose.position.set(s * (1.5 * CAR + 0.6), (WALL + 0.4 + Y0) / 2, 0); nose.castShadow = true; T.add(nose);
+      B.add(win, boxG(2.2, 1.0, W * 0.62), M(s * (1.5 * CAR + 2.4), 2.2, 0, 0, 0, s * 0.45));
+      B.add(stripe, boxG(3.6, 0.26, W * 0.9), M(s * (1.5 * CAR + 1.6), 0.75, 0, 0, 0, s * 0.2));
     }
     B.build(T);
     T.doorX = doors.map((d) => d.parent.position.x);
-    T.setDoors = (k) => doors.forEach((d) => { d.position.x = k * 1.45; });
+    T.setDoors = (k) => doors.forEach((d) => { d.position.x = k * (DOOR_W + 0.05); });
     return T;
   }
+
+  // =================================================================================
+  // EFFECTS for the action (all deterministic functions of time):
+  //   const b = RT.capital.fx.burst('#e8c86a', 16, 0.12); scene.add(b); b.set(origin, lt, dir, speed)   flying chips (straw, wood, stone)
+  //   const d = RT.capital.fx.puffs('#e8e2d6', 10);        scene.add(d); d.set(origin, lt, size)         soft dust clouds
+  //   const s = RT.capital.fx.streak('#ffffff');           scene.add(s); s.set(from, to, alpha)          a motion streak between two points
+  //   const a = RT.capital.fx.arc('#dff4ff');              scene.add(a); a.set(center, yaw, a0, a1, r0, r1, alpha)   a swing trail (fan)
+  // =================================================================================
+  const fx = {
+    burst(color, n = 16, size = 0.12) {
+      const m = new THREE.InstancedMesh(new THREE.BoxGeometry(size, size * 0.5, size * 1.6), RT.plastic(color, { roughness: 0.7 }), n), dm = new THREE.Object3D(), r = RT.rng(n * 31 + size * 1000);
+      const v = Array.from({ length: n }, () => [r() - 0.5, r() * 0.9 + 0.2, r() - 0.5, r() * 6, r() * 6, 0.6 + r() * 0.8]);
+      m.visible = false; m.frustumCulled = false;
+      m.set = (o, lt, dir = new THREE.Vector3(0, 0, 1), speed = 4) => {
+        m.visible = lt >= 0 && lt < 1.3; if (!m.visible) return;
+        v.forEach((q, i) => { const sp = speed * q[5];
+          dm.position.set(o.x + (q[0] * 1.6 + dir.x) * sp * lt * 0.6, Math.max(0.03, o.y + (q[1] + dir.y) * sp * lt * 0.6 - 4.9 * lt * lt), o.z + (q[2] * 1.6 + dir.z) * sp * lt * 0.6);
+          dm.rotation.set(q[3] + lt * 9, q[4] + lt * 7, 0); dm.scale.setScalar(Math.max(0.01, 1 - lt / 1.3)); dm.updateMatrix(); m.setMatrixAt(i, dm.matrix); });
+        m.instanceMatrix.needsUpdate = true;
+      };
+      return m;
+    },
+    puffs(color = '#e9e3d6', n = 10) {
+      const tex = RT.canvasTexture(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,0.9)'); gr.addColorStop(0.5, 'rgba(255,255,255,0.4)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+      const g = new THREE.Group(), sp = [], r = RT.rng(n * 7 + 3);
+      for (let i = 0; i < n; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color, transparent: true, depthWrite: false })); g.add(s); sp.push([s, r() * 6.28, 0.6 + r() * 0.7, r()]); }
+      g.visible = false;
+      g.set = (o, lt, size = 1) => {
+        g.visible = lt >= 0 && lt < 1.4; if (!g.visible) return;
+        for (const [s, a, k, h] of sp) { const d = size * 1.3 * RT.easeOut(lt / 1.2) * k;
+          s.position.set(o.x + Math.cos(a) * d, o.y + 0.15 + lt * 0.35 * (0.5 + h), o.z + Math.sin(a) * d); s.scale.setScalar(size * (0.5 + lt * 1.3) * k); s.material.opacity = 0.6 * (1 - lt / 1.4); }
+      };
+      return g;
+    },
+    streak(color = '#ffffff') {
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.0, 1, 6, 1, true), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }));
+      m.geometry.rotateX(Math.PI / 2); m.geometry.translate(0, 0, 0.5); m.visible = false;
+      m.set = (from, to, alpha = 0.6) => { const L = from.distanceTo(to); m.visible = L > 0.05 && alpha > 0.01; if (!m.visible) return; m.position.copy(to); m.lookAt(from); m.scale.set(1, 1, L); m.material.opacity = alpha; };
+      return m;
+    },
+    arc(color = '#e8f6ff') {
+      const m = new THREE.Mesh(new THREE.RingGeometry(0.6, 1.0, 24, 1, 0, 1), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.5, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+      m.visible = false;
+      m.set = (c, yaw, a0, a1, r0, r1, alpha) => {
+        m.visible = alpha > 0.01; if (!m.visible) return;
+        m.geometry.dispose(); m.geometry = new THREE.RingGeometry(r0, r1, 20, 1, a0, a1 - a0);
+        m.position.copy(c); m.rotation.set(0, yaw + Math.PI / 2, 0); m.material.opacity = alpha;
+      };
+      return m;
+    },
+  };
 
   // =================================================================================
   // 2. THE TRAINING COURT (morning). Open-air, ringed by a white colonnade; the Council balcony on the north wall.
@@ -534,6 +603,7 @@
     const holdCols = ['#ff4fa3', '#ffd23f', '#2fd06b', '#2f6fe0', '#ff7b2e', '#b57bff'];
     for (let i = 0; i < 46; i++) B.add(RT.plastic(holdCols[i % 6], { roughness: 0.5 }), new THREE.DodecahedronGeometry(0.17 + r() * 0.12, 0), M(cx - 13 + (r() - 0.5) * 6.2, 0.8 + r() * 8.4, z0 + 2.25));
     B.add(P.gold, boxG(7.3, 0.3, 1.0), M(cx - 13, 9.6, z0 + 1.8));
+    B.add(RT.plastic('#2f6fd6', { roughness: 0.7 }), boxG(7, 0.35, 3.6, 0.15), M(cx - 13, 0.18, z0 + 4.2));                    // crash mat under the wall
     for (const s of [-1, 1]) B.add(steel, new THREE.CylinderGeometry(0.15, 0.15, 10, 10), M(cx - 4.5 + s * 3.5, 5, z0 + 4.5));
     B.add(steel, new THREE.CylinderGeometry(0.15, 0.15, 7.2, 10), M(cx - 4.5, 10, z0 + 4.5, 0, 0, Math.PI / 2));
     const ropeM = RT.plastic('#c9a66b', { roughness: 0.85 }), ropes = [];
@@ -557,7 +627,7 @@
     for (let k = 0; k < 9; k++) { const kx = JX - 1.3 + (k % 5) * 0.6, kz = JZ - 0.35 + Math.floor(k / 5) * 0.55; if (k % 3 === 0) B.add(copper, new THREE.TorusGeometry(0.16, 0.06, 6, 10), M(kx, 1.35, kz, Math.PI / 2, 0, 0)); else if (k % 3 === 1) B.add(scrap, new THREE.CylinderGeometry(0.06, 0.06, 0.6, 8), M(kx, 1.3, kz, 0, 0, Math.PI / 2)); else B.add(scrap, boxG(0.3, 0.2, 0.25), M(kx, 1.35, kz)); }
     for (let k = 0; k < 6; k++) B.add(scrap, new THREE.CylinderGeometry(0.22, 0.22, 0.08, 8), M(JX - 1.2 + k * 0.5, 0.05, JZ + 1.4 + (k % 2) * 0.3));
     B.add(scrap, boxG(1.4, 0.8, 1.0), M(JX - 2.7, 0.4, JZ + 0.4)); B.add(copper, boxG(0.9, 0.5, 0.7), M(JX - 2.7, 1.05, JZ + 0.4));
-    const NET = { x: JX + 4.8, z: JZ + 1.0, y: 5.2 };
+    const NET = { x: JX + 3.9, z: JZ + 1.0, y: 5.2 };
     for (const s of [-1, 1]) B.add(wood, boxG(0.2, 5.6, 0.2), M(NET.x + s * 1.8, 2.8, NET.z - 1.6)); B.add(wood, boxG(3.8, 0.2, 0.2), M(NET.x, 5.6, NET.z - 1.6));
     const netTex = RT.canvasTexture(128, 128, (g) => { g.clearRect(0, 0, 128, 128); g.strokeStyle = '#d9c28a'; g.lineWidth = 3; for (let k = 0; k <= 128; k += 16) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, 128); g.moveTo(0, k); g.lineTo(128, k); g.stroke(); } });
     const net = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2, 8, 8), new THREE.MeshStandardMaterial({ map: netTex, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide, roughness: 0.8 }));
@@ -575,10 +645,17 @@
     const stone = RT.mesh(new THREE.SphereGeometry(0.11, 10, 8), RT.plastic('#8a8f96')); stone.visible = false; G.add(stone);
     G.update = (t, u = {}) => {
       ropes.forEach((rp, i) => { rp.rotation.z = Math.sin(t * 0.9 + i) * 0.03; rp.rotation.x = Math.sin(t * 0.7 + i * 2) * 0.02; });
-      const drop = u.net || 0;                                                                   // 0 = hanging, 1 = on the ground
-      net.position.y = lerp(NET.y, 0.15, drop * drop); net.geometry.attributes.position.needsUpdate = false;
-      net.scale.set(1 + drop * 0.15, 1 + drop * 0.15, 1);
-      wire.visible = drop < 0.02;
+      // the net: u.netT = seconds since the trap was sprung (falls with gravity, bounces, ripples, then lies flat)
+      const nt = u.netT ?? -1, land = 0.55, pos = net.geometry.attributes.position, base = net.userData.base || (net.userData.base = Float32Array.from(pos.array));
+      if (nt < 0) net.position.y = NET.y;
+      else if (nt < land) net.position.y = NET.y - (NET.y - 0.15) * (nt / land) ** 2;
+      else net.position.y = 0.15 + Math.abs(Math.sin((nt - land) * 9)) * 0.35 * Math.exp(-(nt - land) * 4.5);
+      const rip = nt > land ? Math.exp(-(nt - land) * 2.2) : nt > 0 ? 0.25 : 0;
+      for (let i = 0; i < pos.count; i++) { const x = base[i * 3], y = base[i * 3 + 1], d = Math.hypot(x, y);
+        pos.setZ(i, nt > 0 ? Math.sin(d * 4 - nt * 14) * 0.12 * rip + (nt < land ? d * d * 0.05 : 0) : 0); }
+      pos.needsUpdate = true;
+      net.scale.set(1 + clamp(nt / land, 0, 1) * 0.12, 1 + clamp(nt / land, 0, 1) * 0.12, 1);
+      wire.visible = nt < 0;
     };
     G.spots = { COURT, seats, dummies, targets, arrows, stone, net, NET, JX, JZ, BAL_Y, BAL_Z, rope: ropes, climb: new THREE.Vector3(cx - 13, 0, z0 + 2.6), rack: new THREE.Vector3(cx - 19.8, 0, cz) };
     return G;
@@ -635,7 +712,7 @@
         beam.position.set(tx, 15.0, lz); beam.lookAt(new THREE.Vector3(s * 1.5, 0, SZ + 0.5)); beam.rotateX(-Math.PI / 2); beam.renderOrder = 6; G.add(beam); beams.push(beam);
       }
     }
-    const spot = new THREE.SpotLight('#fff4dc', 1.1, 60, 0.5, 0.6, 1.2); spot.position.set(0, 18, SZ - 8); spot.target.position.set(0, STAGE_Y, SZ + 0.5); G.add(spot, spot.target);
+    const spot = new THREE.SpotLight('#fff4dc', 0.8, 60, 0.5, 0.6, 1.2); spot.position.set(0, 18, SZ - 8); spot.target.position.set(0, STAGE_Y, SZ + 0.5); G.add(spot, spot.target);
     // audience tiers: a half ring of white steps (z grows toward the camera side), people from the Capital
     const tiers = 7, spots = [];
     for (let k = 0; k < tiers; k++) {
@@ -664,7 +741,7 @@
     G.update = (t, u = {}) => {
       crowd.update(t, { lookAt: u.lookAt || new THREE.Vector3(0, 2, SZ), cheer: u.cheer || 0 });
       ledRing.material.color.setHSL((t * 0.08) % 1, 0.8, 0.7);
-      beams.forEach((b, i) => { b.material.opacity = 0.18 + 0.04 * Math.sin(t * 1.3 + i); });
+      beams.forEach((b, i) => { b.material.opacity = (0.18 + 0.04 * Math.sin(t * 1.3 + i)) * (u.beams ?? 1); });   // u.beams: 1 in wide shots, low in close-ups
       if (u.screen && u.screen !== G._scr) { G._scr = u.screen; paintScreen(...u.screen); }
     };
     G.spots = { SZ, STAGE_Y, chairs, crowd, screen, cams, paintScreen, tierY: spots.map((s) => s[3]) };
@@ -713,5 +790,5 @@
     return G;
   }
 
-  RT.capital = { MOODS, mats, Garden, skyline, station, trainingCourt, showStage, rooftop, TRACK_Z, COURT, ROOF_Y };
+  RT.capital = { MOODS, mats, Garden, skyline, station, trainingCourt, showStage, rooftop, fx, TRACK_Z, COURT, ROOF_Y };
 })();

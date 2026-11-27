@@ -96,7 +96,7 @@ function cover(n) {
   fs.copyFileSync(src, thumb);
   ff(['-i', mp4, '-loop', '1', '-framerate', String(FPS), '-t', '0.5', '-i', thumb, '-f', 'lavfi', '-t', '0.5', '-i', 'anullsrc=r=44100:cl=stereo',
     '-filter_complex', `[0:v]setsar=1[a];[1:v]scale=${W}:${H},format=yuv420p,setsar=1[t];[a][0:a][t][2:a]concat=n=2:v=1:a=1[v][au]`,
-    '-map', '[v]', '-map', '[au]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', out]);
+    '-map', '[v]', '-map', '[au]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', ...capArgs(probe(mp4) + 0.5), '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', out]);
   console.log(`✔ ${rel(thumb)}\n✔ ${rel(out)}  (${probe(out).toFixed(2)} s: the last 0.5 s is the cover)`);
 }
 
@@ -109,10 +109,17 @@ function watermarkFilter() {
   return { input: f, filter: `[2:v]scale=${w}:-1,format=rgba,colorchannelmixer=aa=${b.opacity}[wm];[0:v][wm]overlay=${x}:${y}:format=auto,format=yuv420p[v]` };
 }
 
+// GitHub refuses files over 100 MB: keep CRF 18, but cap the bitrate so a video of this length stays under about 90 MB
+// (only busy pictures, like the dense wheat in ep3, ever reach the cap)
+function capArgs(dur) {
+  const kbps = Math.max(2500, Math.floor(((90 * 1048576 * 8) / dur - 192000 - 60000) / 1000));
+  return ['-maxrate', `${kbps}k`, '-bufsize', `${kbps * 2}k`];
+}
+
 function encode(framesDir, total, audio, out) {
   const wm = watermarkFilter();
   ff(['-framerate', String(FPS / STEP), '-i', path.join(framesDir, '%05d.jpg'), '-i', audio, ...(wm ? ['-i', wm.input, '-filter_complex', wm.filter, '-map', '[v]'] : ['-map', '0:v']), '-map', '1:a',
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', ...capArgs((total * STEP) / FPS), '-pix_fmt', 'yuv420p', '-r', String(FPS), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100',
     '-t', String((total * STEP) / FPS), '-movflags', '+faststart', out]);
 }
 

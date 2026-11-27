@@ -194,13 +194,13 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
   const DIVE_T = R_GO + 2.35, DITCH_T = W(12, 'dropped') + 0.2;
   // Dax: from his platform to the pile (sword) → turns to Rhea → chases her through the wheat → onto the Farm Road → leaps off at the bell
   const D_PILE = [1.6, 0, 1.4], D_TURN = S(9) - 0.25, D_GO = S(10) - 0.2;
-  const D_PATH = [[6.0, 0, 18.4], [13.5, 0, 30], [25.5, 0, 43], [34.8, 0, 52.2], [38.2, 0, 56]], D_ROAD = [38.2, 0, 78], D_JUMP = W(14, 'jumped') - 0.1, D_LAND = [43.5, 0, 74.5];
+  const D_PATH = [[6.0, 0, 18.4], [13.5, 0, 30], [25.5, 0, 43], [33.6, 0, 55.0], [38.2, 0, 57.5]], D_ROAD = [38.2, 0, 78], D_JUMP = W(14, 'jumped') - 0.1, D_LAND = [43.5, 0, 74.5];
   const playDax = A.actor(dax, [
     { at: 0, pos: platTop(1), yaw: yawTo(P3(PLAT[1]), C0), move: 'crossArms', face: 'smirk' },
     { at: S(6) - 0.2, to: D_PILE, speed: 4.6, gait: 'run', move: 'idle', yaw: yawTo(D_PILE, C0) },
     { at: D_TURN, yaw: yawTo(D_PILE, R_GAP), move: 'point', face: 'smirk' },
-    { at: D_GO, via: [[4.0, 0, 9.0], ...D_PATH.slice(0, 4)], to: D_PATH[4], speed: 4.9, gait: 'run', move: 'idle', face: 'smirk' },
-    { at: DITCH_T + 2.0, to: D_ROAD, speed: 3.6, gait: 'run', move: 'look', opts: { turn: 1.2 }, yaw: Math.PI },
+    { at: D_GO, via: [[4.0, 0, 9.0], ...D_PATH.slice(0, 4)], to: D_PATH[4], speed: 5.8, gait: 'run', move: 'idle', face: 'smirk' },
+    { at: S(12) + 4.25, to: D_ROAD, speed: 5.2, gait: 'run', move: 'look', opts: { turn: 1.2 }, yaw: Math.PI },
   ]);
   // the other five: to the pile, then away; Sector 5 and Sector 8 run west down Main Road (the glow catches them)
   const ZAP = [W(15, 'flashes') - 0.15, W(15, 'light') + 0.25];
@@ -249,7 +249,7 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
     if (t > D_JUMP && t < D_JUMP + 1.2) { const k = clamp((t - D_JUMP) / 0.7, 0, 1); dax.position.set(lerp(D_ROAD[0] - 0.2, D_LAND[0], ease(k)), Math.sin(Math.min(k, 1) * Math.PI) * 1.4, lerp(D_ROAD[2] - 2.5, D_LAND[2], k)); dax.rotation.y = Math.PI / 2 + 0.3;
       A.set(dax, 'jump', (t - D_JUMP) * 1.2); dax.rig.setFace('shocked'); }
     else if (t >= D_JUMP + 1.2) { dax.position.set(...D_LAND); dax.rotation.y = -Math.PI / 2 - 0.4; A.apply(dax, Object.assign(A.pose('idle', t), { lean: 0.25, hx: 0.25, aLf: 0.6, aRf: 0.7, kL: 0.6, kR: 0.6, y: -0.25 })); dax.rig.setFace('scared'); }
-    else if (t > DITCH_T + 2.0 && t < D_JUMP) { const P = A.pose('run', t); if (t > BELL_T + 1.2) { P.hy = 1.4; dax.rig.setFace('scared'); } A.apply(dax, P); }
+    else if (t > S(12) + 4.25 && t < D_JUMP) { const P = A.pose('run', t); if (t > BELL_T + 1.2) { P.hy = 1.4; dax.rig.setFace('scared'); } A.apply(dax, P); }
     dustJump.set(V3(D_LAND[0], 0, D_LAND[2]), t - D_JUMP - 0.7, 1.2);
     // the five others; Sector 5 and Sector 8 are teleported out on Main Road
     others.forEach((ch, k) => { ch.visible = true; ch.rig.setFace(t > BELL_T ? 'scared' : 'neutral'); });
@@ -317,7 +317,7 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
     { t0: S(9) - 0.2, mood: 'day', pos: () => head(dax, -0.3).add(V3(2.2, -0.2, 3.4)), look: () => head(dax, -0.35), fov: [44, 42], subj: [dax] },
     { t0: S(10) - 0.2, mood: 'day', pos: () => V3(dax.position.x - 2.4, 1.6, dax.position.z - 4.5), look: () => V3(dax.position.x + 3, 1.3, dax.position.z + 6), fov: [52, 52], ease: 'linear', shake: 0.006, subj: [dax] },
     { t0: S(11) - 0.2, mood: 'day', pos: () => V3(rhea.position.x + 3.2, 1.5, rhea.position.z + 4.6), look: () => V3(rhea.position.x, 1.2, rhea.position.z), fov: [50, 50], ease: 'linear', shake: 0.005, subj: [rhea] },
-    { t0: S(12) - 0.25, mood: 'day', pos: [[37.2, 0.55, 46.8], [37.2, 0.55, 47.1]], look: [[35.9, 0.7, 55], [36.8, 1.1, 57]], fov: [58, 56] },
+    { t0: S(12) - 0.25, mood: 'day', pos: [[37.6, 0.9, 45.8], [37.6, 0.9, 46.1]], look: [[36.0, 0.5, 54.2], [36.3, 0.7, 56]], fov: [64, 62] },
     { t0: S(13) - 0.15, mood: 'day', pos: [[8.2, 6.6, -6.4], [8.4, 6.4, -6.8]], look: [[11, 8.0, -12.5]], fov: [44, 42] },
     { t0: S(14) - 0.3, mood: 'day', pos: [[60, 26, 40], [62, 24, 46]], look: [[36, 0, 72], [38, 0, 74]], fov: [52, 50] },
     { t0: S(15) - 0.3, mood: 'day', pos: [[-118, 4.2, -2.6], [-120, 4.0, -2.8]], look: [[-150, 1.4, -6], [-150, 1.6, -6]], fov: [52, 50] },
@@ -327,7 +327,7 @@ Places (arena7.js): the copied Sector 7 under the dome. Moods: day → sunset (t
     { t0: S(17) - 0.2, mood: 'sunset', pos: [[WIRE.x - 3.4, 1.3, BZ + 3.0], [WIRE.x - 3.2, 1.2, BZ + 2.8]], look: [[WIRE.x + 0.6, 0.6, BZ - 0.2]], fov: [50, 48], subj: [rhea], pull: 1 },
     { t0: S(18) - 0.2, mood: 'sunset', pos: [[WIRE.x - 4.5, 1.2, BZ + 4.0], [WIRE.x - 4.4, 1.2, BZ + 3.8]], look: [[WIRE.x - 0.6, 2.8, BZ]], fov: [54, 52], shake: 0.006, subj: [rhea] },
     { t0: S(19) - 0.25, mood: 'sunset', pos: [[WIRE.x + 0.2, 2.1, BZ + 3.6], [WIRE.x + 0.1, 2.1, BZ + 3.4]], look: () => head(juno, -0.2), fov: [48, 46], subj: [juno], pull: 1 },
-    { t0: S(20) - 0.2, mood: 'sunset', pos: () => head(rhea, 0).add(V3(1.6, -0.2, 1.4)), look: () => head(rhea, -0.1), fov: [44, 42], subj: [rhea] },
+    { t0: S(20) - 0.2, mood: 'sunset', pos: [[-76.75, 1.0, 93.88], [-76.9, 1.05, 94.1]], look: () => head(juno, -0.1).lerp(V3(WIRE.x - 0.6, 2.4, BZ), 0.35), fov: [56, 54], subj: [juno], pull: 1 },   // low, Juno looking up at the net
     { t0: S(21) - 0.2, mood: 'sunset', pos: () => head(juno, -0.1).add(V3(1.8, 0, 1.6)), look: () => head(juno, -0.15), fov: [42, 40], subj: [juno] },
     { t0: S(22) - 0.2, mood: 'sunset', pos: () => head(rhea, -0.1).add(V3(-1.6, 0, 2.0)), look: () => head(rhea, -0.1), fov: [42, 40], subj: [rhea] },
     { t0: S(23) - 0.25, mood: 'sunset', pos: [[WIRE.x - 1.9, 2.3, BZ + 4.6], [WIRE.x - 1.8, 2.3, BZ + 4.4]], look: [[WIRE.x - 0.4, 1.6, BZ + 0.6]], fov: [50, 48], subj: [juno, rhea], pull: 1 },

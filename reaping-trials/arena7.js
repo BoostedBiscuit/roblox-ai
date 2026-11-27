@@ -229,7 +229,7 @@
     const fence = (x0, z0, x1, z1) => { const n = Math.max(1, Math.round(Math.hypot(x1 - x0, z1 - z0) / 2.6)), ang = Math.atan2(x1 - x0, z1 - z0), L = Math.hypot(x1 - x0, z1 - z0) / n;
       for (let k = 0; k <= n; k++) { const x = lerp(x0, x1, k / n), z = lerp(z0, z1, k / n); B.add(railM, boxG(0.2, 1.25, 0.2), M(x, 0.62, z, 0, 0, (RT.hash(k + x) - 0.5) * 0.08)); }
       for (const y of [0.55, 1.0]) for (let k = 0; k < n; k++) { const x = lerp(x0, x1, (k + 0.5) / n), z = lerp(z0, z1, (k + 0.5) / n); B.add(railM, boxG(0.12, 0.12, L + 0.15), M(x, y + (RT.hash(k * 3 + y) - 0.5) * 0.06, z, 0, ang, 0)); } };
-    fence(FIELD.x0, FIELD.z0, -6, FIELD.z0); fence(10, FIELD.z0, FIELD.x1, FIELD.z0); fence(FIELD.x1, FIELD.z0, FIELD.x1, FIELD.z1);   // (an open gap where the square meets the field)
+    fence(FIELD.x0, FIELD.z0, -6, FIELD.z0); fence(10, FIELD.z0, FIELD.x1, FIELD.z0); fence(FIELD.x1, FIELD.z0, FIELD.x1, 47.5); fence(FIELD.x1, 58.5, FIELD.x1, FIELD.z1);   // (open gaps: where the square meets the field, and a broken stretch by the ditch)
     const DITCH = { x: 35.6, z0: 30, z1: 90 };                                                    // a shallow drainage ditch between the fence and the Farm Road
     const ditchM = RT.plastic('#7a6040', { roughness: 0.95 });
     B.add(ditchM, boxG(1.4, 0.06, DITCH.z1 - DITCH.z0), M(DITCH.x, -0.35, (DITCH.z0 + DITCH.z1) / 2));

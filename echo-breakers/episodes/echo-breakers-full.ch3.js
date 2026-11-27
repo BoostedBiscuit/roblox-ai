@@ -17,9 +17,8 @@
   // an orange on the ground (Grant slips on it)
   const orange = RT.mesh(new THREE.SphereGeometry(0.14, 12, 9), RT.plastic('#ff9a1f')); EB.scene.add(orange); EB.extra.push(orange);
 
-  // ---------- chapter card ----------
-  const CARD = E('boss', 0.1), START = S('road', -0.2);
-  F.card(CARD, START, { kind: 'chapter', n: 3, title: 'TEN SECONDS' });
+  // (no chapter card: the arena dissolves straight into the chase)
+  const START = S('road', -0.2);
 
   // the chase: everyone runs toward +x. run(ch, x, z, t) = running pose at a spot
   const runAt = (ch, x, z, t, o = {}) => { put(ch, [x, o.y ?? WALK_Y, z], Math.PI / 2 + (o.yaw || 0)); A.apply(ch, Object.assign(A.pose('run', t, { phase: (x / 0.9) * Math.PI }), o.mod || {})); if (o.face) ch.rig.setFace(o.face); return ch; };
@@ -89,7 +88,7 @@
   // G · "Ten seconds of perfect luck." countdown 10 → 0 (fast) while every hunter gets stopped
   const LUCK_T = S('luck', -0.05), TIMEUP = S('timeup');
   F.countdown(LUCK_T, TIMEUP + 0.4, 10);
-  const XH0 = 89.8;                                                                        // hunters' timing (their x as a function of time)
+  const XH0 = S('luck', 1.46);                                                                        // hunters' timing (their x as a function of time)
   const XH = (t, off) => -6 + 6.2 * (t - XH0) - off;
   EB.shot({ t0: LUCK_T, loc: 'promenade', pos: [[GX - 1.2, 2.0, GZ + 3.4], [GX - 1.5, 2.1, GZ + 2.8]], look: [[GX + 0.2, 1.9, GZ], [GX + 0.2, 2.0, GZ]], fov: [46, 44], shadow: 8, bloom: 0.9,
     run(t, lt) {
@@ -98,7 +97,7 @@
       put(dante, [GX + 1.4, 0, GZ - 1.0], 0.6); pose(dante, 'idle', lt, { face: 'surprised' });
     } });
   // the lucky chain (4 quick shots). Each blocker: { t: when it hits }
-  const T1 = 89.95, T2 = 91.33, T3 = 92.5, T4 = 93.42;
+  const T1 = S('luck', 1.61), T2 = S('luck', 2.99), T3 = S('luck', 4.16), T4 = S('luck', 5.08);
   const DING = (t0) => { F.flash(t0, 0.18, '#ffe9a0', 0.55).sfx(t0, t0 + 0.65, 'キラッ', { x: 64, y: 24, size: 11, rot: 12, color: '#fff4a0', shadow: '#d89a00' }); };
   [T1, T2, T3, T4].forEach(DING);
   function chain(t) {
@@ -171,5 +170,5 @@
       grant.rig.props.hat.visible = false;
     } });
 
-  EB.STILLS.push(75.5, 77.3, 78.8, 80.8, 83.5, 86.4, 87.5, 89.0, 90.1, 91.4, 92.6, 93.5, 94.1, 96.0, 97.0, 98.0, 99.3, 100.3, 101.8);
+  EB.STILLS.push(75.8, 77.6, 79.1, 81.1, 83.8, 86.7, 87.8, 89.3, 90.4, 91.7, 92.9, 93.8, 94.4, 96.3, 97.3, 98.3, 99.6, 100.6, 102.1);
 })();

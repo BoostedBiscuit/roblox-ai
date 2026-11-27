@@ -1,6 +1,6 @@
 // =====================================================================================
 // CHAPTER 1 · THE SILENT RECORD (Old Town Stairway + the record shop)
-// Cold open (the sign falling, freeze) → rewind → "10 MINUTES EARLIER" → the street → the shop → the golden record
+// Cold open ("In this town…": wide over the town, the sign falls, freeze, glide down to Dante) → rewind → "10 MINUTES EARLIER" → the street → the shop → the golden record
 // → top of the stairs, play → one note, the city goes silent (ゴゴゴゴ) → the sign falls → HIBIKI bursts out and
 // punches it to pieces → "What… are you?" → 「俺はお前の響きだ。」 → pose + name card → pull back over the city.
 // Times come from the voice lines: S('label') / E('label') (see the NARRATION block in echo-breakers-full.html).
@@ -19,7 +19,8 @@
 
   // ---------- the big HOTEL AURORA sign (design units inside the stairway group) ----------
   // It hangs from the left building; when it falls it swings off its bracket toward Dante and is punched at T_HIT.
-  const T_FALL = 25.0, T_HIT = 26.75;                                                    // falling starts / HIBIKI's fist lands
+  const T_FALL = E('silent', 0.22), T_HIT = E('silent', 1.97);                          // falling starts / HIBIKI's fist lands
+  EB.T_HIT = T_HIT;
   const P0 = new THREE.Vector3(-13.3, 31.5, -54), P1 = new THREE.Vector3(-12.6, 28.2, -60.6);
   const qY = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2), qT = new THREE.Quaternion(), qX = new THREE.Quaternion();
   const signU = (t) => clamp((t - T_FALL) / (T_HIT - T_FALL), 0, 1);
@@ -39,38 +40,50 @@
     pose(dante, arms ? 'block' : 'idle', lt, { face: 'shocked', mod: { hx: -0.62, hy: -0.25, ...(arms ? {} : { aLf: 0.5, aRf: 0.45, eL: 1.0, eR: 1.0, aLo: 0.2, aRo: 0.2 }) } });
     put(player, PLAYER_AT, 0.3); spinDisc.rotation.y = -t * 3.4;
   }
-  const LOW_FRONT = { pos: [[3.4, 8.0, -20.6], [3.2, 8.2, -21.4]], look: [[-2.3, 11.9, -29.5], [-2.3, 12.1, -29.5]], fov: [54, 52] };   // (from the right, so the sign never hides him)
 
-  // ======================= COLD OPEN (0 – 3.5 s): the sign falls toward Dante… freeze. =======================
-  const FREEZE = 0.75;
-  EB.shot({ t0: 0, loc: 'stairway', ...LOW_FRONT, moveDur: 3.5, ease: 'out', shadow: 14, bloom: 0.6,
+  // ======================= COLD OPEN: "In this town, one note can change everything." =======================
+  // One unbroken camera move. High and wide over the town; the big sign tears off its bracket and drops toward the
+  // boy at the top of the stairs… time freezes on "everything". "That's me." — the camera sinks down to him, frozen
+  // under the sign. Then the picture rewinds.
+  const FREEZE = WD('town', 'everything'), FALL0 = FREEZE - 0.75, RW0 = E('me', 0.1), RW1 = RW0 + 0.88;
+  const HIGH = [[11, 31, 34], [9.5, 27, 26]], HIGH_LOOK = [[-3, 19, -40], [-2.8, 16, -36]];
+  const LOW_END = [3.8, 11.3, -26.4], LOW_LOOK = [-4.0, 13.2, -29.8], U_FROZEN = 0.5;   // (front-right; the frozen sign hangs just above him)
+  const DOWN0 = S('me', 0.05), DOWN1 = WD('me', 'giant') + 0.1;                         // the glide down to Dante
+  EB.shot({ t0: 0, loc: 'stairway', fov: [50, 52], shadow: 30, bloom: 0.6, ease: 'linear', moveDur: RW0,
+    pos: (lt) => {
+      const a = V(...HIGH[0]).lerp(V(...HIGH[1]), easeOut(clamp(lt / DOWN0, 0, 1)));
+      return a.lerp(V(...LOW_END), ease(clamp((lt - DOWN0) / (DOWN1 - DOWN0), 0, 1)));
+    },
+    look: (lt) => {
+      const a = V(...HIGH_LOOK[0]).lerp(V(...HIGH_LOOK[1]), clamp(lt / DOWN0, 0, 1));
+      return a.lerp(V(...LOW_LOOK), ease(clamp((lt - DOWN0) / (DOWN1 - DOWN0), 0, 1)));
+    },
     locT: (t) => Math.min(t, FREEZE) + 21,
     run(t) {
       const ft = Math.min(t, FREEZE);                                                     // time stops at FREEZE
-      setSign(lerp(0.28, 0.66, ft / FREEZE));
-      danteLooksUp(ft + 25.5, ft + 0.5, 0);
+      const u = ft < FALL0 ? 0 : U_FROZEN * Math.pow((ft - FALL0) / (FREEZE - FALL0), 1.3);
+      setSign(u, ft < FALL0 ? Math.sin(ft * 70) * 0.04 * ramp(ft, FALL0 - 0.35, 0.1) : 0);   // it shudders, then drops
+      danteLooksUp(ft + 25.5, ft < FALL0 ? 0.2 : ft - FALL0 + 0.3, 0);
     } });
-  F.flash(FREEZE, 0.18, '#ffffff', 0.85).grade(FREEZE, 3.45, { sat: 0.35, contrast: 1.18, fade: 0.05 }).lines(FREEZE, 3.45, { kind: 'focus', color: '#ffffff', amount: 0.7 })
-    .vignette(FREEZE, 3.45, 0.7, 0.1).sfx(FREEZE + 0.05, 3.4, '！？', { x: 74, y: 24, size: 20, rot: 10 });
+  F.flash(FREEZE, 0.16, '#ffffff', 0.55).grade(FREEZE, RW0 + 0.05, { sat: 0.35, contrast: 1.18, fade: 0.05 }).lines(FREEZE, RW0, { kind: 'focus', color: '#ffffff', amount: 0.6 })
+    .vignette(FREEZE, RW0, 0.7, 0.1).sfx(WD('me', 'crushed'), RW0, '！？', { x: 74, y: 24, size: 20, rot: 10 });
 
-  // ======================= REWIND (3.47 – 4.35) → CHAPTER 1 card → "10 MINUTES EARLIER" =======================
-  const RW0 = E('me', 0.1), RW1 = RW0 + 0.88;
-  EB.shot({ t0: RW0, loc: 'stairway', pos: [[3.2, 8.2, -21.4], [3, 6, 4]], look: [[-2.3, 12.1, -29.5], [-2.5, 9, -24]], fov: [50, 55], ease: 'in', moveDur: RW1 - RW0,
+  // ======================= REWIND → "10 MINUTES EARLIER" =======================
+  EB.shot({ t0: RW0, loc: 'stairway', pos: [LOW_END, [3, 6, 4]], look: [LOW_LOOK, [-2.5, 9, -24]], fov: [52, 55], ease: 'in', moveDur: RW1 - RW0,
     locT: (t) => 21 - (t - RW0) * 6,
     run(t) {
       const k = (t - RW0) / (RW1 - RW0);                                                // time runs backward fast
-      setSign(lerp(0.66, 0, Math.min(1, k * 1.6)));
-      danteLooksUp(25.5 - k * 3, 1.25 - k, 0);
+      setSign(lerp(U_FROZEN, 0, Math.min(1, k * 1.6)));
+      danteLooksUp(25.5 - k * 3, Math.max(0.2, 1.25 - k), 0);
     } });
   F.rewind(RW0, RW1).grade(RW0, RW1, { sat: 0.5, contrast: 1.25, hue: -25, fade: 0.04 }).lines(RW0, RW1, { kind: 'speed', color: '#ffffff', amount: 0.55, angle: Math.PI / 2 });
-  const CH1 = RW1, CARD10 = CH1 + 0.68;
-  F.card(CH1, CARD10, { kind: 'chapter', n: 1, title: 'THE SILENT RECORD' });
+  const CARD10 = RW1;
   F.card(CARD10, CARD10 + 1.25, { kind: 'text', text: '10 MINUTES EARLIER', top: 28 });
 
   // ======================= "My name is Dante Ferro." … "the kid nobody notices." (the top street) =======================
-  const W0 = CH1, SHOP_T = S('shop', -0.15);
+  const W0 = RW1, SHOP_T = S('shop', -0.15);
   const DX = (t) => 14.5 - 1.25 * (t - W0);                                               // Dante walks along the top street toward −x
-  EB.shot({ t0: W0, loc: 'stairway', fov: [46, 44], shadow: 14,
+  EB.shot({ t0: W0, loc: 'stairway', fov: [46, 44], shadow: 14, dissolve: true, xfade: 0.6,      // (the rewind dissolves into the morning)
     pos: (lt) => V(DX(W0 + lt) - 4.6, 11.45, -32.4), look: (lt) => V(DX(W0 + lt) + 0.3, 11.25, -35.4),
     run(t, lt) {
       walk(dante, [[14.5, 10, -35.2], [-10, 10, -35.2]], W0, 1.25, t, { face: 'neutral' });
@@ -154,7 +167,7 @@
   // ======================= it falls… HIBIKI bursts out and punches it to pieces =======================
   const FALL_SHOT = T_FALL + 0.35, BURST = T_HIT - 0.45;
   EB.shot({ t0: FALL_SHOT, loc: 'stairway', pos: [[3.6, 8.0, -20.4], [3.9, 8.3, -19.6]], look: [[-2.4, 12.3, -29.5], [-2.4, 12.8, -29.4]], fov: [54, 58], ease: 'out', shadow: 14, bloom: 0.9,
-    shake: 0.004,
+    shake: 0.004, kicks: [BURST, T_HIT + 0.07], kickAmp: 0.14,
     run(t, lt) {
       const hit = t >= T_HIT;
       if (!hit) setSign(signU(t)); else st().props.bigSign.visible = false;
@@ -167,6 +180,7 @@
         fx3.barrage.set(t, chest, SIGN_HIT.clone().sub(chest), t < T_HIT + 0.5 ? 1 : Math.max(0, 1 - (t - T_HIT - 0.5) * 4), 1.4, 2.6);
       }
       fx3.wave.set(head(dante, -0.8), V(0, 1, 0), (t - BURST) / 0.6, 6);
+      fx3.dust.set(V(DP[0], DP[1], DP[2]), t - BURST, 1.2, 2.0);                            // the burst blows dust off the steps
       fx3.debris.set(SIGN_HIT, t - T_HIT, 1.2, 1.4, 10.05);
       fx3.wave2.set(SIGN_HIT, V(0, -1, 0.3), (t - T_HIT) / 0.5, 5);
     } });
@@ -213,5 +227,5 @@
       put(player, PLAYER_AT, 0.3); spinDisc.rotation.y = -t * 3.4;
     } });
 
-  EB.STILLS = [0.5, 2.0, 4.0, 5.6, 8.5, 12.0, 15.6, 16.5, 19.0, 20.8, 23.0, 25.2, 26.3, 26.8, 27.5, 28.6, 30.2, 32.3, 35.5];
+  EB.STILLS = [0.5, 1.5, 2.4, 3.6, 4.6, 5.5, 5.7, 7.3, 10.2, 13.7, 17.3, 18.2, 20.7, 22.5, 24.7, 26.9, 28.0, 28.5, 29.2, 30.3, 31.9, 34.0, 37.2];
 })();

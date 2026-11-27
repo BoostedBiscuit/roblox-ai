@@ -11,11 +11,10 @@
 // =====================================================================================
 (function () {
   'use strict';
-  const { S, E, WD, V, D, F, fx3, A, dante, aurora, grant, hale, vahl, hibiki, shuen, auroraCopies, thrownPhones, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw } = EB;
+  const { S, E, WD, V, D, F, fx3, A, dante, aurora, grant, hale, vahl, hibiki, shuen, auroraCopies, thrownPhones, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw, hitStop } = EB;
   const { clamp, lerp, ease, easeOut } = RT;
 
-  const CARD = E('arena', 0.1), EST = CARD + 1.2;
-  F.card(CARD, EST, { kind: 'chapter', n: 5, title: 'THE CONDUCTOR' });
+  const EST = E('arena', 0.1);                                                          // (no chapter card: a dissolve into the arena)
 
   // ---------- positions ----------
   const VQ = [0, 0, -6], SQ = [0, 0.4, -10.5], DQ = [0, 0, 12];                          // Vahl, SHŪEN, Dante
@@ -90,14 +89,22 @@
   F.flash(HB_OUT, 0.15, '#bfe6ff', 0.6).lines(LG_T, E('letgo', 0.1), { kind: 'focus', amount: 0.6 });
 
   // ======================= THE CLASH: 「響け！」 vs 「無駄無駄無駄無駄！」 =======================
-  const CL_T = E('letgo', 0.02), MUDA = S('muda', -0.1), WIN = E('muda', 0.05);
-  const HB_AT = (t) => [0, 0, lerp(12.5, 4.2, easeOut(clamp((t - CL_T) / 0.45, 0, 1)))];
-  const SH_AT = (t) => [0, 0.4, lerp(-10.5, -3.2, easeOut(clamp((t - CL_T - 0.3) / 0.6, 0, 1)))];
+  // HIBIKI charges in; the two Echoes' fists meet in the middle (hit-stop + jolt + a ring of dust); then SHŪEN's
+  // heavier barrage slowly drives HIBIKI back — its feet skid across the cracking floor.
+  const CL_T = E('letgo', 0.02), MUDA = S('muda', -0.1), WIN = E('muda', 0.05), COLLIDE = CL_T + 0.9;
+  const shove = (t) => Math.pow(clamp((t - MUDA) / (WIN - MUDA), 0, 1), 1.6);                // 0 → 1 while SHŪEN wins
+  const HB_AT = (t) => [0, 0, lerp(12.5, 4.2, easeOut(clamp((t - CL_T) / 0.45, 0, 1))) + 1.8 * shove(t) + 0.08 * Math.sin(t * 47) * shove(t)];
+  const SH_AT = (t) => [0, 0.4, lerp(-10.5, -3.2, easeOut(clamp((t - CL_T - 0.3) / 0.6, 0, 1))) + 0.9 * shove(t)];
   const CMID = V(0, 3.2, 0.6);
-  function clash(t) {
+  const cmid = (t) => V(0, 3.2, 0.6 + 1.35 * shove(t));
+  function clash(t0) {
+    const t = hitStop(t0, [COLLIDE], 0.1);
     put(dante, [0, 0, 14.5], Math.PI); pose(dante, 'power', t, { face: 'serious' }); placeVahl(t, 'conduct', t * 1.6); puppets(t);
     echoAt(hibiki, HB_AT(t), Math.PI, t, { move: 'barrage', lt: t - CL_T });
     sh(t, { at: SH_AT(t), move: t > MUDA - 0.2 ? 'barrage' : 'raiseHand', lt: t - MUDA });
+    const CMID = cmid(t);
+    fx3.dust.set(V(0, 0.1, 0.6), t - COLLIDE, 1.5, 3.2);                                       // the shock of the first collision
+    if (t > MUDA) fx3.dust2.set(V(0, 0.1, HB_AT(t)[2] + 0.6), (t - MUDA) % 0.55, 0.8, 1.1);    // HIBIKI's feet skidding back
     const hc = head(hibiki, -1.4), sc = head(shuen, -2.6);
     fx3.barrage.set(t, hc, CMID.clone().sub(hc), 1, 1.6, hc.distanceTo(CMID) - 0.2);
     fx3.barrage2.set(t, sc, CMID.clone().sub(sc), t > MUDA - 0.2 ? 1 : 0, 2.2, sc.distanceTo(CMID) - 0.2);
@@ -107,21 +114,29 @@
     fx3.notes.set(t, V(0, 1.5, -6), 9, 1, 8);
   }
   // H · HIBIKI's barrage (over its shoulder toward SHŪEN)
-  EB.shot({ t0: CL_T, loc: 'arena', pos: (lt) => V(2.4, 3.8, HB_AT(CL_T + lt)[2] + 6.0), look: [[0, 3.6, -3]], fov: [54, 56], ease: 'linear', shadow: 16, shake: 0.015, bloom: 0.75, run(t) { clash(t); } });
+  EB.shot({ t0: CL_T, loc: 'arena', pos: (lt) => V(2.4, 3.8, HB_AT(CL_T + lt)[2] + 6.0), look: [[0, 3.6, -3]], fov: [54, 56], ease: 'linear', shadow: 16, shake: 0.01, bloom: 0.75,
+    kicks: [COLLIDE + 0.1], kickAmp: 0.2, run(t) { clash(t); } });
+  F.impact(COLLIDE, 0.05).sfx(COLLIDE + 0.02, COLLIDE + 0.7, 'ガッ!!', { x: 34, y: 34, size: 14, rot: -10 });
   // I · SHŪEN answers: MUDA MUDA MUDA MUDA (high angle: both barrages meet in the middle)
-  EB.shot({ t0: MUDA, loc: 'arena', pos: [[0, 15, 21], [0, 16, 22]], look: [[0, 1.5, 0.5], [0, 1.5, 0.5]], fov: [50, 50], shadow: 24, shake: 0.012, bloom: 1.0, run(t) { clash(t); } });
+  EB.shot({ t0: MUDA, loc: 'arena', pos: [[0, 15, 21], [0, 13, 24]], look: [[0, 1.5, 0.5], [0, 1.5, 2.2]], fov: [50, 50], shadow: 24, shake: 0.012, bloom: 1.0,
+    kicks: [WIN - 1.2, WIN - 0.7, WIN - 0.3], kickAmp: 0.08, run(t) { clash(t); } });
   F.sfx(CL_T + 0.1, MUDA, 'ドドドドド', { kind: 'menace', x: 50, y: 70, size: 13, rot: 6, color: '#5aa8ff', glow: '#1a4fb0' })
     .sfx(MUDA + 0.05, WIN, 'ゴゴゴゴゴ', { kind: 'menace', x: 50, y: 16, size: 14, rot: -6, color: '#b46bff', glow: '#4a0a8a' })
     .lines(CL_T, WIN, { kind: 'speed', amount: 0.5, angle: Math.PI / 2, color: '#e8dcff' }).grade(CL_T, WIN, { contrast: 1.15, sat: 1.2, fade: 0.1 });
   // J · SHŪEN wins: Dante and HIBIKI are thrown back across the floor
-  const LAND = WIN + 0.9;
-  EB.shot({ t0: WIN, loc: 'arena', pos: [[9.5, 3.0, 8.0], [10.5, 3.4, 9.5]], look: [[0, 1.5, 10], [0, 1.2, 13]], fov: [54, 54], ease: 'out', shadow: 18, shake: 0.02, bloom: 0.95,
-    run(t, lt) {
-      const k = easeOut(clamp(lt / 0.8, 0, 1));
-      put(dante, [0, Math.sin(Math.min(1, lt / 0.8) * Math.PI) * 1.2, lerp(14.5, 16.5, k)], Math.PI); pose(dante, lt < 0.8 ? 'knockback' : 'fallOver', lt < 0.8 ? lt : lt - 0.8);
-      echoAt(hibiki, [0, 0, lerp(4.2, 11.5, k)], Math.PI, t, { move: 'knockback', lt, power: 1 - ramp(t, WIN + 0.8, 1.2) });
+  // the last MUDA lands: a beat of stillness (hit-stop), then HIBIKI is blasted back and Dante with it — he flies,
+  // hits the floor, and skids to a stop in a cloud of dust.
+  const HOLD = 0.12, LAND = WIN + HOLD + 0.55;
+  EB.shot({ t0: WIN, loc: 'arena', pos: [[9.5, 3.0, 8.0], [10.5, 3.4, 9.5]], look: [[0, 1.5, 10], [0, 1.2, 13]], fov: [54, 54], ease: 'out', shadow: 18, shake: 0.012, bloom: 0.95,
+    kicks: [WIN + HOLD, LAND], kickAmp: 0.22,
+    run(t, lt0) {
+      const lt = Math.max(0, lt0 - HOLD), air = clamp(lt / 0.55, 0, 1), sk = easeOut(clamp((lt - 0.55) / 0.45, 0, 1));
+      put(dante, [0, Math.sin(air * Math.PI) * 1.1, lerp(14.5, 15.9, easeOut(air)) + 0.6 * sk], Math.PI); pose(dante, lt < 0.55 ? 'knockback' : 'fallOver', lt < 0.55 ? lt : lt - 0.55);
+      const hz = lerp(HB_AT(WIN)[2], 11.5, easeOut(clamp(lt / 0.8, 0, 1)));
+      echoAt(hibiki, [0, 0, hz], Math.PI, t, { move: 'knockback', lt, power: 1 - ramp(t, WIN + 0.8, 1.2) });
+      fx3.dust2.set(V(0, 0.1, hz), lt, 1, 1.6); fx3.dust.set(V(0, 0.05, 16.0), t - LAND, 1.3, 2.0);
       sh(t, { at: SH_AT(t), move: 'barrage', lt: t - MUDA }); placeVahl(t); puppets(t);
-      const sc = head(shuen, -2.6); fx3.barrage2.set(t, sc, V(0, 1.5, 12).sub(sc), 1 - ramp(t, WIN + 0.5, 0.5), 2.2, 6);
+      const sc = head(shuen, -2.6); fx3.barrage2.set(t, sc, V(0, 1.5, 12).sub(sc), 1 - ramp(t, WIN + HOLD + 0.4, 0.5), 2.2, 6);
       fx3.cracks.set(V(0, 0.03, 0.6), 1, 18, '#1a1018'); fx3.rubble.set(V(0, 0.5, 16.2), t - LAND, 0.4, 0.5, 0.05); fx3.wave.set(V(0, 0.3, 16.5), V(0, 1, 0), (t - LAND) / 0.5, 6);
     } });
   F.impact(WIN, 0.07).flash(WIN + 0.07, 0.2, '#c79bff', 0.9).sfx(WIN, WIN + 1.0, 'ドゴォン!!', { x: 50, y: 30, size: 17, rot: -8, shadow: '#7a2ad8' });
@@ -142,10 +157,10 @@
   EB.shot({ t0: CO_T, loc: 'arena', pos: [[0.8, 1.0, 16.6], [0.7, 1.0, 16.0]], look: [[0, 6.5, -3.5], [0, 6.8, -3.5]], fov: [52, 50], shadow: 18, run(t) { danteDown(t); slowWorld(t); } });
   // M · flash inserts: Vahl's baton, Dante's headphones, the first night HIBIKI appeared
   const FI = E('controls', 0.1), FI2 = FI + 0.45, FI3 = FI2 + 0.45, FI_END = S('weakness', -0.05);
-  EB.shot({ t0: FI, loc: 'arena', pos: () => { const v = V(); vahl.rig.props.baton.getWorldPosition(v); return v.add(V(0.9, -0.7, 1.7)); }, look: () => { const v = V(); vahl.rig.props.baton.getWorldPosition(v); return v; }, fov: [38, 36], shadow: 6,
+  EB.shot({ t0: FI, cut: true, loc: 'arena', pos: () => { const v = V(); vahl.rig.props.baton.getWorldPosition(v); return v.add(V(0.9, -0.7, 1.7)); }, look: () => { const v = V(); vahl.rig.props.baton.getWorldPosition(v); return v; }, fov: [38, 36], shadow: 6,
     run(t) { danteDown(t); slowWorld(t); } });
-  EB.shot({ t0: FI2, loc: 'arena', pos: () => head(dante, -0.3).add(V(0.35, 0.2, -1.3)), look: () => head(dante, -0.42), fov: [38, 36], shadow: 6, run(t) { danteDown(t); slowWorld(t); } });
-  EB.shot({ t0: FI3, loc: 'stairway', pos: [[-0.4, 7.8, -20.4]], look: [[-3.0, 12.8, -29.4]], fov: [56, 56], shadow: 14, bloom: 0.9,
+  EB.shot({ t0: FI2, cut: true, loc: 'arena', pos: () => head(dante, -0.3).add(V(0.35, 0.2, -1.3)), look: () => head(dante, -0.42), fov: [38, 36], shadow: 6, run(t) { danteDown(t); slowWorld(t); } });
+  EB.shot({ t0: FI3, cut: true, loc: 'stairway', pos: [[-0.4, 7.8, -20.4]], look: [[-3.0, 12.8, -29.4]], fov: [56, 56], shadow: 14, bloom: 0.9,
     run(t) {                                                                                 // (the same picture as the first night)
       put(dante, [-2.6, 10, -30.4], 0.15); pose(dante, 'block', 1, { face: 'shocked', mod: { hx: -0.62 } });
       const ec = echoAt(hibiki, beside(dante, 0.25, 0.55, 0.7), 0.15, t, { move: 'barrage', lt: t }); ec.rotation.order = 'YXZ'; ec.rotation.x = -0.75;
@@ -207,7 +222,7 @@
     } });
   F.flash(SH_T2, 0.2, '#bfe6ff', 1).lines(SH_T2, E('shout', 0.2), { kind: 'focus', amount: 0.9 }).sfx(SH_T2 + 0.1, E('shout', 0.2), 'ゴゴゴゴ', { kind: 'menace', x: 50, y: 18, size: 16, rot: -5, color: '#5aa8ff', glow: '#1a4fb0' });
   // HIBIKI dashes in and punches SHŪEN's golden mask
-  const HB_FROM = 17.0, HB_TO = -0.2;
+  const HB_FROM = 17.0, HB_TO = -0.2 + 0.9;                                                // (SHŪEN stands 0.9 closer after the clash)
   const dash = (t) => [0, 0.6, lerp(HB_FROM, HB_TO, easeOut(clamp((t - FINAL_T) / (PUNCH - FINAL_T), 0, 1)))];
   EB.shot({ t0: FINAL_T, loc: 'arena', pos: (lt) => V(2.4, 4.6, dash(FINAL_T + lt)[2] + 2.8), look: (lt) => V(0, 5.2, dash(FINAL_T + lt)[2] - 5), fov: [56, 60], ease: 'linear', shadow: 16, shake: 0.015, bloom: 1.1,
     run(t, lt) {
@@ -218,8 +233,13 @@
     } });
   F.lines(FINAL_T, PUNCH, { kind: 'speed', amount: 0.7, angle: Math.PI / 2, color: '#dff4ff' });
   // the hit: impact frames, the mask shatters, the shockwave lights up the whole arena; Vahl falls; the strings snap
-  EB.shot({ t0: PUNCH, loc: 'arena', pos: [[2.2, 5.8, 6.5], [7, 18, 34]], look: [[0, 5.6, -3.2], [0, 2, -2]], fov: [54, 56], ease: 'out', moveDur: S('stopped', 0) - PUNCH, shadow: 30, bloom: 1.2,
-    run(t, lt) {
+  // (hit-stop: the fist sinks into the mask and everything holds 0.15 s; then the camera jolts, SHŪEN's head snaps back,
+  //  the mask bursts, the giant staggers and fades)
+  const PHOLD = 0.15;
+  EB.shot({ t0: PUNCH, loc: 'arena', pos: [[2.2, 5.8, 7.4], [7, 18, 34]], look: [[0, 5.6, -2.3], [0, 2, -2]], fov: [54, 56], ease: 'out', moveDur: S('stopped', 0) - PUNCH, shadow: 30, bloom: 1.2,
+    kicks: [PUNCH + PHOLD], kickAmp: 0.3,
+    run(t0, lt0) {
+      const t = hitStop(t0, [PUNCH], PHOLD), lt = t - PUNCH;
       put(dante, DOWN, Math.PI); pose(dante, lt < 1.6 ? 'shout' : 'idle', lt, { face: lt < 1.6 ? 'shout' : 'determined' }); dante.rig.props.headphones.visible = false;
       echoAt(hibiki, [0, 0.6, HB_TO + 0.6 * easeOut(clamp(lt / 0.4, 0, 1))], Math.PI, t, { move: 'punch', lt: 0.5, scale: 1.25, power: 1 - ramp(t, PUNCH + 2.0, 1.2) });
       shuen.rig.head.visible = lt < 0.05; shuen.echo.crackMask(1);
@@ -227,7 +247,8 @@
       shuen.rig.head.visible = lt < 0.05;
       put(vahl, VQ, 0); pose(vahl, 'fallOver', lt - 0.4); vahl.rig.crackMask(1);
       friends.forEach(([ch, p], i) => { put(ch, p, lookYaw(p, DQ)); pose(ch, lt < 0.6 ? 'puppet' : 'kneel', lt < 0.6 ? PUNCH : lt - 0.6, { face: lt < 1.6 ? 'sad' : 'shocked' }); ch.rig.setEyes(lt < 1.2 ? 'closed' : null); });
-      const mask = V(0, 7.6, -3.0); fx3.goldBits.set(mask, lt, 1.2, 1.2, 0.05);
+      const ec = shuen; ec.rotation.order = 'YXZ'; ec.rotation.x = -0.35 * Math.sin(clamp(lt / 0.5, 0, 1) * Math.PI) * (lt < 0.5 ? 1 : 0.4);   // the head snaps back
+      const mask = V(0, 7.6, -2.1); fx3.goldBits.set(mask, lt, 1.2, 1.2, 0.05);
       fx3.ground.set(V(0, 0.3, -1), V(0, 1, 0), lt / 1.6, 60); fx3.wave.set(mask, V(0, 0, 1), lt / 0.6, 14); fx3.wave3.set(mask, V(0.3, 0.2, 1), (lt - 0.15) / 0.7, 18);
     } });
   F.impact(PUNCH, 0.08).flash(PUNCH + 0.08, 0.9, '#ffffff', 1).sfx(PUNCH + 0.02, PUNCH + 1.4, 'バキィィン!!', { x: 50, y: 24, size: 18, rot: -7, shadow: '#e0a000' })
@@ -240,5 +261,5 @@
       put(vahl, VQ, 0); pose(vahl, 'fallOver', 3); vahl.rig.crackMask(1); unpuppet();
     } });
 
-  EB.STILLS.push(144.6, 147.0, 148.6, 150.8, 153.0, 156.0, 158.6, 160.3, 161.8, 163.6, 166.2, 168.0, 172.0, 173.6, 177.0, 178.6, 179.1, 179.6, 182.0, 185.2, 188.5, 190.6, 191.4, 192.8, 195.0, 197.2, 198.1, 199.6, 201.0, 203.0, 205.0);
+  EB.STILLS.push(143.4, 145.8, 147.4, 149.6, 151.8, 154.8, 157.4, 159.1, 160.6, 162.4, 165.0, 166.8, 170.8, 172.4, 175.8, 177.4, 177.9, 178.4, 180.8, 184.0, 187.3, 189.4, 190.2, 191.6, 193.8, 196.0, 196.9, 198.4, 199.8, 201.8, 203.8);
 })();

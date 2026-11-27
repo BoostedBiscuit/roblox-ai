@@ -48,7 +48,7 @@
     camera.position.copy(P); camera.lookAt(L);
     if (s.roll) camera.rotateZ(typeof s.roll === 'function' ? s.roll(lt, p) : s.roll);
     camera.fov = RT.lerp(s.fov[0], s.fov[1] ?? s.fov[0], p); camera.updateProjectionMatrix();
-    return { lt, p };
+    return { lt, p, pos: P.clone(), look: L.clone(), fov: camera.fov };
   }
 
   // ---- shot helpers (all positions in world units) ----

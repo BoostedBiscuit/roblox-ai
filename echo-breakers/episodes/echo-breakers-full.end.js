@@ -20,7 +20,7 @@
     RAIL.forEach(([x, who], i) => { const ch = crew[who]; put(ch, [x, 0.15, -6.55], Math.PI + (i - 1.5) * 0.06); pose(ch, i === 2 ? 'idle' : 'idle', t + i * 0.7, { face: who === 'grant' ? 'sad' : 'calm' }); });
     dante.rig.props.headphones.visible = false; grant.rig.props.hat.visible = false; dante.rig.setFace('smiling');
   }
-  EB.shot({ t0: DAWN_T, loc: 'promenade', mood: 'dawn', pos: [[14, 6, -26], [10, 4, -22]], look: [[2, 2, -6], [1.5, 1.8, -6.5]], fov: [50, 48], ease: 'out', shadow: 20,
+  EB.shot({ t0: DAWN_T, loc: 'promenade', mood: 'dawn', pos: [[14, 6, -26], [10, 4, -22]], look: [[2, 2, -6], [1.5, 1.8, -6.5]], fov: [50, 48], ease: 'out', shadow: 20, xfade: 0.9,
     run(t) { atTheRail(t); } });
   EB.shot({ t0: S('sunrise', -0.1), loc: 'promenade', mood: 'dawn', pos: [[4.2, 2.7, -1.2], [4.1, 2.8, -1.5]], look: [[6.5, 2.4, -24], [7.0, 2.6, -24]], fov: [52, 50], shadow: 10,
     run(t) { atTheRail(t); } });
@@ -37,7 +37,7 @@
 
   // ---------- black / white overlays ----------
   EB.black = (t) => clamp((t - (EB.DURATION - 0.45)) / 0.45, 0, 1);
-  EB.white = (t) => (t >= DAWN_T && t < DAWN_T + 0.5 ? 1 - (t - DAWN_T) / 0.5 : 0);     // the final shockwave's light fades into the dawn
+  EB.white = () => 0;                                                                     // (the arena now dissolves into the dawn instead of a white flash)
   EB.noCaptions = [];
 
   // =====================================================================================
@@ -91,7 +91,7 @@
       add('<div class="th" style="top:6%"><div style="font-size:calc(var(--u)*13)">HE TURNED</div><div class="p" style="font-size:calc(var(--u)*12.5)">MY FRIENDS</div><div class="y" style="font-size:calc(var(--u)*12)">INTO PUPPETS</div></div>');
     } else {
       // the first night: HIBIKI bursts out of Dante and punches the falling sign to pieces
-      stage3D(26.9);
+      stage3D(EB.T_HIT + 0.15);
       cam.position.set(3.4, 8.4, -21.8);
       const DP = [-2.6, 10, -30.4]; put(dante, DP, 0.15); pose(dante, 'block', 1, { face: 'shocked', mod: { hx: -0.62 } }); dante.rig.setEyes('open'); dante.rig.update(0);
       put(EB.player, [-1.25, 10, -29.65], 0.3);
@@ -104,5 +104,5 @@
     if (window.RT_BRAND !== false) add('<img src="../brand/watermark.png" style="position:absolute;left:60%;top:91%;width:36%;opacity:.4">');
   };
 
-  EB.STILLS.push(207.0, 209.0, 211.0, 212.8, 215.5, 218.0);
+  EB.STILLS.push(205.8, 207.8, 209.8, 211.6, 214.3, 216.8);
 })();

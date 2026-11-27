@@ -8,24 +8,27 @@
 // =====================================================================================
 (function () {
   'use strict';
-  const { S, E, WD, V, F, fx3, A, dante, aurora, vahl, hibiki, kagerou, shuen, copies, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw } = EB;
+  const { S, E, WD, V, F, fx3, A, dante, aurora, vahl, hibiki, kagerou, shuen, copies, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw, hitStop } = EB;
   const { clamp, lerp, ease, easeOut } = RT;
 
-  // ---------- chapter card ----------
-  const CARD = E('made', 0.12), START = S('punched', -0.25);
-  F.card(CARD, START, { kind: 'chapter', n: 2, title: 'MIRAGE GIRL' });
+  // (no chapter card: the last picture of the city dissolves straight into the piazza)
+  const START = S('punched', -0.25);
 
   const DSTOP = [2.2, 0, 10.0], C0 = [2.3, 0, 10.5];                                    // where Dante stops / the center of the copy ring
   const T_PUNCH = WD('punched', 'punched') + 0.05, T_ME = WD('punched', 'me') - 0.1;
   const COPY_HIT = [1.75, 0, 8.85];                                                       // the first copy, in front of him
   // Dante gets punched: knocked back 1.2 units
+  // (the punch lands with a hit-stop: everything holds 0.1 s, then he is knocked back and skids, scuffing dust)
   function danteHit(t) {
+    t = hitStop(t, [T_PUNCH], 0.1);
     if (t < T_PUNCH) { walk(dante, [[3.4, 0, 13.6], DSTOP], START, 1.3, t, { end: 'idle', endYaw: Math.PI, face: 'neutral' }); return; }
-    const k = easeOut(clamp((t - T_PUNCH) / 0.3, 0, 1));
+    const k = easeOut(clamp((t - T_PUNCH) / 0.45, 0, 1));
     put(dante, [lerp(DSTOP[0], 2.6, k), 0, lerp(DSTOP[2], 11.2, k)], Math.PI);
+    fx3.dust.set(V(lerp(DSTOP[0], 2.6, k), 0, lerp(DSTOP[2], 11.2, k)), t - T_PUNCH, 0.7, 1.0);
     pose(dante, t < T_PUNCH + 1.4 ? 'knockback' : 'idle', t - T_PUNCH, { face: t < T_PUNCH + 1.4 ? 'pain' : 'shocked' });
   }
   function copyPunch(t, c, t0) {                                                          // a copy runs in from behind the fountain and punches
+    t = hitStop(t, [T_PUNCH], 0.1);
     walk(c, [[-2.6, 0, 5.9], COPY_HIT], t0 - 1.25, 4.2, t, { gait: 'run', end: 'idle', endYaw: lookYaw(COPY_HIT, DSTOP) });
     if (t >= t0 - 0.12) pose(c, 'punch', t - t0 + 0.12, { face: 'smirk' });
     c.setHaze(t, 0.92); c.rig.setFace('smirk');
@@ -36,7 +39,7 @@
     run(t) { danteHit(t); } });
   // B · side two-shot: the copy runs in and punches him in the face
   const B_T = T_PUNCH - 1.0;
-  EB.shot({ t0: B_T, loc: 'piazza', pos: [[6.6, 2.1, 11.6], [6.2, 2.0, 11.2]], look: [[2.0, 1.7, 9.6], [2.1, 1.6, 9.9]], fov: [46, 44], shadow: 10, shake: 0,
+  EB.shot({ t0: B_T, loc: 'piazza', pos: [[6.6, 2.1, 11.6], [6.2, 2.0, 11.2]], look: [[2.0, 1.7, 9.6], [2.1, 1.6, 9.9]], fov: [46, 44], shadow: 10, shake: 0, kicks: [T_PUNCH + 0.1], kickAmp: 0.1,
     run(t) { danteHit(t); copyPunch(t, copies[0], T_PUNCH); } });
   F.impact(T_PUNCH, 0.07).flash(T_PUNCH + 0.07, 0.15, '#ffffff', 0.7).sfx(T_PUNCH, T_PUNCH + 0.8, 'ドゴッ!', { x: 34, y: 34, size: 16, rot: -12 })
     .lines(T_PUNCH, T_PUNCH + 0.5, { kind: 'focus', amount: 0.7 });
@@ -46,11 +49,14 @@
   // D · it attacks again: HIBIKI appears and blocks (sparks)
   const D_T = E('punched', 0.02), LUNGE = D_T + 0.55, BLOCK = LUNGE + 0.22;
   EB.shot({ t0: D_T, loc: 'piazza', pos: [[7.8, 2.6, 8.2], [7.4, 2.4, 8.8]], look: [[2.0, 1.9, 10.0], [2.0, 1.9, 10.1]], fov: [48, 46], shadow: 12, bloom: 0.8,
-    run(t, lt) {
+    kicks: [BLOCK + 0.1], kickAmp: 0.12,
+    run(t0, lt0) {
+      const t = hitStop(t0, [BLOCK], 0.1), lt = t - D_T;                                     // (a beat of stillness when fist meets arms)
       put(dante, [2.6, 0, 11.2], Math.PI); pose(dante, 'block', lt, { face: 'scared' });
       const c = copies[0], back = t > BLOCK ? easeOut(clamp((t - BLOCK) / 0.35, 0, 1)) * 1.4 : 0;
       put(c, [COPY_HIT[0] - back * 0.2, 0, COPY_HIT[2] - back], lookYaw(COPY_HIT, DSTOP)); c.setHaze(t, 0.92);
       pose(c, t < BLOCK ? 'punch' : 'knockback', t < BLOCK ? t - LUNGE + 0.1 : t - BLOCK, { face: 'smirk' });
+      fx3.dust.set(V(COPY_HIT[0] - back * 0.2, 0, COPY_HIT[2] - back), t - BLOCK, 0.7, 1.0);
       if (t > LUNGE - 0.2) {
         const p = popIn(t, LUNGE - 0.2, 0.25);
         echoAt(hibiki, [2.35, 0, 10.05], Math.PI, t, { power: Math.min(1, p * 1.3), scale: 0.5 + 0.5 * p, move: 'block', lt: t - LUNGE });
@@ -61,13 +67,17 @@
   F.flash(LUNGE - 0.2, 0.2, '#bfe6ff', 0.9).sfx(BLOCK, BLOCK + 0.8, 'ガキン!', { x: 60, y: 30, size: 15, rot: 8, shadow: '#2f7fe0' });
 
   // E · "Then there were ten of me. Fake walls. Fake doors." ten copies in a ring + heat-haze walls (high orbit)
-  const TEN_T = S('ten', -0.1), ringPos = (i, t) => { const a = (i / 10) * Math.PI * 2 + (t - TEN_T) * 0.35; return [C0[0] + Math.sin(a) * 4.6, 0, C0[2] + Math.cos(a) * 4.6]; };
+  const TEN_T = S('ten', -0.1), ringPos = (i, t, r = 4.6) => { const a = (i / 10) * Math.PI * 2 + (t - TEN_T) * 0.35; return [C0[0] + Math.sin(a) * r, 0, C0[2] + Math.cos(a) * r]; };
+  // the smash: HIBIKI dashes at four copies one by one (dash → punch), then spins into a barrage that takes out the rest
+  const SMASH_ORDER = [3, 5, 2, 4, 6, 7, 8, 9, 0, 1];
+  const hitTime = (i, from) => { const k = SMASH_ORDER.indexOf(i); return from + (k < 4 ? k * 0.3 + 0.12 : 1.25 + (k - 4) * 0.09); };
   const WALLS = [[0, -6.2, 0], [6.0, 0, Math.PI / 2], [-5.6, 2.4, Math.PI / 2.6], [-1.5, 6.0, 0.25]];   // (dx, dz, yaw) around C0
   function ring(t, smashFrom = 1e9) {
     copies.forEach((c, i) => {
-      const appear = ramp(t, TEN_T + 0.1 + i * 0.1, 0.25), hit = smashFrom + i * 0.16, gone = ramp(t, hit, 0.25);
+      const appear = ramp(t, TEN_T + 0.1 + i * 0.1, 0.25), hit = hitTime(i, smashFrom), gone = ramp(t, hit + 0.12, 0.3);
       if (appear <= 0 || gone >= 1) { c.visible = false; return; }
-      const p = ringPos(i, Math.min(t, smashFrom)); put(c, p, lookYaw(p, C0)); c.setHaze(t + i, 0.9 * appear * (1 - gone));
+      const thrown = t > hit ? easeOut(clamp((t - hit) / 0.3, 0, 1)) * 1.3 : 0;            // knocked outward by the blow
+      const p = ringPos(i, Math.min(t, smashFrom), 4.6 + thrown); put(c, p, lookYaw(p, C0)); c.setHaze(t + i, 0.9 * appear * (1 - gone));
       pose(c, t > hit ? 'knockback' : 'guard', t > hit ? t - hit : t + i * 0.3, { face: 'smirk' });
       if (t > hit) fx3.hazeBits.set(V(p[0], 1.4, p[2]), t - hit, 0.35, 0.6);
     });
@@ -87,12 +97,25 @@
   // F · HIBIKI smashes the copies (barrage sweeping around)
   const SMASH_T = E('ten', 0.05), SMASH0 = SMASH_T + 0.2;
   EB.shot({ t0: SMASH_T, loc: 'piazza', pos: [[C0[0] + 4.2, 2.2, C0[2] + 5.0], [C0[0] + 3.4, 2.6, C0[2] + 5.6]], look: [[C0[0], 1.8, C0[2]], [C0[0], 2.0, C0[2] - 1]], fov: [56, 58], shadow: 12, shake: 0.012, bloom: 0.9,
+    kicks: [0, 1, 2, 3].map((k) => SMASH0 + k * 0.3 + 0.12), kickAmp: 0.09,
     run(t, lt) {
       put(dante, C0, Math.PI); pose(dante, 'guard', lt + 2, { face: 'determined' });
-      const yaw = Math.PI + (t - SMASH0) * 4.2;
-      echoAt(hibiki, beside(dante, 0, -0.9), yaw, t, { move: 'barrage', lt });
+      const HOME = beside(dante, 0, -0.9);
+      const ang = (i) => (i / 10) * Math.PI * 2 + (SMASH0 - TEN_T) * 0.35, near = (i) => [C0[0] + Math.sin(ang(i)) * 3.2, 0, C0[2] + Math.cos(ang(i)) * 3.2];
+      const u = t - SMASH0; let at = HOME, yaw = Math.PI, move = 'guard', mlt = lt, punch = 0;
+      if (u >= 0 && u < 1.2) {                                                             // four dash-punches
+        const k = Math.floor(u / 0.3), v = u - k * 0.3, from = k ? near(SMASH_ORDER[k - 1]) : HOME, to = near(SMASH_ORDER[k]), m = easeOut(clamp(v / 0.12, 0, 1));
+        at = [lerp(from[0], to[0], m), 0, lerp(from[2], to[2], m)]; yaw = ang(SMASH_ORDER[k]); move = v < 0.06 ? 'guard' : 'punch'; mlt = v - 0.06; punch = v > 0.08 && v < 0.24 ? 1 : 0;
+      } else if (u >= 1.2) {                                                               // back to Dante, spinning barrage
+        const back = easeOut(clamp((u - 1.2) / 0.08, 0, 1)), last = near(SMASH_ORDER[3]);
+        at = [lerp(last[0], HOME[0], back), 0, lerp(last[2], HOME[2], back)];
+        yaw = u < 1.25 ? lerp(ang(4), ang(6), (u - 1.2) / 0.05) : ang(6) + (u - 1.25) * ((Math.PI * 2 / 10) / 0.09);
+        move = 'barrage'; mlt = u; punch = u < 1.8 ? 1 : 0;
+      }
+      echoAt(hibiki, at, yaw, t, { move, lt: mlt });
       const chest = head(hibiki, -1.3), dir = V(Math.sin(yaw), -0.1, Math.cos(yaw));
-      fx3.barrage.set(t, chest, dir, 1, 1.6, 3.0);
+      fx3.barrage.set(t, chest, dir, punch, 1.6, u < 1.2 ? 1.8 : 3.0);
+      fx3.dust.set(V(at[0], 0, at[2]), u < 1.2 ? (u % 0.3) : u - 1.2, 0.6, 1.0);
       ring(t, SMASH0); walls(t);
     } });
   F.sfx(SMASH0, SMASH0 + 1.7, 'ドドドドド', { kind: 'menace', x: 50, y: 22, size: 13, rot: -6, color: '#5aa8ff', glow: '#1a4fb0' }).lines(SMASH0, SMASH0 + 1.8, { kind: 'speed', amount: 0.5, angle: 0.3 });
@@ -183,5 +206,5 @@
       put(aurora, NEAR, lookYaw(NEAR, C0)); pose(aurora, 'handsOnHips', lt, { face: 'smirk' });
     } });
 
-  EB.STILLS.push(39.8, 41.4, 42.8, 44.3, 47.0, 50.5, 52.4, 53.6, 55.0, 57.5, 59.8, 62.0, 66.3, 66.8, 70.8);
+  EB.STILLS.push(40.8, 42.4, 43.8, 45.3, 48.0, 51.5, 53.4, 54.6, 56.0, 58.5, 60.8, 63.0, 67.3, 67.8, 71.8);
 })();

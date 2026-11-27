@@ -9,12 +9,11 @@
 // =====================================================================================
 (function () {
   'use strict';
-  const { S, E, WD, V, D, F, fx3, A, dante, hale, hibiki, tsurara, iceLegs, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw } = EB;
+  const { S, E, WD, V, D, F, fx3, A, dante, hale, hibiki, tsurara, iceLegs, put, pose, walk, echoAt, beside, popIn, ramp, head, lookYaw, hitStop } = EB;
   const { clamp, lerp, ease, easeOut } = RT;
   const fort = () => EB.loc('fortress');
 
-  const CARD = E('escaped', 0.1), START = S('sunset', -0.2);
-  F.card(CARD, START, { kind: 'chapter', n: 4, title: 'ICE DUEL' });
+  const START = S('sunset', -0.2);                                                      // (no chapter card: a dissolve into the fortress)
 
   // ---------- positions ----------
   const DQ = [2.5, 0, 6.5], HQ = [-11, 0, -3];                                          // Dante / Hale
@@ -76,20 +75,29 @@
   F.card(TC_T + 0.05, TC_T + 1.8, { kind: 'echo', name: 'TSURARA', kanji: '氷柱', color: '#3fd0ff' })
     .sfx(TC_T + 0.1, TC_T + 1.8, 'ゴゴゴ', { kind: 'menace', x: 78, y: 60, size: 11, rot: 9, color: '#7fe6ff', glow: '#1a6fa8' });
   // G · the lance strikes, HIBIKI parries, ice spikes burst up (cut from the Shorts)
+  // TSURARA lunges across the ice; the lance hits HIBIKI's crossed arms — the picture holds for a beat (hit-stop),
+  // the camera jolts, and HIBIKI is shoved back, skidding, ice dust spraying from its feet.
   const CL_T = E('freeze', 4.15), STRIKE = CL_T + 0.4;
-  EB.shot({ t0: CL_T, loc: 'fortress', pos: [[4.4, 3.4, -10.8], [4.0, 3.2, -10.4]], look: [[MID.x, 2.0, MID.z], [MID.x, 2.2, MID.z]], fov: [54, 56], shadow: 12, shake: 0.01, bloom: 0.9,
+  const DIR = V(HB[0] - TS[0], 0, HB[2] - TS[2]).normalize(), SKID = 0.75;                // TSURARA → HIBIKI
+  const skid = (t) => easeOut(clamp((t - STRIKE) / 0.45, 0, 1)) * SKID;
+  const HBs = (t, extra = 0) => [HB[0] + DIR.x * (skid(t) + extra), 0, HB[2] + DIR.z * (skid(t) + extra)];
+  const lunge = (t) => 2.0 * (easeOut(clamp((t - STRIKE + 0.3) / 0.3, 0, 1)) - 0.45 * easeOut(clamp((t - STRIKE - 0.1) / 0.7, 0, 1)));
+  EB.shot({ t0: CL_T, loc: 'fortress', pos: [[4.4, 3.4, -10.8], [4.0, 3.2, -10.4]], look: [[MID.x, 2.0, MID.z], [MID.x + 0.4, 2.2, MID.z + 0.3]], fov: [54, 56], shadow: 12, shake: 0.006, bloom: 0.9,
+    kicks: [STRIKE + 0.12], kickAmp: 0.16,
     run(t, lt) {
-      placeDante(t, 'guard', lt, 'determined'); placeHale(t, 'crossArms', lt); ice(t);
-      ts(t, { move: lt < 0.35 ? 'power' : 'punch', lt: lt - 0.35 });
-      if (t > STRIKE - 0.3) { const p = popIn(t, STRIKE - 0.3, 0.25); hb(t, { move: 'block', lt: t - STRIKE, power: Math.min(1, p * 1.3), scale: 0.5 + 0.5 * p }); }
-      fx3.sparks.set(MID, t - STRIKE, 0.6, 0.8); fx3.wave2.set(MID, V(1, 0, 0.4), (t - STRIKE) / 0.4, 3);
-      fx3.spikes.set(V(MID.x, 0, MID.z), (t - STRIKE - 0.2) / 0.6, 4.5);
+      const ta = hitStop(t, [STRIKE], 0.12);                                                 // (everything holds 0.12 s on the hit)
+      placeDante(ta, 'guard', ta - CL_T, 'determined'); placeHale(ta, 'crossArms', ta - CL_T); ice(t);
+      ts(ta, { at: [TS[0] + DIR.x * lunge(ta), 0, TS[2] + DIR.z * lunge(ta)], move: ta - CL_T < 0.35 ? 'power' : 'punch', lt: ta - CL_T - 0.35 });
+      if (ta > STRIKE - 0.3) { const p = popIn(ta, STRIKE - 0.3, 0.25); hb(ta, { at: HBs(ta), move: 'block', lt: ta - STRIKE, power: Math.min(1, p * 1.3), scale: 0.5 + 0.5 * p }); }
+      fx3.sparks.set(MID, ta - STRIKE, 0.6, 0.8); fx3.wave2.set(MID, V(1, 0, 0.4), (ta - STRIKE) / 0.4, 3);
+      fx3.spikes.set(V(MID.x, 0, MID.z), (ta - STRIKE - 0.2) / 0.6, 4.5);
+      const f = HBs(ta); fx3.iceDust.set(V(f[0], 0.3, f[2]), ta - STRIKE, 1, 1.3);
     } });
   F.flash(STRIKE - 0.3, 0.18, '#bfe6ff', 0.8).sfx(STRIKE, STRIKE + 0.9, 'ガキィン!', { x: 50, y: 28, size: 15, rot: -8, shadow: '#2a8fc8' }).impact(STRIKE, 0.05);
   // H · Dante frozen to the knees; the lance pushes HIBIKI back
   const FZ_T = E('freeze', 6.85);
   const push = (t) => easeOut(clamp((t - FZ_T) / 2.2, 0, 1)) * 2.2;                      // how far HIBIKI is pushed back toward Dante
-  const hbPushed = (t, o = {}) => hb(t, Object.assign({ at: [HB[0] + 0.7 * push(t) * 0.45, 0, HB[2] + push(t) * 0.45 * 0.9], move: 'block' }, o));
+  const hbPushed = (t, o = {}) => hb(t, Object.assign({ at: [HB[0] + DIR.x * SKID + 0.7 * push(t) * 0.45, 0, HB[2] + DIR.z * SKID + push(t) * 0.45 * 0.9], move: 'block' }, o));
   const legsIce = (t) => { put(iceLegs, DQ, 0); iceLegs.scale.setScalar(easeOut(ramp(t, FZ_T - 0.2, 0.5)) * (1 - ramp(t, SWITCH_HIT, 0.1))); iceLegs.visible = iceLegs.scale.x > 0.01; };
   const SWITCH = E('power', 0.02), SWITCH_HIT = SWITCH + 0.55;
   EB.shot({ t0: FZ_T, loc: 'fortress', pos: [[6.6, 1.6, 9.8], [6.2, 1.7, 9.4]], look: [[0.4, 1.6, 4.4], [0.2, 1.7, 4.6]], fov: [50, 48], shadow: 10, shake: 0.006, bloom: 0.85,
@@ -117,9 +125,9 @@
   F.sfx(WD('crack', 'cracking') - 0.2, E('crack', 0.6), 'ピキ…ピキ…', { x: 64, y: 34, size: 11, rot: 6, color: '#e8fbff', shadow: '#2a8fc8' });
   // K · flash inserts: the crack spreading, HIBIKI's speaker shoulder
   const FL1 = E('crack', 0.02), FL2 = FL1 + 0.4;
-  EB.shot({ t0: FL1, loc: 'fortress', pos: [[CRK.x + 0.9, 1.3, CRK.z + 0.6]], look: [[CRK.x, 0.25, CRK.z]], fov: [34, 30], shadow: 4,
+  EB.shot({ t0: FL1, loc: 'fortress', cut: true, pos: [[CRK.x + 0.9, 1.3, CRK.z + 0.6]], look: [[CRK.x, 0.25, CRK.z]], fov: [34, 30], shadow: 4,
     run(t) { frozenScene(t); fx3.cracks.set(CRK, 1, 3.2 + (t - FL1) * 4, '#ffffff'); } });
-  EB.shot({ t0: FL2, loc: 'fortress', pos: () => { const v = V(); hibiki.rig.props.speakerL.getWorldPosition(v); return v.add(V(1.7, 0.5, 2.1)); }, look: () => { const v = V(); hibiki.rig.props.speakerL.getWorldPosition(v); return v; }, fov: [30, 28], shadow: 4, bloom: 1.1,
+  EB.shot({ t0: FL2, loc: 'fortress', cut: true, pos: () => { const v = V(); hibiki.rig.props.speakerL.getWorldPosition(v); return v.add(V(1.7, 0.5, 2.1)); }, look: () => { const v = V(); hibiki.rig.props.speakerL.getWorldPosition(v); return v; }, fov: [30, 28], shadow: 4, bloom: 1.1,
     run(t) { frozenScene(t); } });
   F.flash(FL1, 0.08, '#ffffff', 0.9).flash(FL2, 0.08, '#ffffff', 0.9).grade(FL1, S('power', -0.05), { invert: 0, contrast: 1.35, sat: 0.3, fade: 0.02 });
   // L · "Every crack is a sound. And every sound… is power." (his eyes; HIBIKI's speakers pulse with sound rings)
@@ -145,12 +153,19 @@
 
   // N · 「響け！響け！響け！」 HIBIKI's barrage into TSURARA: the ice cracks everywhere
   const RS_T = S('resound1', -0.15);
-  EB.shot({ t0: RS_T, loc: 'fortress', pos: (lt) => V(-1.4 + Math.sin(lt * 0.8) * 1.2, 2.4, 9.5 - lt * 0.4), look: [[MID.x, 2.3, MID.z]], fov: [56, 60], ease: 'linear', shadow: 14, shake: 0.016, bloom: 1.0,
+  // HIBIKI drives forward punching; every hit knocks TSURARA back a step (it recoils, its feet scrape the ice);
+  // the camera tracks alongside and jolts with the heavy hits.
+  const RS_HITS = [0.35, 0.75, 1.1, 1.45, 1.8, 2.1, 2.4].map((x) => RS_T + x);
+  EB.shot({ t0: RS_T, loc: 'fortress', pos: (lt) => V(-1.4 + Math.sin(lt * 0.8) * 1.2 - lt * 0.5, 2.4, 9.5 - lt * 0.75), look: (lt) => V(MID.x - lt * 0.45, 2.3, MID.z - lt * 0.35), fov: [56, 60], ease: 'linear', shadow: 14, shake: 0.01, bloom: 1.0,
+    kicks: RS_HITS, kickAmp: 0.07,
     run(t, lt) {
       placeDante(t, 'power', lt + 1, 'serious'); placeHale(t, 'idle', lt, 'shocked'); ice(t);
-      hb(t, { move: 'barrage', lt });
-      const back = easeOut(clamp(lt / 2.6, 0, 1)) * 1.6;
-      ts(t, { at: [TS[0] - back * 0.7, 0, TS[2] - back * 0.5], move: 'knockback', lt: lt * 0.5 });
+      let rec = 0; for (const h of RS_HITS) rec += easeOut(clamp((t - h) / 0.18, 0, 1)) * 0.24;   // step-by-step recoil
+      const shake = RS_HITS.reduce((a, h) => a + (t > h && t < h + 0.12 ? Math.sin((t - h) * 80) * 0.05 : 0), 0);
+      const adv = Math.max(0, rec - 0.25);                                                 // HIBIKI keeps pressing in
+      hb(t, { at: [HB[0] - DIR.x * adv, 0, HB[2] - DIR.z * adv], move: 'barrage', lt });
+      ts(t, { at: [TS[0] - DIR.x * rec + shake, 0, TS[2] - DIR.z * rec], move: 'knockback', lt: lt * 0.5 });
+      fx3.iceDust.set(V(TS[0] - DIR.x * rec, 0.3, TS[2] - DIR.z * rec), (t - RS_T) % 0.7, 0.7, 1.2);
       const chest = head(hibiki, -1.3), tc = head(tsurara, -1.4); fx3.barrage.set(t, chest, tc.clone().sub(chest), 1, 1.7, Math.min(4.5, chest.distanceTo(tc)));
       fx3.cracks2.set(V(MID.x, 0.28, MID.z), lt / 2.2, 22, '#e8fbff'); fx3.wave.set(MID, V(1, 0, 0.5), (lt % 0.45) / 0.45, 3.2);
       fx3.spikes.set(V(MID.x, 0, MID.z), 1 - ramp(t, RS_T + 1.0, 0.8), 4.5);
@@ -162,7 +177,8 @@
     run(t, lt) {
       placeDante(t, 'power', 3, 'serious'); hb(t, { move: 'guard', lt, power: 1 - ramp(t, T_SHATTER + 1.2, 0.8) });
       placeHale(t, lt < 0.4 ? 'idle' : 'kneel', lt - 0.4, 'pain');
-      ts(t, { at: [TS[0] - 1.8, 0, TS[2] - 1.2], move: 'knockback', lt: 2, power: 1 - ramp(t, T_SHATTER, 0.6) });
+      const fly = easeOut(clamp(lt / 0.5, 0, 1)) * 1.4;                                      // the last hit throws TSURARA back
+      ts(t, { at: [TS[0] - DIR.x * (1.7 + fly), 0, TS[2] - DIR.z * (1.7 + fly)], move: 'knockback', lt: 2, power: 1 - ramp(t, T_SHATTER, 0.6) });
       ice(t); fx3.shards.set(V(-3, 1.0, 0), lt, 1.4, 14); fx3.wave.set(V(-3, 0.5, 0), V(0, 1, 0), lt / 0.8, 26);
     } });
   F.flash(T_SHATTER, 0.3, '#ffffff', 1).sfx(T_SHATTER + 0.05, T_SHATTER + 1.3, 'パリーン!!', { x: 50, y: 26, size: 17, rot: -6, color: '#f4fdff', shadow: '#2a8fc8' });
@@ -171,5 +187,5 @@
   EB.shot({ t0: AR_T, loc: 'fortress', pos: (lt) => head(hale, 0).add(new THREE.Vector3(Math.sin(H_YAW + 0.4), 0, Math.cos(H_YAW + 0.4)).multiplyScalar(EB.tNow > TONIGHT ? lerp(2.0, 1.25, ease(clamp((EB.tNow - TONIGHT) / 0.4, 0, 1))) * 1.25 : 2.5)).add(V(0, 0.15, 0)), look: () => head(hale, 0.05), fov: [42, 42], shadow: 8,
     run(t, lt) { placeHale(t, 'kneel', 2, 'smirk'); placeDante(t, 'idle', lt, 'determined'); } });
 
-  EB.STILLS.push(103.4, 105.5, 108.3, 111.0, 113.4, 114.6, 116.4, 118.4, 120.6, 123.2, 125.5, 127.5, 129.6, 130.9, 131.3, 133.0, 134.6, 135.3, 136.8, 139.0, 141.5);
+  EB.STILLS.push(103.0, 105.1, 107.9, 110.6, 113.0, 114.2, 116.0, 118.0, 120.2, 122.8, 125.1, 127.1, 129.2, 130.5, 130.9, 132.6, 134.2, 134.9, 136.4, 138.6, 141.1);
 })();

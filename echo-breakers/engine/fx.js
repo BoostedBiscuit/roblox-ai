@@ -358,5 +358,20 @@
     return m;
   }
 
-  RT.fx = { screen, barrage, shockwave, debris, cracks, notes, strings, iceSpikes, shards, mirageCopy, ghostWall, pop, fadeWin };
+  // DUST: soft puffs kicked up from the ground (skids, landings, Echoes bursting out). d.set(origin, lt, power, spread)
+  let puffTex = null;
+  function dust(color = '#d9c8a8', n = 10) {
+    if (!puffTex) puffTex = RT.canvasTexture(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,0.9)'); gr.addColorStop(0.5, 'rgba(255,255,255,0.4)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+    const g = new THREE.Group(); g.name = 'dust'; g.visible = false; const sp = [];
+    for (let i = 0; i < n; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffTex, color, transparent: true, depthWrite: false })); g.add(s); sp.push(s); }
+    g.set = (origin, lt, power = 1, spread = 1.6) => {
+      g.visible = lt >= 0 && lt < 1.6; if (!g.visible) return;
+      sp.forEach((s, i) => { const a = (i / n) * Math.PI * 2 + RT.hash(i) * 0.6, d = spread * power * easeOut(clamp(lt / 1.2, 0, 1)) * (0.6 + 0.6 * RT.hash(i * 3.1));
+        s.position.set(origin.x + Math.cos(a) * d, origin.y + 0.25 + lt * 0.5 * (0.5 + RT.hash(i * 7.7)), origin.z + Math.sin(a) * d);
+        s.scale.setScalar((0.6 + lt * 1.6) * power * (0.7 + 0.6 * RT.hash(i * 5.3))); s.material.opacity = 0.55 * (1 - lt / 1.6); });
+    };
+    return g;
+  }
+
+  RT.fx = { screen, dust, barrage, shockwave, debris, cracks, notes, strings, iceSpikes, shards, mirageCopy, ghostWall, pop, fadeWin };
 })();

@@ -127,7 +127,7 @@
   // the last MUDA lands: a beat of stillness (hit-stop), then HIBIKI is blasted back and Dante with it — he flies,
   // hits the floor, and skids to a stop in a cloud of dust.
   const HOLD = 0.12, LAND = WIN + HOLD + 0.55;
-  EB.shot({ t0: WIN, loc: 'arena', pos: [[9.5, 3.0, 8.0], [10.5, 3.4, 9.5]], look: [[0, 1.5, 10], [0, 1.2, 13]], fov: [54, 54], ease: 'out', shadow: 18, shake: 0.012, bloom: 0.95,
+  EB.shot({ t0: WIN, loc: 'arena', pos: [[10, 3.5, 20], [11, 3.8, 21.3]], look: [[0, 1.5, 12], [0, 1.2, 14.8]], fov: [56, 56], ease: 'out', shadow: 18, shake: 0.012, bloom: 0.95,   // (from the side: HIBIKI flies into frame, Dante tumbles)
     kicks: [WIN + HOLD, LAND], kickAmp: 0.22,
     run(t, lt0) {
       const lt = Math.max(0, lt0 - HOLD), air = clamp(lt / 0.55, 0, 1), sk = easeOut(clamp((lt - 0.55) / 0.45, 0, 1));

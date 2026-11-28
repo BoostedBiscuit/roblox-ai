@@ -1,0 +1,11 @@
+/* fonts.css: local copies of three free fonts (SIL Open Font License 1.1, see LICENSE-*.txt),
+   so the scenes look the same on your phone, offline, and in the MP4 renderer.
+   Cinzel     → gold title text ("THE REAPING TRIALS")
+   Montserrat → big narrator word captions (900 = Black)
+   Inter      → small UI text, speaker names and character subtitles */
+@font-face { font-family: 'Cinzel'; font-weight: 600; font-style: normal; font-display: block; src: url('cinzel-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Cinzel'; font-weight: 800; font-style: normal; font-display: block; src: url('cinzel-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-weight: 800; font-style: normal; font-display: block; src: url('montserrat-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-weight: 900; font-style: normal; font-display: block; src: url('montserrat-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 500; font-style: normal; font-display: block; src: url('inter-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 700; font-style: normal; font-display: block; src: url('inter-latin-700-normal.woff2') format('woff2'); }

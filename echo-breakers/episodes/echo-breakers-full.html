@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<!--
+=====================================================================================
+ECHO BREAKERS · the whole story in one video (full version 3:30–4:00; the Shorts version is cut from it).
+  node echo-breakers/tools/narrate.js echo-breakers-full             voices (cached: no credits for unchanged lines)
+  node echo-breakers/tools/render.js echo-breakers-full              → out/echo-breakers/echo-breakers-full.mp4 (+ -no-voice, -sfx-only, -no-music, -voice.mp3)
+  node echo-breakers/tools/render.js echo-breakers-full --shorts     → out/echo-breakers/echo-breakers-shorts.mp4 (SHORTS CUTS below)
+  node echo-breakers/tools/render.js echo-breakers-full --thumbs     → 3 thumbnail options;  --cover 1|2|3 → -with-cover MP4s of both
+  node echo-breakers/tools/render.js echo-breakers-full --stills --at 12,30.5   → single frames to check a shot
+The shots are in the chapter files next to this page: echo-breakers-full.ch1.js … ch5.js and .end.js (ending + thumbnails).
+Every shot is placed on the voice lines by their LABEL (the word after @ below): S('what') = when that line starts,
+E('what') = when it ends. Change a line, run narrate again, and the shots and sounds follow it.
+=====================================================================================
+
+=== VOICE ===
+# who        ElevenLabs voice id      options (rate = speed factor, pitch moves with it · fx = effect preset in tools/narrate.js · gain = dB in the mix)
+narrator     pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+dante        pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+aurora       pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+grant        pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+hale         pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+vahl         pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3
+think        pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3 fx=think gain=-3
+vahlthink    pNInz6obpgDQGcFmaJgB     name=Adam rate=1.3 fx=think gain=-3
+hibiki       nPczCjzI2devNBz1zQrb     name=Brian rate=0.891 fx=hibiki stability=0.45 style=0.4 speed=1.0 gain=3
+kagerou      EXAVITQu4vr4xnSDxMaL     name=Sarah fx=kagerou stability=0.45 style=0.4 speed=1.0 gain=3
+omamori      cgSgspJ2msm6clMCkdW9     name=Jessica rate=1.414 fx=omamori stability=0.45 style=0.4 speed=1.0 gain=3
+tsurara      onwK4e9ZLuTAKqWW03F9     name=Daniel fx=tsurara stability=0.45 style=0.4 speed=1.0 gain=3
+shuen        JBFqnCBsd6RMkjVDRZzb     name=George rate=0.75 fx=shuen stability=0.45 style=0.4 speed=1.0 gain=3
+=== END ===
+
+=== NARRATION ===
+# <start s | +gap after the previous line>  <who>@<label>  <text>   (Echo lines: Japanese || English subtitle)
+# A "+gap" is also how long the action between two lines lasts (fights, name cards, chapter cards).
+# --- CH 1 · THE SILENT RECORD (Old Town Stairway) ---
+0.5   narrator@town       In this town, one note can change everything.
++0.3  narrator@me         That's me. About to get crushed by a giant sign.
++1.7  narrator@name       My name is Dante Ferro.
++0.15 narrator@nobody     Sixteen. Headphones always on. In Port Halcyon, I'm the kid nobody notices.
++0.25 narrator@shop       That morning, I found a record shop I'd never seen before.
++0.3  narrator@back       In the back… a golden record. No name. No price.
++0.3  narrator@play       So I took it to the top of the old stairs… and pressed play.
++2.2  narrator@silent     One note. And the whole city went silent.
++3.4  dante@what          What… are you?
++0.3  hibiki@echo1        俺はお前の響きだ。 || I am your echo.
++1.6  narrator@made       A spirit made of sound. Made from… me. And I was about to find out… I wasn't the only one.
+# --- CH 2 · MIRAGE GIRL (Fountain Piazza) ---
++0.9  narrator@punched    Next day, in the Fountain Piazza… I got punched in the face. By me.
++2.0  narrator@ten        Then there were ten of me. Fake walls. Fake doors. The whole piazza was lying to me.
++4.5  aurora@hunters      You're not one of Vahl's hunters… are you?
++0.3  kagerou@kagerou     見えるものが、真実とは限らない。 || What you see isn't always the truth.
++1.5  narrator@aurora     Aurora Vesper. Street artist. Her Echo, Kagerou, makes mirages.
++0.3  aurora@vahl         The man hunting us is called Maestro Vahl. He steals Echoes. Yours is next.
++0.4  narrator@boss       Great. Two days with superpowers… and I already have a final boss.
+# --- CH 3 · TEN SECONDS (Seaside Promenade) ---
++0.9  narrator@road       Vahl's hunters found us on the seaside road.
++3.8  grant@always        Why is it ALWAYS me?!
++0.3  narrator@grant      That's Grant Azzardo. He heard the record too. He's scared of literally everything.
++0.3  omamori@tensec      十秒だけだぞ！ || Only ten seconds!
++1.6  narrator@luck       Ten seconds of perfect luck.
++4.2  omamori@timeup      あっ…時間切れ。 || Oops… time's up.
++0.3  narrator@worst      …then ten seconds of the worst luck ever.
++3.6  grant@hat           My HAT!
++0.3  narrator@escaped    We escaped. His hat didn't.
+# --- CH 4 · ICE DUEL (Sea Fortress, sunset) ---
++0.9  narrator@sunset     At sunset, someone was waiting for me on the old sea fortress.
++0.4  hale@show           So you're the new kid with the loud Echo. Show me.
++0.3  narrator@hale       Hale Inverno. Rich. Cold. And his Echo… was even colder.
++0.4  tsurara@freeze      凍りつけ。 || Freeze.
++9.5  think@cold          Cold… I can't move. Hibiki's fists are slowing down…
++0.3  think@crack         Wait. That sound. The ice is… cracking.
++0.8  think@power         Every crack is a sound. And every sound… is power.
++1.1  hibiki@resound1     響け！響け！響け！ || Resound! Resound! Resound!
++2.2  hale@arena          Not bad. Vahl is at the old arena. Tonight.
+# --- CH 5 · THE CONDUCTOR (Ancient Arena, night) ---
++2.8  vahl@welcome        Welcome, children. Your Echoes will make a beautiful finale.
++0.3  shuen@final         最後の楽章を始めよう。 || Let the final movement begin.
++1.8  narrator@puppets    His music grabbed Aurora, Grant, even Hale… and made them dance like puppets.
++3.3  dante@letgo         Let them GO!
++0.2  hibiki@resound2     響け！響け！響け！ || Resound! Resound! Resound!
++0.2  shuen@muda          無駄無駄無駄無駄！ || Useless!
++3.2  think@everywhere    His music is everywhere… Aurora, Grant, Hale… they're all dancing to his beat.
++0.3  think@controls      As long as there's music, he controls everything. Even me.
++1.5  think@weakness      Hibiki gets stronger with sound… and weaker in silence. That's my weakness…
++0.3  think@his           …but silence is HIS weakness too.
++0.3  think@takeaway      Then I'll take everything away. Every sound. And give it back all at once.
++3.6  vahlthink@impossible Silence…? Impossible. Nobody escapes my finale…
++0.9  dante@shout         HIBIKIIIII!
++0.3  hibiki@lastpunch    響けぇぇぇっ！ || RESOUND!
++3.3  narrator@stopped    And just like that… the music stopped.
+# --- ENDING ---
++2.0  narrator@sunrise    By sunrise, the golden record was gone.
++0.3  narrator@another    But somewhere in Port Halcyon… another one started to spin.
+=== END ===
+
+=== CUE SHEET ===
+# <time> <sound> <volume> [options]   time = seconds or a line label: what.s (start) / what.e (end) ± offset, e.g. silent.s-1.5
+# sounds: echo-breakers/audio/sfx/<name>.mp3 (or music:<name>). volume 1 = as loud as the voice. Options:
+#   align=onset|peak|end  dur=seconds  loop  fadein= fadeout=a~b  mute=a~b (music only: silence between a and b)  duck=0.55 (music under voices)
+0              music:dreamcore   0.40  duck=0.6 fadein=0.6 mute=takeaway.e+1.6~shout.s fadeout=another.e+6.4~another.e+7.2
+0                      wind             0.30 dur=2.4
+town.s+0.5             metal_snap       0.55 
+town.s+0.55            whoosh           0.60 
+town.s+1.28            shutter          0.80 dur=0.4
+town.s+1.30            impact_hit       0.40 
+me.e+0.1               record_scratch   1.00 dur=1.1
+me.e+0.2               whoosh           0.50 
+me.e+0.98              whoosh           0.35 
+name.s-0.6             city_murmur      0.22 loop dur=15.5 fadeout=play.e-0.4~play.e+0.15
+name.s-0.5             steps_stone      0.32 loop dur=5.2
+shop.s+0.4             sparkle          0.45 
+back.s+1.01            sparkle          0.60 
+back.s+1.01            eerie_note       0.25 
+play.s+2.00            vinyl_crackle    0.55 dur=2.6
+play.e+0.15            eerie_note       1.00 
+play.e+0.2             time_slow        0.60 
+play.e+0.3             low_drone        0.55 dur=4.6 fadeout=silent.e~silent.e+0.4
+play.e+0.8             rumble           0.45 dur=3.4
+silent.e+0.12          metal_snap       1.00 
+silent.e+0.22          whoosh           0.70 
+silent.e+1.52          echo_appear      0.90 dur=1.6
+silent.e+1.52          aura_whoosh      0.80 
+silent.e+1.54          big_boom         0.55 
+silent.e+1.62          barrage_hits     0.90 
+silent.e+1.97          punch_big        1.00 
+silent.e+1.98          stone_break      0.75 
+silent.e+2.22          rumble           0.35 dur=1.5
+echo1.e+0.15           serious_hit      0.60 
+echo1.e+0.15           shutter          0.45 dur=0.4
+made.s                 wind             0.30 dur=5
+punched.s-0.35         whoosh           0.25 
+punched.s-0.25         city_murmur      0.22 dur=4.5
+punched.s+1.06     shimmer          0.50 
+punched.s+2.21    punch_big        1.00 
+punched.e+0.37         echo_appear      0.85 dur=1.6
+punched.e+0.79         clash            0.95 
+ten.s                  shimmer          0.75 
+ten.s+0.9              whoosh           0.40 
+ten.s+1.6              shimmer          0.40 
+ten.e+0.37             punch_1          0.90 
+ten.e+0.67             punch_2          0.90 
+ten.e+0.97             punch_1          0.90 
+ten.e+1.27             punch_2          0.95 
+ten.e+1.45             barrage_hits     1.00 dur=0.75
+ten.e+0.7              glass_shatter    0.35 
+ten.e+2.5              punch_big        0.90 
+ten.e+2.55             shimmer          0.60 
+kagerou.s-0.15         echo_appear      0.80 dur=1.6
+kagerou.s-0.1          shimmer          0.55 
+kagerou.e+0.05         serious_hit      0.50 
+aurora.s               whoosh           0.30 
+vahl.s+0.99       orchestra_hit    0.80 
+vahl.s+1.02       low_drone        0.50 dur=0.9
+boss.s+2.46       boing            0.35 dur=1.0
+road.s-0.3             whoosh           0.25 
+road.s-0.2             running_steps    0.50 loop dur=11.5
+road.s                 seagull          0.25 dur=2.6
+road.e+0.35            scooter_pass     0.80 
+road.e+0.6             car_pass         0.50 
+road.e+1.6             whoosh           0.50 
+tensec.s-0.15          sparkle          0.80 
+tensec.s-0.15          echo_appear      0.55 dur=1.6
+tensec.e+0.05          serious_hit      0.40 
+luck.s+1.01            car_pass         0.60 
+luck.s+1.61            punch_2          0.80 
+luck.s+1.63            lucky_ding       0.80 
+luck.s+2.64            scooter_pass     0.80 
+luck.s+2.99            boing            0.40 dur=1.0
+luck.s+3.01            lucky_ding       0.80 
+luck.s+3.61            metal_snap       0.50 
+luck.s+4.16            bonk             0.80 
+luck.s+4.18            lucky_ding       0.80 
+luck.s+5.08            punch_1          0.70 
+luck.s+5.10            lucky_ding       0.80 
+timeup.s               time_slow        0.35 
+worst.e+0.1            cartoon_slip     0.90 
+worst.e+1.65           bonk             1.00 
+worst.e+2.2            seagull          1.00 dur=2.6
+worst.e+2.6            whoosh           0.40 
+escaped.s              seagull          0.45 dur=2.6
+escaped.s              wind             0.25 dur=2
+sunset.s-0.3           whoosh           0.25 
+sunset.s-0.2           wind             0.30 loop dur=36 fadeout=arena.e-0.5~arena.e+0.1
+sunset.s+0.3           steps_stone      0.35 dur=2.6
+hale.s+2.99        echo_appear      0.80 dur=1.6
+hale.s+3.04       freeze_crackle   0.60 
+freeze.s+0.2           punch_big        0.50 
+freeze.s+0.22          ice_crack        0.80 dur=1.6
+freeze.e               freeze_crackle   1.00 
+freeze.e+0.05          ice_crack        0.85 dur=2.4
+freeze.e+2.3           serious_hit      0.50 
+freeze.e+4.25          echo_appear      0.60 dur=1.6
+freeze.e+4.55          clash            1.00 
+freeze.e+4.75          glass_shatter    0.40 
+freeze.e+6.85          ice_crack        0.70 dur=1.5
+cold.s-0.3             time_slow        0.60 
+cold.s-0.25            low_drone        0.60 dur=9.6 fadeout=power.e-0.2~power.e+0.05
+cold.s-0.2             heartbeat        0.60 loop dur=9.5
+crack.s+1.83       ice_crack        0.90 dur=1.6
+crack.e+0.02           impact_hit       0.35 
+crack.e+0.42           impact_hit       0.35 
+power.s+2.42           sparkle          0.50 
+power.e+0.02           whoosh           0.60 
+power.e+0.57           serious_hit      1.00 
+power.e+0.6            glass_shatter    0.40 
+resound1.s-0.1         barrage_hits     1.00 loop dur=2.9
+resound1.s             rumble           0.50 dur=2.8
+resound1.e+0.15        glass_shatter    1.00 
+resound1.e+0.16        big_boom         0.80 
+resound1.e+0.4         sparkle          0.60 
+arena.e+0.08           whoosh           0.30 
+arena.e+1.3            rumble           0.50 dur=2.4
+arena.e+1.3            low_drone        0.45 dur=2.5
+welcome.s-0.25         orchestra_hit    0.55 
+final.s-0.15           orchestra_hit    1.00 
+final.s-0.12           echo_appear      0.80 dur=1.6
+final.s                rumble           0.50 dur=2
+final.e+0.05           serious_hit      0.50 
+puppets.s              low_drone        0.35 dur=4
+puppets.e+0.35         shimmer          0.60 
+puppets.e+0.45         whoosh           0.45 
+puppets.e+2.2          ice_crack        0.70 dur=1
+puppets.e+2.22         glass_shatter    0.35 
+letgo.s+0.13           echo_appear      0.90 dur=1.6
+letgo.s+0.15           aura_whoosh      0.80 
+letgo.e+0.02           barrage_hits     1.00 loop dur=3.0
+letgo.e                rumble           0.50 dur=5
+letgo.e+0.92           punch_big        0.90 
+letgo.e+0.93           big_boom         0.50 
+muda.s-0.1             barrage_hits     1.00 loop dur=2.0
+muda.s-0.12            orchestra_hit    0.70 
+muda.e+0.05            big_boom         1.00 
+muda.e+0.06            punch_big        0.80 
+muda.e+0.72            stone_break      0.70 
+muda.e+0.72            impact_hit       0.45 
+everywhere.s-0.3       time_slow        0.70 
+everywhere.s-0.25      low_drone        0.60 dur=19.5 fadeout=takeaway.e-0.3~takeaway.e+0.05
+everywhere.s-0.2       heartbeat        0.60 loop dur=19.6
+controls.e+0.1         impact_hit       0.35 
+controls.e+0.55        impact_hit       0.35 
+controls.e+1.0         punch_big        0.40 
+takeaway.e+0.05        whoosh           0.60 
+takeaway.e+0.55        serious_hit      1.00 
+takeaway.e+1.35        plastic_crunch   1.00 
+takeaway.e+1.37        punch_2          0.50 
+takeaway.e+1.6         ear_ring         0.60 dur=5.9 fadeout=shout.s-0.6~shout.s
+impossible.e+0.3       mask_crack       1.00 
+shout.s-0.05           aura_whoosh      1.00 
+shout.s                rumble           0.80 dur=1.2
+shout.s+0.1            echo_appear      0.80 dur=1.6
+lastpunch.s-0.1        whoosh           0.80 
+lastpunch.e-0.4        punch_big        1.00 
+lastpunch.e-0.25       final_shockwave  1.00 
+lastpunch.e-0.24       glass_shatter    0.80 
+lastpunch.e-0.2        big_boom         0.70 
+stopped.s              wind             0.30 dur=2.2
+stopped.e+0.25         seagull          0.40 dur=2.6
+stopped.e+0.25         wind             0.25 dur=4.5
+another.s+0.07     vinyl_crackle    0.60 loop dur=9.5
+another.s+2.32    eerie_note       0.60 
+another.e+1.2          low_drone        0.40 dur=2
+another.e+3.2          serious_hit      0.70 
+=== END ===
+
+=== SHORTS CUTS ===
+# <from> <to>: these parts are left out of the YouTube Shorts version (max 2:58). Times or line labels, like the cue sheet.
+nobody.s-0.08     back.s-0.3
+made.s-0.1        made.e+0.05
+ten.s-0.1         hunters.s-0.7
+boss.s-0.1        road.s-0.2
+road.e+1.3        always.s-0.45
+grant.s-0.1       grant.e+0.05
+timeup.s-0.12     timeup.e+0.05
+escaped.s-0.1     sunset.s-0.2
+hale.s-0.1        hale.e+0.1
+freeze.e+4.15     freeze.e+6.85
+cold.s-0.1        cold.e+0.15
+controls.s-0.1    controls.e+0.1
+impossible.s-0.1  impossible.e+0.05
+stopped.s-0.1     stopped.e+0.25
+=== END ===
+-->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Echo Breakers</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="../fonts/fonts-jp.css">
+</head><body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../engine/vendor/CopyShader.js"></script><script src="../engine/vendor/LuminosityHighPassShader.js"></script>
+<script src="../engine/vendor/EffectComposer.js"></script><script src="../engine/vendor/RenderPass.js"></script>
+<script src="../engine/vendor/ShaderPass.js"></script><script src="../engine/vendor/UnrealBloomPass.js"></script>
+<script src="../engine/common.js"></script><script src="../engine/mood.js"></script><script src="../engine/characters.js"></script>
+<script src="../engine/animations.js"></script><script src="../engine/cast.js"></script><script src="../engine/echoes.js"></script>
+<script src="../engine/glow.js"></script><script src="../engine/world.js"></script><script src="../engine/locations.js"></script>
+<script src="../engine/camera.js"></script><script src="../engine/fx.js"></script><script src="../engine/player.js"></script>
+<script src="../audio/voice/echo-breakers-full_narration.js"></script>
+<script>
+// =====================================================================================
+// SETUP: renderer, camera, light, the cast, the Echoes, effects and the helpers every chapter file uses (window.EB)
+// =====================================================================================
+(function () {
+  'use strict';
+  const { clamp, lerp, ease, easeOut, easeOutBack } = RT, A = RT.anim, C = RT.cast, EC = RT.echoes;
+  const RENDER = RT.player.RENDER || !!RT.player.THUMB;
+  const NAR = window.RT_NARRATION['echo-breakers-full'];
+  const LN = (lb) => { const l = NAR.lines.find((x) => x.label === lb); if (!l) throw new Error('no NARRATION line labelled ' + lb); return l; };
+  const S = (lb, d = 0) => +(LN(lb).start + d).toFixed(3), E = (lb, d = 0) => +(LN(lb).end + d).toFixed(3);
+  const WD = (lb, word) => { const l = LN(lb), w = l.words.find((k) => k.w.toLowerCase().replace(/[^a-z']/g, '') === word); return w ? w.start : l.start; };   // when a word is said
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+
+  // ---------- renderer, camera, light ----------
+  const renderer = RT.mood.renderer(null, { preserve: RENDER });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 9 / 16, 0.1, 5000);
+  const env = RT.mood.create(scene, renderer, { mood: 'halcyon', shadowSize: 2048 });
+  const key = new THREE.DirectionalLight('#fff4e6', 0); scene.add(key, key.target);      // soft face light for close-ups (no shadows)
+  let glow = null;                                                                       // bloom pass (made at the first frame, at the final size)
+
+  // ---------- locations (built the first time they are used; only one is visible) ----------
+  const LIGHT = { stairway: 0.5, recordShop: 0.9, piazza: 0.5, promenade: 0.5, fortress: 0.62, arena: 1, darkRoom: 1 };   // Echo brightness per place (see echoes.js "light")
+  const LOCS = {}, SNAP = new Map();
+  function loc(name) {
+    if (LOCS[name]) return LOCS[name];
+    const g = RT.locations[name](); g.visible = false; scene.add(g); LOCS[name] = g;
+    // remember every prop's start state: each frame starts from it, so a shot can move props without affecting other shots
+    const objs = new Set([...(g.breakables || [])]); const add = (v) => { if (v && v.isObject3D) objs.add(v); else if (Array.isArray(v)) v.forEach(add); };
+    Object.values(g.props || {}).forEach(add);
+    SNAP.set(g, [...objs].map((o) => ({ o, p: o.position.clone(), q: o.quaternion.clone(), s: o.scale.clone(), v: o.visible })));
+    return g;
+  }
+  let cur = null, curMood = '';
+  function useLoc(name, mood) {
+    const g = loc(name);
+    if (cur !== g) { if (cur) cur.visible = false; g.visible = true; cur = g; }
+    for (const r of SNAP.get(g)) { r.o.position.copy(r.p); r.o.quaternion.copy(r.q); r.o.scale.copy(r.s); r.o.visible = r.v; }
+    const m = mood || g.mood, mk = typeof m === 'string' ? m : JSON.stringify(m);
+    if (mk !== curMood) { env.set(m); curMood = mk; }
+    EB.light = LIGHT[name] ?? 1;
+    return g;
+  }
+  // a location's props live in its own (design) units: world = design × SCALE
+  const D = (v) => v / RT.locations.SCALE;
+
+  // ---------- the cast ----------
+  const dante = C.dante(), aurora = C.aurora(), grant = C.grant(), hale = C.hale(), vahl = C.vahl();
+  const hunters = [1, 2, 3, 4, 5].map((i) => C.hunter(i));
+  const walkers = [3, 7, 12, 18, 25, 31].map((s) => C.walker(s));
+  const copies = Array.from({ length: 10 }, () => RT.fx.mirageCopy(() => C.dante()));      // KAGEROU's fake Dantes
+  const auroraCopies = [0, 1].map(() => RT.fx.mirageCopy(() => C.aurora()));
+  const hibiki = EC.hibiki(), kagerou = EC.kagerou(), omamori = EC.omamori(), tsurara = EC.tsurara(), shuen = EC.shuen();
+  const PEOPLE = [dante, aurora, grant, hale, vahl, ...hunters, ...walkers, ...copies, ...auroraCopies];
+  const ECHOES = [hibiki, kagerou, omamori, tsurara, shuen];
+  for (const o of [...PEOPLE, ...ECHOES]) { scene.add(o); o.visible = false; }
+  dante.name = 'Dante'; aurora.name = 'Aurora'; grant.name = 'Grant'; hale.name = 'Hale'; vahl.name = 'Vahl';
+
+  // ---------- small props ----------
+  const goldMat = () => { const t = RT.canvasTexture(256, 256, (g) => { const gr = g.createRadialGradient(128, 128, 20, 128, 128, 128); gr.addColorStop(0, '#fff2b0'); gr.addColorStop(1, '#c89a2a'); g.fillStyle = gr; g.beginPath(); g.arc(128, 128, 126, 0, 7); g.fill(); g.strokeStyle = 'rgba(120,80,10,0.35)'; for (let r = 40; r < 124; r += 5) { g.beginPath(); g.arc(128, 128, r, 0, 7); g.stroke(); } g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillRect(124, 10, 8, 90); g.fillStyle = '#fff8dc'; g.beginPath(); g.arc(128, 128, 28, 0, 7); g.fill(); });
+    return new THREE.MeshStandardMaterial({ map: t, metalness: 0.6, roughness: 0.25, emissive: '#ffcf5a', emissiveMap: t, emissiveIntensity: 0.55 }); };
+  const discGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.03, 40), gm = goldMat();
+  // the golden record in Dante's hand
+  const handRecord = RT.mesh(discGeo, [RT.plastic('#c89a2a', { metalness: 0.8 }), gm, gm]); handRecord.rotation.x = Math.PI / 2; handRecord.position.set(0, -0.25, 0.1); handRecord.userData.glow = true;
+  dante.rig.hold('R', handRecord); handRecord.visible = false;
+  // the portable record player at the top of the stairs (case + spinning golden record + tone arm)
+  const player = new THREE.Group(); player.name = 'record player';
+  player.add(RT.mesh(RT.roundedBoxGeometry(1.15, 0.32, 0.95, 0.06, 2), RT.plastic('#2f3a4a', { roughness: 0.4 })).translateY(0.16));
+  player.add(RT.mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 32), RT.plastic('#111')).translateY(0.34));
+  const spinDisc = RT.mesh(discGeo, [RT.plastic('#c89a2a', { metalness: 0.8 }), gm, gm]); spinDisc.position.y = 0.37; spinDisc.userData.glow = true; player.add(spinDisc);
+  player.add(RT.mesh(new THREE.BoxGeometry(0.05, 0.05, 0.6), RT.metal('#c9ced6')).translateX(0.42).translateY(0.42).translateZ(-0.05));
+  scene.add(player); player.visible = false;
+  // thrown headphones (CH5), Grant's hat flying with the seagull (CH3), ice blocks around Dante's legs (CH4)
+  const thrownPhones = dante.rig.props.headphones.clone(); thrownPhones.visible = false; scene.add(thrownPhones);
+  const flyingHat = grant.rig.props.hat.clone(); flyingHat.visible = false; scene.add(flyingHat);
+  const gull = RT.kit.seagull(1.3); gull.visible = false; scene.add(gull);
+  const iceLegs = new THREE.Group(); const iceM = new THREE.MeshStandardMaterial({ color: '#bff3ff', roughness: 0.05, transparent: true, opacity: 0.78, emissive: '#3fc8ff', emissiveIntensity: 0.2 });
+  iceLegs.add(RT.mesh(new THREE.DodecahedronGeometry(0.75, 0), iceM)); iceLegs.children[0].scale.set(1.2, 1.1, 1.0); iceLegs.children[0].position.y = 0.55; scene.add(iceLegs); iceLegs.visible = false;
+
+  // ---------- 3D effects (hidden every frame unless a shot sets them) ----------
+  const fx3 = {
+    barrage: RT.fx.barrage('#4fb8ff'), barrage2: RT.fx.barrage('#a070ff'), barrageIce: RT.fx.barrage('#7fe6ff', 14),
+    wave: RT.fx.shockwave('#ffffff'), wave2: RT.fx.shockwave('#9fd8ff'), wave3: RT.fx.shockwave('#c79bff'), ground: RT.fx.shockwave('#ffe6a0'),
+    debris: RT.fx.debris(36, ['#7a1f2b', '#ffd98a', '#2a2b2e']), rubble: RT.fx.debris(44, ['#c9b79a', '#8f7f68']), fruit: RT.fx.debris(30, ['#ff9a1f', '#f5e04a', '#d83a2e', '#7cc04a'], 0.22),
+    goldBits: RT.fx.debris(40, ['#ffd45a', '#fff2b0'], 0.3, true), phoneBits: RT.fx.debris(14, ['#eef3ff', '#3a8dff', '#222'], 0.12),
+    sparks: RT.fx.debris(26, ['#ffffff', '#9fd8ff'], 0.08, true), hazeBits: RT.fx.debris(30, ['#ffb35a', '#fff0d6'], 0.15, true), luck: RT.fx.debris(18, ['#ffd84a', '#fff6c8'], 0.1, true),
+    cracks: RT.fx.cracks(3), cracks2: RT.fx.cracks(8), notes: RT.fx.notes('#c08bff'), goldNotes: RT.fx.notes('#ffd45a', 10), strings: RT.fx.strings('#c46bff'),
+    spikes: RT.fx.iceSpikes(16, 5), spikes2: RT.fx.iceSpikes(10, 9), shards: RT.fx.shards(80), shardsSmall: RT.fx.shards(30),
+    walls: [0, 1, 2, 3].map(() => RT.fx.ghostWall('#ffb35a', 5, 3.2)),
+    dust: RT.fx.dust('#d9c8a8'), dust2: RT.fx.dust('#d9c8a8'), iceDust: RT.fx.dust('#eefbff'), sandDust: RT.fx.dust('#cdb48a', 12),
+  };
+  const FX3 = Object.values(fx3).flat(); FX3.forEach((o) => scene.add(o));
+
+  // ---------- screen effects (DOM overlays) ----------
+  const F = RT.fx.screen(renderer.domElement);
+
+  // =====================================================================================
+  // HELPERS used by the chapter files
+  // =====================================================================================
+  const put = (o, p, yaw = 0) => { o.visible = true; o.position.set(p[0], p[1], p[2]); o.rotation.set(0, yaw, 0); return o; };
+  // pose(character, move, seconds into the move, options). options.mod = override pose values, options.face = expression
+  const pose = (ch, move, lt, o = {}) => { const P = Object.assign(A.pose(move, Math.max(0, lt), o), o.mod || {}); A.apply(ch, P); if (o.face) ch.rig.setFace(o.face); return P; };
+  // walk / run along points [[x,y,z],…] from time t0 at `speed` units/s; at the end: o.end move (default idle), o.endYaw
+  function walk(ch, pts, t0, speed, t, o = {}) {
+    const segs = []; let total = 0;
+    for (let i = 0; i < pts.length - 1; i++) { const a = pts[i], b = pts[i + 1], d = Math.hypot(b[0] - a[0], b[2] - a[2]); segs.push({ a, b, d, from: total }); total += d; }
+    const dist = clamp((t - t0) * speed, 0, total);
+    let sg = segs[segs.length - 1]; for (const g of segs) if (dist <= g.from + g.d) { sg = g; break; }
+    const k = sg.d ? clamp((dist - sg.from) / sg.d, 0, 1) : 1, moving = t >= t0 && dist < total - 1e-3;
+    const x = lerp(sg.a[0], sg.b[0], k), y = lerp(sg.a[1], sg.b[1], k), z = lerp(sg.a[2], sg.b[2], k);
+    const yaw = moving || o.endYaw === undefined ? Math.atan2(sg.b[0] - sg.a[0], sg.b[2] - sg.a[2]) : o.endYaw;
+    put(ch, [x, o.ground ? o.ground(x, z) : y, z], yaw);
+    if (moving) { const gait = o.gait || 'walk'; A.apply(ch, Object.assign(A.pose(gait, t, { phase: (dist / (gait === 'run' ? 0.9 : 0.6)) * Math.PI }), o.mod || {})); if (o.face) ch.rig.setFace(o.face); }
+    else pose(ch, o.end || 'idle', t - (t0 + total / speed), { face: o.face, mod: o.endMod });
+    return { moving, done: t >= t0 && !moving, x, z };
+  }
+  // a point beside/behind a character (its own left/right and back): side > 0 = to its left (+x when it faces +z)
+  const beside = (ch, side = 0.9, back = 1.0, up = 0) => { const y = ch.rotation.y, c = Math.cos(y), s = Math.sin(y); return [ch.position.x + side * c - back * s, ch.position.y + up, ch.position.z - side * s - back * c]; };
+  // place an Echo: o = { power 0..1, move, lt, scale, float, orchestra, face }
+  function echoAt(ec, p, yaw, t, o = {}) {
+    ec.visible = true; ec.position.set(p[0], p[1] + (o.float ?? 0.35) + Math.sin(t * 2.2) * 0.07, p[2]); ec.rotation.set(0, yaw, 0);
+    ec.scale.setScalar(o.scale ?? 1);
+    if (ec.rig && o.move) pose(ec, o.move, o.lt ?? t, o.opts || {});
+    ec.echo.update(t, { power: o.power ?? 1, light: o.light ?? EB.light });
+    if (ec.echo.orchestra) ec.echo.orchestra.visible = !!o.orchestra;
+    return ec;
+  }
+  // 0 → 1 with a little overshoot: for things that pop in (Echoes appearing)
+  // HIT-STOP: on a big hit the action freezes for a moment (anime impact feel). Use hitStop(t, [hit times], hold) as the
+  // action clock in a fight shot: after each hit everything runs `hold` seconds later.
+  const hitStop = (t, hits, hold = 0.1) => { let d = 0; for (const h of hits) if (t > h) d += Math.min(t - h, hold); return t - d; };
+  const popIn = (t, t0, dur = 0.35) => (t < t0 ? 0 : easeOutBack(clamp((t - t0) / dur, 0, 1), 2.2));
+  const ramp = (t, t0, dur = 0.3) => clamp((t - t0) / dur, 0, 1);
+  const head = (ch, dy = 0) => { const v = V(); ch.rig.head.getWorldPosition(v); v.y += dy; return v; };
+  const lookYaw = (from, to) => Math.atan2(to[0] - from[0], to[2] - from[2]);
+
+  // ---------- the shot list: chapter files call EB.shot({ t0, loc, mood, pos, look, fov, ease, shake, roll, run(t, lt) }) ----------
+  const SHOTS = [];
+  window.EB = {
+    THREE, RT, A, scene, camera, renderer, env, key, NAR, LN, S, E, WD, V, D, F, fx3, LIGHT, light: 1,
+    dante, aurora, grant, hale, vahl, hunters, walkers, copies, auroraCopies, hibiki, kagerou, omamori, tsurara, shuen, PEOPLE, ECHOES,
+    handRecord, player, spinDisc, thrownPhones, flyingHat, gull, iceLegs,
+    loc, useLoc, put, pose, walk, beside, echoAt, popIn, ramp, head, lookYaw, hitStop,
+    shot(s) { SHOTS.push(s); return s; }, SHOTS, extra: [],                             // extra: props a chapter adds (hidden every frame unless a shot shows them) get glow() { return glow; }, set glow(g) { glow = g; }, RENDER,
+  };
+})();
+</script>
+<script src="echo-breakers-full.ch1.js"></script>
+<script src="echo-breakers-full.ch2.js"></script>
+<script src="echo-breakers-full.ch3.js"></script>
+<script src="echo-breakers-full.ch4.js"></script>
+<script src="echo-breakers-full.ch5.js"></script>
+<script src="echo-breakers-full.end.js"></script>
+<script>
+// =====================================================================================
+// RUN: every frame is a pure function of t (the renderer asks for frame f at t = f / 30)
+// =====================================================================================
+(function () {
+  'use strict';
+  const { scene, camera, renderer, env, key, F, fx3, A } = EB, { clamp, lerp } = RT;
+  const shots = RT.camera.list(EB.SHOTS);
+  shots.shots.forEach((s, i) => { s.t1 = shots.shots[i + 1] ? shots.shots[i + 1].t0 : EB.DURATION; });
+  const FX3 = Object.values(fx3).flat(), TALKERS = { dante: EB.dante, aurora: EB.aurora, grant: EB.grant, hale: EB.hale, vahl: EB.vahl };
+  // lips: a character's mouth flaps on the words of their own lines (Echoes, thoughts and the narrator never move a mouth)
+  function lips(t) {
+    for (const who in TALKERS) {
+      const ch = TALKERS[who], l = EB.NAR.lines.find((x) => x.who === who && t >= x.start - 0.02 && t < x.end);
+      let open = false; if (l) { const w = l.words.find((k) => t >= k.start && t < k.end); open = !!w && Math.sin((t - w.start) * 25) > -0.35; }
+      if (l || !ch.userData.mouthHeld) ch.rig.setMouth(open);
+    }
+  }
+  // ---------- one shot's state at time t (location, actors, effects) ----------
+  function setup(s, t) {
+    for (const o of EB.PEOPLE) o.visible = false;
+    for (const o of EB.ECHOES) o.visible = false;
+    for (const o of FX3) o.visible = false;
+    for (const o of [EB.player, EB.thrownPhones, EB.flyingHat, EB.gull, EB.iceLegs, EB.handRecord, ...EB.extra]) o.visible = false;
+    EB.dante.rig.props.headphones.visible = true; EB.grant.rig.props.hat.visible = true;      // (shots may hide them)
+    EB.shuen.rig.head.visible = true; EB.shuen.echo.crackMask(0); EB.vahl.rig.crackMask(0);
+    for (const ch of [EB.aurora, EB.grant, EB.hale]) ch.rig.setEyes(null);
+    for (const ec of EB.ECHOES) { ec.rotation.order = 'XYZ'; ec.rotation.x = 0; }
+    const g = EB.useLoc(s.loc, s.mood);
+    key.intensity = 0;
+    if (s.run) s.run(t, t - s.t0, s);
+    if (g.update) g.update(s.locT ? s.locT(t) : t, typeof s.locOpts === 'function' ? s.locOpts(t) : s.locOpts || {});
+    for (const ch of EB.PEOPLE) if (ch.visible) ch.rig.update(t);
+    lips(t);
+  }
+  // ---------- SMOOTH TRANSITIONS ----------
+  // No hard cuts. When a new shot starts in the same place, the camera glides from where the last shot's camera was
+  // to the new one (s.blend seconds, default 0.55; it swings around the subject instead of flying through it). When the
+  // new shot is in another place — or the two cameras face each other (a glide would whip through the subject) — the old
+  // picture dissolves into the new one (s.xfade seconds, default 0.5). dissolve: true asks for a dissolve anyway.
+  // cut: true keeps a hard cut (only the quick flash inserts of the thinking moments).
+  // kicks: [times] jolts the camera on big hits (kickAmp = how hard).
+  shots.shots.forEach((s, k) => { s.k = k; const nx = shots.shots[k + 1]; s.dur = nx ? nx.t0 - s.t0 : 99; });
+  const tmpCam = new THREE.PerspectiveCamera(50, 9 / 16, 0.1, 5000);
+  const prevOf = (s) => (s.k > 0 ? shots.shots[s.k - 1] : null);
+  function transOf(s) {                                                                    // 'cut' | 'glide' | 'fade' (decided once, at s.t0)
+    if (s.trans) return s.trans;
+    const prev = prevOf(s);
+    if (!prev || s.cut) return (s.trans = 'cut');
+    if (prev.loc !== s.loc || s.dissolve) return (s.trans = 'fade');
+    setup(s, s.t0); tmpCam.aspect = camera.aspect;
+    const a = RT.camera.apply(tmpCam, prev, s.t0), b = RT.camera.apply(tmpCam, s, s.t0);
+    const oa = a.pos.clone().sub(a.look).normalize(), ob = b.pos.clone().sub(b.look).normalize();
+    const far = a.look.distanceTo(b.look) > 3 * Math.max(1, Math.min(a.pos.distanceTo(a.look), b.pos.distanceTo(b.look)));
+    return (s.trans = oa.dot(ob) < -0.25 || far ? 'fade' : 'glide');
+  }
+  function placeCamera(s, t) {
+    tmpCam.aspect = camera.aspect;
+    const r = RT.camera.apply(camera, s, t), prev = prevOf(s), BL = Math.min(s.blend ?? 0.55, s.dur * 0.6);
+    if (prev && t - s.t0 < BL && transOf(s) === 'glide') {
+      const a = RT.camera.apply(tmpCam, prev, t), k = RT.ease(clamp((t - s.t0) / BL, 0, 1));
+      const L = a.look.clone().lerp(r.look, k), oa = a.pos.clone().sub(a.look), ob = r.pos.clone().sub(r.look), da = oa.length(), db = ob.length();
+      const dir = oa.normalize().clone().lerp(ob.normalize(), k); if (dir.lengthSq() < 1e-4) dir.copy(ob);
+      camera.position.copy(L).addScaledVector(dir.normalize(), lerp(da, db, k)); camera.lookAt(L);
+      camera.fov = lerp(a.fov, r.fov, k); camera.updateProjectionMatrix();
+    }
+    let kx = 0, ky = 0;
+    for (const h of s.kicks || []) { const d = t - h; if (d >= 0 && d < 0.5) { const e = Math.exp(-d * 9); kx += Math.sin(d * 57) * e; ky += Math.cos(d * 43) * e; } }
+    if (kx || ky) { camera.translateX(kx * (s.kickAmp || 0.12)); camera.translateY(ky * (s.kickAmp || 0.12) * 0.7); }
+    env.follow(camera);
+    const look = s.focus || camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(s.focusDist || 10).add(camera.position);
+    env.shadowFocus(look.x, look.y, look.z, s.shadow || 16);
+  }
+  let fadeCv = null;
+  function fadeLayer() {
+    if (fadeCv) return fadeCv;
+    if (!renderer.domElement.parentNode) return null;
+    fadeCv = document.createElement('canvas'); fadeCv.width = renderer.domElement.width; fadeCv.height = renderer.domElement.height;
+    fadeCv.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;';
+    renderer.domElement.after(fadeCv); return fadeCv;
+  }
+  let decided = false;
+  function frame(t) {
+    if (!decided) { decided = true; shots.shots.forEach(transOf); }                       // (once, before the first picture)
+    const s = shots.at(t), prev = prevOf(s), XF = Math.min(s.xfade ?? 0.5, s.dur * 0.7), fv = fadeLayer();
+    if (fv) {
+      if (prev && t - s.t0 < XF && transOf(s) === 'fade') {
+        // draw the previous shot once more, keep that picture on top, and fade it out over the new one
+        setup(prev, t); placeCamera(prev, t); drawShot(prev);
+        if (fv.width !== renderer.domElement.width || fv.height !== renderer.domElement.height) { fv.width = renderer.domElement.width; fv.height = renderer.domElement.height; }
+        const c = fv.getContext('2d'); c.clearRect(0, 0, fv.width, fv.height); c.drawImage(renderer.domElement, 0, 0, fv.width, fv.height);
+        fv.style.filter = F.filterAt(t); fv.style.opacity = (1 - RT.ease(clamp((t - s.t0) / XF, 0, 1))).toFixed(3);
+      } else fv.style.opacity = '0';
+    }
+    setup(s, t); placeCamera(s, t);
+  }
+  function drawShot(s) {
+    if (!EB.glow) { const sz = new THREE.Vector2(); renderer.getSize(sz); EB.glow = RT.glow.create(renderer, scene, camera, { strength: 0.75, radius: 0.6, scale: 0.5 }); EB.glow.resize(sz.x, sz.y); }
+    EB.glow.strength = s.bloom ?? 0.75; EB.glow.render();
+  }
+  EB.renderAt = (t) => { EB.tNow = t; frame(t); F.update(t); draw(); };                // used by the thumbnails
+  const draw = () => drawShot(shots.at(EB.tNow || 0));
+  RT.player.start({
+    name: 'echo-breakers-full', duration: EB.DURATION, renderer, scene, camera,
+    frame: (t) => { EB.tNow = t; frame(t); }, draw, narration: EB.NAR,
+    speakers: { dante: 'DANTE', aurora: 'AURORA', grant: 'GRANT', hale: 'HALE', vahl: 'MAESTRO VAHL' },
+    echoes: { hibiki: { name: 'HIBIKI', color: '#3f9bff' }, kagerou: { name: 'KAGEROU', color: '#ff8a2a' }, omamori: { name: 'OMAMORI', color: '#ffc81f', ink: '#3a2200' }, tsurara: { name: 'TSURARA', color: '#3fd0ff', ink: '#002a3a' }, shuen: { name: 'SHŪEN', color: '#8a4dff' } },
+    thinkers: { think: { color: '#5fb8ff' }, vahlthink: { color: '#b46bff' } },
+    noCaptions: EB.noCaptions || [], overlayLayers: F.layers, overlays: (t) => F.update(t),
+    black: EB.black, white: EB.white, stills: EB.STILLS || [], thumbnail: (n) => EB.thumbnail(n),
+    menu: { title: 'ECHO BREAKERS', sub: 'The whole story · tap to play' },
+    audio: '../audio/mix/echo-breakers-full_mix.mp3',
+  });
+  if (RT.player.THUMB && EB.thumbnail) { /* thumbnail mode is handled by the player calling o.thumbnail */ }
+})();
+</script>
+</body></html>

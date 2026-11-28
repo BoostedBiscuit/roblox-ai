@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Midnight Eye</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<!--
+=====================================================================================
+THE MIDNIGHT EYE (standalone "In this town…" story, Type B survival; script + bible + scene plan approved: midnight-sea/STORY.md)
+1080 × 1920 · 30 fps · about 2:15–2:20
+Render:  node midnight-sea/tools/render.js midnight-eye      → out/midnight-sea/eye.mp4
+Voice:   node midnight-sea/tools/narrate.js eye             (after changing NARRATION lines)
+Audio:   narrator + dreamcore at 50 % only (no sound effects for now)
+
+=== VOICE ===  (narrator of this episode: name + ElevenLabs voice id [+ rant=1.3: sped up 1.3x, pitch rises with it])
+Adam  pNInz6obpgDQGcFmaJgB  rant=1.3
+=== END ===
+
+=== NARRATION ===  (start: seconds, or +gap after the previous line · who: narrator = big captions)
+at     who       text
++0.6   narrator  In this town, a giant Eye opens in the sky at midnight. If you see it… you walk into the sea.
++0.5   narrator  Not just in the sky. In a window. A puddle. Even a black phone screen.
++0.55  narrator  It stays open for one hour. The only way to stop someone: cover their eyes before the water reaches their knees.
++0.7   narrator  Tonight, Old Bram forgot. He looked up from the pier… and walked straight into the red water.
++0.6   narrator  Milo and I were home alone. Shutters closed. Mirrors covered. And Milo whispered what he always does: "I just want to see it once."
++0.7   narrator  At twelve-oh-five, the wind ripped our shutter open and cracked the glass. I threw a blanket over it. It sliced my hand.
++0.55  narrator  Then Milo opened the front door. His whale was still on the porch.
++0.5   narrator  I dragged him back… and saw it. In the porch window. Staring at me.
++0.5   narrator  My legs started walking. I couldn't stop them.
++0.6   narrator  Milo squeezed his eyes shut… and followed the sound of my footsteps.
++0.5   narrator  The water hit my ankles. My shins. Then two small hands covered my eyes.
++0.6   narrator  I stopped. But we were outside, under the open sky. Forty minutes left.
++0.7   narrator  We crawled to the pier, eyes shut. Milo let go of his whale to hold my hand. The tide took it.
++0.6   narrator  Under the pier, my phone slipped out. Face up. A black mirror. Red light crawled across it… the Eye was looking for us.
++0.6   narrator  "Close your eyes," I told Milo. I shut mine… and turned the screen to the sky.
++0.6   narrator  The Eye saw itself. And for the first time… something else walked into the sea.
++0.9   narrator  Then Milo's hand slipped out of mine. He never closed his eyes.
++0.5   narrator  He finally saw it. And now he was following it into the water.
++0.7   narrator  I couldn't look either. So I shut my eyes and ran toward his splashing. Just like he did for me.
++0.5   narrator  The water reached my shins. On Milo, that's almost his knees. I grabbed his face and covered his eyes.
++0.6   narrator  He stopped. The red drained from the water. We never got Old Bram back. Or the whale.
++1.0   narrator  The next night, at midnight, we opened every shutter. And the sky stayed empty.
++0.9   narrator  Milo doesn't ask to see it anymore.
+=== END ===
+
+=== CUE SHEET ===  (time, sound, volume, options; music 0.50 = 50 %)
+time    sound                     volume  options
+0.00    music:dreamcore           0.50    from=0 fadein=1.0 fadeout=113.1-115.1 duck=0.75
+=== END ===
+=====================================================================================
+-->
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../post.js"></script>
+<script src="../cast.js"></script>
+<script src="../skyeye.js"></script>
+<script src="../bay.js"></script>
+<script src="../audio/voice/eye_narration.js"></script>
+<script>
+(function () {
+  'use strict';
+  const RT = window.RT, A = RT.anim, { clamp, lerp, ease, easeOut } = RT;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const NAR = window.RT_NARRATION.eye, L = (n) => NAR.lines[n], S = (n) => L(n).start, E = (n) => L(n).end;
+  const W = (n, word, nth = 0) => { const cl = (x) => x.toLowerCase().replace(/[^a-z']/g, ''), ws = L(n).words;
+    let m = ws.filter((x) => cl(x.w) === word); if (!m.length) m = ws.filter((x) => cl(x.w).startsWith(word));
+    if (!m[nth]) throw new Error('no word ' + word + ' in line ' + n); return m[nth].start; };
+  const TITLE_T = 112.6, DURATION = 115.1;
+
+  // ---------- world ----------
+  const renderer = RT.mood.renderer(null, { pixelRatio: 1 });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.05, 2000);
+  const env = RT.mood.create(scene, renderer, { mood: 'midnight', shadowSize: 2048 });
+  const bay = RT.bay.build(scene, env, { naraHouse: 'v2' });
+  const post = RT.post.create(renderer);
+  const SP = bay.spots, gy = SP.ground, H = SP.H2, eye = bay.eye, F = H.F, X = H.X, FZ = H.fz;
+  const faceLight = new THREE.PointLight('#ff4a36', 0, 9, 1.7); scene.add(faceLight);
+  const KEY = 1.8;                                   // key light strength (dark grade, but every face must read)
+  const pierFill = new THREE.PointLight('#ff3422', 0, 10, 1.4); pierFill.position.set(25.6, 1.25, -5.2); scene.add(pierFill);   // the red sea's glow reaching under the pier
+  const lampLight = new THREE.PointLight('#ff6a4c', 0, 8, 1.6); scene.add(lampLight);
+  const phoneGlow = new THREE.PointLight('#ff2a18', 0, 2.6, 2); scene.add(phoneGlow);
+  const yawTo = (a, b) => Math.atan2(b[0] - a[0], b[2] - a[2]);
+  // floor height anywhere: inside the house / porch, the porch steps, the stair to the beach, the sand
+  function hgt(x, z) {
+    if (Math.abs(x - X) < 3.6 && z > -49.6 && z < -40.3) return F;
+    if (Math.abs(x - X) < 0.85 && z >= -40.3 && z < -38.6) return lerp(F, 3.4, (z + 40.3) / 1.7);
+    if (Math.abs(x - 30) < 1.3 && z > -31.2 && z < -23.6) return lerp(3.4, H.STAIR_BOTTOM.y, (z + 31.2) / 7.6);
+    return gy(x, z);
+  }
+
+  // ---------- cast ----------
+  const nara = RT.cast.nara(), milo = RT.cast.milo(), bram = RT.cast.bram();
+  const townA = RT.cast.sleeper(3), townB = RT.cast.sleeper(6);
+  for (const c of [nara, milo, bram, townA, townB]) scene.add(c);
+  const whaleHand = milo.rig.props.whale;
+  const whale = RT.cast.whale(); whale.scale.setScalar(0.42); scene.add(whale);
+  const phone = RT.cast.phone(); scene.add(phone);
+  const phoneScreen = phone.children[1], phoneCanvasMat = phoneScreen.material;
+  // Nara's cut (right palm) and, the next night, the bandage
+  const cut = RT.mesh(new THREE.BoxGeometry(0.42, 0.06, 0.1), new THREE.MeshBasicMaterial({ color: '#b3120c' }), false); cut.position.set(0, -0.32, 0.27); nara.rig.handR.add(cut);
+  const bandage = RT.mesh(RT.roundedBoxGeometry(0.62, 0.42, 0.62, 0.1, 2), RT.plastic('#d9d4cb', { roughness: 0.9 }), false); bandage.position.set(0, -0.28, 0.02); nara.rig.handR.add(bandage);
+  // Bram's rod and lantern
+  const rod = RT.mesh(new THREE.CylinderGeometry(0.03, 0.05, 6.5, 6), RT.plastic('#3a2a1c')); rod.position.set(0, 1.2, 0.5); rod.rotation.x = 0.7; bram.rig.hold('R', rod);
+  const lantern = new THREE.Group(); { const m = RT.metal('#4a3a2a'); lantern.add(RT.mesh(new THREE.BoxGeometry(0.22, 0.04, 0.22), m)); const gl = RT.mesh(new THREE.BoxGeometry(0.16, 0.24, 0.16), new THREE.MeshStandardMaterial({ color: '#ffb066', emissive: '#ff8a3a', emissiveIntensity: 2.2, transparent: true, opacity: 0.85 })); gl.position.y = 0.15; lantern.add(gl); lantern.add(RT.mesh(new THREE.BoxGeometry(0.22, 0.04, 0.22), m).translateY(0.3)); lantern.userData.glass = gl; }
+  const lanternLight = new THREE.PointLight('#ff9a4a', 0, 8, 2); lantern.add(lanternLight); lanternLight.position.y = 0.2; scene.add(lantern);
+
+  // ---------- the living room's moving parts ----------
+  const LW = H.LIVING_WIN;
+  const woodM = RT.plastic('#3e3128', { roughness: 0.9 });
+  const glassM = new THREE.MeshStandardMaterial({ color: '#160c0c', roughness: 0.15, metalness: 0.3, transparent: true, opacity: 0.55 });
+  const crackTex = RT.canvasTexture(256, 256, (g) => { g.strokeStyle = 'rgba(255,230,220,0.9)'; g.lineWidth = 2; const r = RT.rng(5);
+    for (let k = 0; k < 12; k++) { let x = 128, y = 120, a = k / 12 * 6.28; g.beginPath(); g.moveTo(x, y); for (let s = 0; s < 6; s++) { x += Math.cos(a) * (14 + r() * 16); y += Math.sin(a) * (14 + r() * 16); a += (r() - 0.5) * 0.6; g.lineTo(x, y); } g.stroke(); } });
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), glassM); glass.position.set(LW.x, LW.y, FZ - 0.08); scene.add(glass);
+  const crack = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), new THREE.MeshBasicMaterial({ map: crackTex, transparent: true, depthWrite: false })); crack.position.set(LW.x, LW.y, FZ - 0.1); crack.rotation.y = Math.PI; scene.add(crack);
+  const crackLine = new THREE.Mesh(new THREE.PlaneGeometry(0.035, 1.3), new THREE.MeshBasicMaterial({ color: '#ff2a18', toneMapped: false })); crackLine.position.set(LW.x, LW.y, FZ - 0.02); scene.add(crackLine);
+  const shutter = (hx, sgn) => { const piv = new THREE.Group(); piv.position.set(hx, LW.y, FZ + 0.07); const pan = RT.mesh(new THREE.BoxGeometry(0.69, 1.42, 0.05), woodM); pan.position.x = sgn * 0.345; piv.add(pan);
+    for (let k = 0; k < 7; k++) { const sl = RT.mesh(new THREE.BoxGeometry(0.6, 0.04, 0.03), RT.plastic('#2c231c')); sl.position.set(sgn * 0.345, -0.6 + k * 0.2, 0.035); piv.add(sl); } scene.add(piv); return piv; };
+  const shutL = shutter(LW.x - 0.7, 1), shutR = shutter(LW.x + 0.7, -1);
+  lampLight.position.set(X - 2.7, F + 1.85, -46.6);
+  const roomLight = new THREE.PointLight('#ff3020', 0, 9, 1.6); roomLight.position.set(LW.x + 0.3, LW.y, FZ - 1.2); scene.add(roomLight);
+  const outLight = new THREE.PointLight('#ff3a22', 0, 10, 1.6); outLight.position.set(X, F + 2.4, FZ + 2.2); scene.add(outLight);
+  const doorP = new THREE.Group(); doorP.position.set(X - 0.6, F, FZ - 0.11); { const d = RT.mesh(new THREE.BoxGeometry(1.2, 2.3, 0.08), RT.plastic('#2a2018', { roughness: 0.9 })); d.position.set(0.6, 1.15, 0); doorP.add(d); const k = RT.mesh(new THREE.SphereGeometry(0.05, 8, 6), RT.metal('#c9a64a')); k.position.set(1.05, 1.1, 0.08); doorP.add(k); } scene.add(doorP);
+  const blanket = new THREE.Mesh((() => { const g = new THREE.PlaneGeometry(1.7, 1.7, 8, 8), p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 6) * 0.03 + Math.sin(p.getY(i) * 5) * 0.02); g.computeVertexNormals(); return g; })(), RT.plastic('#4a4a50', { roughness: 1, side: THREE.DoubleSide }));
+  blanket.castShadow = true; scene.add(blanket);
+  // reflections of the Eye (glass, puddle, water, the phone screen)
+  const reflPorch = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 1.5), eye.reflectMat({ base: '#0c0707', scale: 0.5, opacity: 0.95 })); reflPorch.position.set(H.PORCH_WIN.x, H.PORCH_WIN.y, FZ - 0.12); reflPorch.rotation.y = Math.PI; scene.add(reflPorch);   // seen from inside
+  const reflUp = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.25), eye.reflectMat({ base: '#090506', scale: 0.78, opacity: 0.97 })); reflUp.position.copy(H.UP_WIN); scene.add(reflUp);
+  const puddle = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.2), eye.reflectMat({ base: '#100909', scale: 0.55, ripple: 1.4, opacity: 0.95, round: true })); puddle.rotation.x = -Math.PI / 2; puddle.position.copy(H.PUDDLE); scene.add(puddle);
+  const reflWaterM = eye.reflectMat({ base: '#000000', scale: 0.55, ripple: 2.2, opacity: 0.7 }); reflWaterM.blending = THREE.AdditiveBlending;
+  const reflWater = new THREE.Mesh(new THREE.PlaneGeometry(9, 7), reflWaterM); reflWater.rotation.x = -Math.PI / 2; reflWater.position.set(5.6, 0.04, 4.5); reflWater.userData.noDepth = true; scene.add(reflWater);
+  const phoneReflM = eye.reflectMat({ base: '#050304', scale: 0.75, opacity: 1 });
+  const prints = bay.footprints((() => { const out = []; for (let k = 0; k < 14; k++) { const f = k / 13; out.push([lerp(5.0, 5.5, f), lerp(-6.8, 0.6, f), 0.05]); } return out; })());
+  const underGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: RT.canvasTexture(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32); gr.addColorStop(0, 'rgba(255,60,30,1)'); gr.addColorStop(1, 'rgba(255,20,10,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); }), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+  underGlow.scale.set(26, 10, 1); underGlow.position.set(24, -0.2, 34); underGlow.userData.noDepth = true; scene.add(underGlow);
+
+  // ---------- poses ----------
+  const head = (ch, dy = 0) => { ch.rig.head.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(ch.rig.head.matrixWorld).add(V3(0, dy, 0)); };
+  const handW = (ch, side) => { const h = side === 'L' ? ch.rig.handL : ch.rig.handR; h.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(h.matrixWorld); };
+  const fwd = (ch, d = 1) => V3(Math.sin(ch.rotation.y) * d, 0, Math.cos(ch.rotation.y) * d);
+  const side = (ch, d = 1) => V3(Math.cos(ch.rotation.y) * d, 0, -Math.sin(ch.rotation.y) * d);
+  function put(ch, x, z, yaw, dy = 0) { ch.position.set(x, hgt(x, z) + dy, z); ch.rotation.set(0, yaw, 0); ch.visible = true; }
+  function walkOn(ch, pts, speed, t0, t, o = {}) {
+    const p = A.path(pts, speed, t0, o.stride || 0.5)(t); ch.position.set(p.x, hgt(p.x, p.z) + (o.dy || 0), p.z); ch.rotation.set(0, o.yaw ?? p.yaw, 0); ch.visible = true;
+    const P = A.pose(o.run ? 'run' : 'walk', t, { phase: p.phase, amp: o.amp || (o.taken ? 0.45 : 0.62) });
+    if (o.taken) { P.aLf = P.aLf * 0.25 + 0.05; P.aRf = P.aRf * 0.25 + 0.05; P.hx = -0.04; P.lean = 0; }
+    if (o.blind) { P.aLf = 0.75 + P.aLf * 0.2; P.aRf = 0.7 + P.aRf * 0.2; P.eL = 0.3; P.eR = 0.3; P.hz = 0.22; }
+    if (o.P) Object.assign(P, o.P);
+    A.apply(ch, P); return p;
+  }
+  const SIT = (t, o = {}) => Object.assign(A.pose('sit', t, { slump: 0.25 }), o);
+  const CROUCH = (t) => ({ y: -0.9, lLf: 1.35, kL: 2.0, lRf: 0.55, kR: 1.55, lean: 0.38, hx: -0.25, aLf: 0.55, eL: 1.2, aRf: 0.75, eR: 1.2, wx: 0.05 + Math.sin(t * 1.4) * 0.01 });
+  const CRAWL = (t, ph) => { const s = Math.sin(ph); return { y: -1.38, fallX: 1.18, lLf: -0.15 + s * 0.35, lRf: -0.15 - s * 0.35, kL: 1.45, kR: 1.45, aLf: 1.2 - s * 0.3, aRf: 1.2 + s * 0.3, eL: 0.1, eR: 0.1, hx: -0.75 }; };
+  const COVER_UP = { aLf: 2.55, aRf: 2.55, eL: 0.55, eR: 0.55, aLo: 0.12, aRo: 0.12, lean: 0.12, y: 0.06, hx: -0.15 };     // on tiptoe, hands over someone's eyes
+  const COVER_DOWN = { aLf: 1.45, aRf: 1.45, eL: 0.35, eR: 0.35, aLo: 0.18, aRo: 0.18, lean: 0.22, hx: 0.25 };
+
+
+  // ---------- story times ----------
+  const T = {
+    eyeOpen: W(0, 'eye'), red: W(0, 'opens') + 0.2, bramUp: W(3, 'looked'), ripped: W(5, 'ripped'), cracked: W(5, 'cracked'), threw: W(5, 'threw'),
+    door: W(6, 'opened'), drag: W(7, 'dragged'), staring: W(7, 'staring') - 0.35, cover1: W(10, 'covered') - 0.2, whaleDrop: W(12, 'let'),
+    phoneOut: W(13, 'slipped'), turn: W(14, 'turned'), slip: W(16, 'slipped'), cover2: W(19, 'grabbed'), drain: W(20, 'red'),
+  };
+  const night = 'midnight';
+  const HOUR = (t) => t >= T.eyeOpen;      // the hour has begun (the rule montage lives inside it too)
+  const SHELTER = [25.35, -9.0], MILO_SH = [23.85, -8.8];        // behind the post under the pier (Nara / Milo)
+  const NARA_YAW = Math.atan2(MILO_SH[0] - SHELTER[0], MILO_SH[1] - SHELTER[1]) + 0.35, MILO_YAW = Math.atan2(SHELTER[0] - MILO_SH[0], SHELTER[1] - MILO_SH[1]) - 0.35, OUT_YAW = Math.PI + 0.27, MILO_OUT = Math.PI + 0.12;   // holding hands, both facing the shore (the Eye behind them)
+  const NWATER = [30.5, 6.3], MWATER = [26.7, 6.9], NWATER2 = [26.45, 6.25];
+
+  const shots = RT.camera.list([
+    // 1. HOOK: the Eye snaps open over a black sea, the red floods in
+    { t0: 0.0, sc: 1, sea: 'spread', eye: 'open', eyeT: T.eyeOpen, pos: [[15.5, 1.15, -4.2], [15.2, 1.05, -3.2]], look: [[3, 12, 120], [3, 10, 120]], fov: [58, 54], fx: { bloom: 1.2, ca: 0.15 } },
+    // 2. if you see it, you walk into the sea: footprints into the red water, the Eye rippling in it
+    { t0: W(0, 'if') - 0.15, sc: 2, prints: true, pos: [[4.5, 1.75, -9.6], [4.75, 1.55, -8.3]], look: [[5.3, 0.0, -2.4], [5.4, 0.0, -0.8]], fov: [48, 46], focusOn: () => V3(5.25, 0.1, -3.2), key: 1.5, fx: { bloom: 1.1, aperture: 0.4 } },
+    // 3–5. not just in the sky: a window, a puddle, a black phone screen
+    { t0: S(1) - 0.2, sc: 3, pos: [[H.UP_WIN.x - 1.0, H.UP_WIN.y - 0.9, H.UP_WIN.z + 4.6], [H.UP_WIN.x - 0.7, H.UP_WIN.y - 0.8, H.UP_WIN.z + 4.1]], look: [[H.UP_WIN.x, H.UP_WIN.y - 0.15, H.UP_WIN.z]], fov: [40, 38], reflSlide: true, fx: { bloom: 1.0 } },
+    { t0: W(1, 'a', 1) - 0.12, sc: 4, pos: [[H.PUDDLE.x + 1.3, H.PUDDLE.y + 2.9, H.PUDDLE.z + 2.9], [H.PUDDLE.x + 1.15, H.PUDDLE.y + 2.7, H.PUDDLE.z + 2.6]], look: [[H.PUDDLE.x, H.PUDDLE.y, H.PUDDLE.z - 0.2]], fov: [46, 44], focusOn: () => H.PUDDLE.clone(), key: 1.0, fx: { bloom: 1.0 } },
+    { t0: W(1, 'even') - 0.12, sc: 5, interior: true, phoneAt: 'table', phoneRefl: true, pos: [[H.TABLE.x + 0.4, H.TABLE.y + 1.15, H.TABLE.z + 0.95], [H.TABLE.x + 0.32, H.TABLE.y + 0.95, H.TABLE.z + 0.78]], look: [[H.TABLE.x + 0.1, H.TABLE.y + 0.05, H.TABLE.z]], fov: [38, 36], focusDist: 1.2, fx: { bloom: 1.0, aperture: 0.6 } },
+    // 6. it stays open for one hour (the phone clock races to 01:00)
+    { t0: S(2) - 0.25, sc: 6, interior: true, phoneAt: 'table', phoneClock: true, pos: [[H.TABLE.x + 0.2, H.TABLE.y + 0.9, H.TABLE.z + 0.5], [H.TABLE.x + 0.18, H.TABLE.y + 0.8, H.TABLE.z + 0.44]], look: [[H.TABLE.x + 0.13, H.TABLE.y + 0.05, H.TABLE.z]], fov: [34, 32], focusDist: 0.95, fx: { bloom: 1.0, aperture: 0.6 } },
+    // 7. the only way to stop someone: cover their eyes before the knees (two townspeople, backlit)
+    { t0: W(2, 'the') - 0.1, sc: 7, demo: true, pos: [[-11.6, 1.25, -2.6], [-11.4, 1.2, -2.0]], look: [[-10, 1.1, 8]], fov: [46, 44], focusDist: 6.5, fx: { bloom: 1.1, aperture: 0.4 } },
+    // 8–9. Old Bram looks up from the pier… and walks off the end into the red water
+    { t0: S(3) - 0.2, sc: 8, bram: 'stand', eyeLook: 'bram', pos: () => head(bram, -0.1).add(V3(0.5, -0.2, 2.4)), look: () => head(bram, -0.1), fov: [38, 36], focusOn: () => head(bram), key: 1.3, fx: { bloom: 0.9, aperture: 0.8 } },
+    { t0: W(3, 'and') - 0.1, sc: 9, bram: 'walk', eyeLook: 'bram', pos: [[23.3, 3.75, 54.8], [23.5, 3.7, 55.4]], look: [[24.2, 2.6, 62]], fov: [46, 44], focusDist: 6, fx: { bloom: 1.1, aperture: 0.3 } },
+    // 10–12. home alone, shutters closed, mirrors covered; Milo: "I just want to see it once"
+    { t0: S(4) - 0.2, sc: 10, interior: true, cast: 'sofa', pos: [[X + 1.6, F + 1.75, -44.0], [X + 1.4, F + 1.65, -44.4]], look: [[X - 1.1, F + 0.95, -47.6]], fov: [46, 44], focusDist: 4.6, fx: { bloom: 0.9, aperture: 0.4 } },
+    { t0: W(4, 'shutters') - 0.12, sc: 11, interior: true, cast: 'sofa', pos: [[LW.x + 1.0, LW.y - 0.25, FZ - 2.7]], look: [[LW.x, LW.y - 0.1, FZ]], fov: [42, 40], focusOn: () => V3(LW.x, LW.y, FZ - 0.1), key: 1.1, fx: { bloom: 1.0, aperture: 0.6 } },
+    { t0: W(4, 'mirrors') - 0.12, sc: 11, interior: true, cast: 'sofa', pos: [[H.MIRROR.x - 2.6, H.MIRROR.y + 0.15, H.MIRROR.z + 1.3]], look: [[H.MIRROR.x, H.MIRROR.y - 0.1, H.MIRROR.z]], fov: [42, 40], focusOn: () => H.MIRROR.clone(), key: 1.1, fx: { bloom: 0.9, aperture: 0.6 } },
+    { t0: W(4, 'and', 1) - 0.12, sc: 12, interior: true, cast: 'sofa', miloFace: 'neutral', pos: (lt, p) => head(milo, -0.02).add(V3(0.7, 0.1, lerp(1.75, 1.45, p))), look: () => head(milo, -0.12), fov: [34, 32], focusOn: () => head(milo), key: 1.0, fx: { bloom: 0.9, aperture: 1.0 } },
+    // 13–15. 12:05: the shutter rips open, the glass cracks; the blanket; her cut palm
+    { t0: S(5) - 0.2, sc: 13, interior: true, cast: 'sofaScared', pos: [[X + 0.2, F + 1.55, -45.6]], look: [[LW.x, LW.y, FZ]], fov: [40, 38], shakeAt: T.ripped, focusOn: () => V3(LW.x, LW.y, FZ - 0.1), key: 0.9, fx: { bloom: 1.0, aperture: 0.4 } },
+    { t0: T.threw - 0.08, sc: 14, interior: true, cast: 'throw', pos: [[LW.x + 2.6, F + 2.3, FZ - 3.6]], look: [[LW.x + 0.2, F + 1.3, FZ - 0.5]], fov: [52, 50], focusOn: () => head(nara), fx: { bloom: 0.9, aperture: 0.5, motion: 0.6 } },
+    { t0: W(5, 'sliced') - 0.15, sc: 15, interior: true, cast: 'palm', pos: () => head(nara, -0.25).add(fwd(nara, 1.5)).add(side(nara, 0.35)), look: () => handW(nara, 'R').lerp(head(nara), 0.45), fov: [40, 38], focusOn: () => handW(nara, 'R'), key: 1.4, fx: { bloom: 0.9, aperture: 0.9 } },
+    // 16–18. Milo opens the front door for his whale; she drags him back… and sees it in the porch window
+    { t0: S(6) - 0.2, sc: 16, interior: true, cast: 'door', pos: [[X + 1.7, F + 1.8, FZ - 3.3], [X + 1.55, F + 1.75, FZ - 3.0]], look: [[X - 0.1, F + 0.8, FZ + 0.8]], fov: [48, 46], focusOn: () => head(milo), fx: { bloom: 1.0, aperture: 0.5 } },
+    { t0: S(7) - 0.15, sc: 17, interior: true, cast: 'drag', pos: [[X - 3.2, F + 2.6, FZ - 5.6], [X - 3.0, F + 2.5, FZ - 5.3]], look: [[X - 0.2, F + 1.0, FZ - 0.7]], fov: [50, 48], shake: 0.01, focusOn: () => head(nara), fx: { bloom: 1.0, aperture: 0.5, motion: 0.5 } },
+    { t0: W(7, 'and') - 0.1, sc: 18, cast: 'porchWin', interior: true, pos: [[32.9, F + 2.05, FZ - 3.3], [33.5, F + 1.75, FZ - 2.0]], look: [[H.PORCH_WIN.x - 0.05, H.PORCH_WIN.y, FZ]], fov: [44, 40], focusDist: 2.6, fx: { bloom: 1.0, aperture: 0.5 } },
+    // 19. her legs start walking (taken): down the porch steps toward the beach
+    { t0: S(8) - 0.15, sc: 19, cast: 'takenWalk', pos: (lt, p) => nara.position.clone().add(V3(0.8, lerp(0.75, 2.2, ease(p)), 2.15)), look: (lt, p) => nara.position.clone().add(V3(0, lerp(0.6, 1.95, ease(p)), 0)), fov: [48, 46], focusOn: () => head(nara), fx: { bloom: 1.0, aperture: 0.6, motion: 0.5 } },
+    // 20–21. Milo squeezes his eyes shut… and follows the sound of her footsteps
+    { t0: S(9) - 0.15, sc: 20, cast: 'miloShut', pos: () => head(milo, 0).add(fwd(milo, 1.45)).add(V3(0.12, 0.0, 0)), look: () => head(milo, -0.1), fov: [34, 32], focusOn: () => head(milo), key: 1.2, fx: { bloom: 0.9, aperture: 1.0 } },
+    { t0: W(9, 'and') - 0.1, sc: 21, cast: 'follow', pos: () => milo.position.clone().add(V3(1.3, 1.05, -1.9)), look: () => milo.position.clone().add(V3(0, 0.8, 4)), fov: [48, 46], shake: 0.01, focusOn: () => head(milo), fx: { bloom: 1.1, aperture: 0.4, motion: 0.5 } },
+    // 22–23. ankles, shins… then two small hands cover her eyes
+    { t0: S(10) - 0.15, sc: 22, cast: 'wade', pos: [[32.5, 0.95, 3.2], [32.3, 0.9, 3.6]], look: () => nara.position.clone().add(V3(0, 0.4, 0)), fov: [44, 42], focusOn: () => nara.position.clone().add(V3(0, 0.2, 0)), fx: { bloom: 1.1, aperture: 0.7 } },
+    { t0: W(10, 'then') - 0.1, sc: 23, cast: 'cover1', pos: [[33.2, 1.25, 6.4]], look: [[30.5, 1.45, 6.0]], fov: [40, 38], focusOn: () => head(nara), key: 1.2, fx: { bloom: 1.0, aperture: 0.6 } },
+    // 24. outside, under the open sky, forty minutes left (crane up, the Eye huge over them)
+    { t0: S(11) - 0.2, sc: 24, cast: 'shallows', pos: [[31.2, 2.2, -4.5], [33.5, 8.8, -14]], look: [[30.5, 1.4, 6], [29, 16, 80]], fov: [44, 52], fx: { bloom: 1.2, aperture: 0.2 } },
+    // 25–27. crawling to the pier, eyes shut; Milo lets go of the whale; the tide takes it
+    { t0: S(12) - 0.17, sc: 25, cast: 'crawl', pos: () => nara.position.clone().add(V3(-2.0, 0.55, -1.4)), look: () => nara.position.clone().add(V3(0, 0.45, 0.4)), fov: [46, 46], focusOn: () => nara.position.clone().add(V3(0, 0.45, 0)), fx: { bloom: 1.0, aperture: 0.5 } },
+    { t0: W(12, 'milo') - 0.1, sc: 26, cast: 'crawl', whaleDrop: true, pos: () => milo.position.clone().add(fwd(milo, 1.7)).add(side(milo, 0.6)).add(V3(0, 0.8, 0)), look: () => milo.position.clone().add(fwd(milo, -0.2)).add(V3(0, 0.3, 0)), fov: [46, 44], focusOn: () => head(milo), key: 1.2, fx: { bloom: 1.0, aperture: 0.8 } },
+    { t0: W(12, 'tide') - 0.25, sc: 27, cast: 'none', whaleFloat: true, pos: [[27.4, 0.42, 0.6]], look: () => whale.position, fov: [36, 32], focusOn: () => whale.position, fx: { bloom: 1.1, aperture: 0.6 } },
+    // 28–29. under the pier; the phone slips out, face up: a black mirror… red light crawls across it
+    { t0: S(13) - 0.2, sc: 28, cast: 'shelter', phoneAt: 'slide', pos: [[22.7, 1.15, -12.2], [22.9, 1.1, -11.9]], look: [[24.85, 1.0, -8.85]], fov: [44, 42], focusOn: () => head(nara), key: 0.8, fx: { bloom: 0.9, aperture: 0.4 } },
+    { t0: W(13, 'black') - 0.25, sc: 29, cast: 'shelter', phoneAt: 'sand', phoneRefl: 'creep', pos: () => phone.position.clone().add(V3(0.22, 0.95, 0.32)), look: () => phone.position.clone(), fov: [40, 38], focusOn: () => phone.position, fx: { bloom: 1.0, aperture: 0.7 } },
+    // 30–31. "Close your eyes," I told Milo (over his shoulder, his eyes never seen); eyes shut, the screen turned to the sky
+    { t0: S(14) - 0.15, sc: 30, cast: 'shelter', naraFace: 'determined', pos: (lt, p) => head(nara, -0.02).add(fwd(nara, lerp(1.45, 1.25, p))), look: () => head(nara, -0.08), fov: [36, 34], focusOn: () => head(nara), key: 1.1, fx: { bloom: 0.9, aperture: 0.9 } },
+    { t0: W(14, 'shut') - 0.2, sc: 31, cast: 'holdOut', phoneAt: 'hand', phoneRefl: true, pos: (lt, p) => phone.position.clone().addScaledVector(eye.dir, lerp(1.25, 0.95, p)).add(V3(0.3, 0.12, 0)), look: () => phone.position.clone().add(V3(-0.08, -0.05, 0)), fov: [40, 38], focusOn: () => phone.position, key: 0.9, fx: { bloom: 1.1, aperture: 0.5 } },
+    // 32–33. the Eye sees itself: it clenches and shudders… and sinks into the sea
+    { t0: S(15) - 0.15, sc: 32, eyeClench: true, pos: [[31.5, 1.9, -6]], look: () => V3(31.5, 1.9, -6).addScaledVector(eye.dir, 100), fov: [9, 8], fx: { bloom: 1.1, ca: 0.3 } },
+    { t0: W(15, 'and') - 0.1, sc: 33, eyeSink: true, pos: [[21, 2.4, -18], [21, 2.6, -18.5]], look: [[12, 14, 120], [12, 6, 120]], fov: [52, 52], fx: { bloom: 1.2, aperture: 0.2 } },
+    // 34–36. Milo's hand slips out of mine; he never closed his eyes (taken); he walks into the water
+    { t0: S(16) - 0.2, sc: 34, cast: 'slip', pos: () => handW(nara, 'L').lerp(handW(milo, 'R'), 0.5).add(V3(0.15, 0.75, -2.5)), look: () => handW(nara, 'L').lerp(handW(milo, 'R'), 0.5).add(V3(0, 0.3, 0)), fov: [44, 42], focusOn: () => handW(milo, 'R'), key: 1.2, fx: { bloom: 1.0, aperture: 0.8 } },
+    { t0: W(16, 'he') - 0.12, sc: 35, cast: 'miloTaken', pos: (lt, p) => head(milo, 0).add(fwd(milo, lerp(1.25, 0.9, p))).add(V3(0, -0.05, 0)), look: () => head(milo, 0), fov: [30, 28], focusOn: () => head(milo), key: 1.4, fx: { bloom: 1.0, aperture: 1.0 }, punch: W(16, 'eyes') },
+    { t0: S(17) - 0.15, sc: 36, cast: 'miloWalk', under: true, pos: [[24.6, 1.45, -11.6], [24.9, 1.45, -11.0]], look: () => milo.position.clone().add(V3(0.3, 0.8, 4)), fov: [46, 44], focusOn: () => head(milo), fx: { bloom: 1.1, aperture: 0.4 } },
+    // 37–39. I couldn't look either; eyes shut, she runs toward his splashing; his legs splash deeper
+    { t0: S(18) - 0.12, sc: 37, cast: 'naraTurn', pos: () => head(nara, 0).add(fwd(nara, 1.15)).add(V3(0.12, -0.12, 0)), look: () => head(nara, 0), fov: [32, 30], focusOn: () => head(nara), key: 1.3, fx: { bloom: 0.9, aperture: 1.0 } },
+    { t0: W(18, 'so') - 0.1, sc: 38, cast: 'naraRun', pos: () => nara.position.clone().add(fwd(nara, 1.8)).add(side(nara, 1.6)).add(V3(0, 1.4, 0)), look: () => nara.position.clone().add(V3(0, 1.15, 0)), fov: [50, 50], shake: 0.014, focusOn: () => head(nara), fx: { bloom: 1.1, aperture: 0.4, motion: 0.8 } },
+    { t0: W(18, 'just') - 0.1, sc: 39, cast: 'miloDeep', pos: () => milo.position.clone().add(V3(1.4, 0.3, -1.6)), look: () => milo.position.clone().add(V3(0, 0.3, 0.2)), fov: [42, 40], focusOn: () => milo.position.clone().add(V3(0, 0.3, 0)), fx: { bloom: 1.1, aperture: 0.6 } },
+    // 40–41. water at her shins = almost his knees; she grabs his face and covers his eyes
+    { t0: S(19) - 0.15, sc: 40, cast: 'sideBySide', pos: [[29.5, 1.2, 5.2], [29.4, 1.15, 5.4]], look: [[26.6, 0.35, 6.5]], fov: [40, 40], focusOn: () => milo.position.clone().add(V3(0, 0.7, 0)), key: 1.3, fx: { bloom: 1.1, aperture: 0.6 } },
+    { t0: T.cover2 - 0.12, sc: 41, cast: 'cover2', pos: (lt, p) => V3(lerp(28.6, 28.0, p), 1.45, lerp(9.4, 8.8, p)), look: () => head(milo, 0.1), fov: [38, 36], focusOn: () => head(milo), key: 1.2, fx: { bloom: 1.0, aperture: 0.7 } },
+    // 42–44. the red drains from the water; Bram's lantern goes out; the empty sea
+    { t0: S(20) - 0.15, sc: 42, cast: 'after', sea: 'drain', pos: [[31, 2.0, -3], [33, 8.5, -10]], look: [[26.6, 1.0, 7], [26, 4, 40]], fov: [46, 50], fx: { bloom: 1.0, aperture: 0.2 } },
+    { t0: W(20, 'we') - 0.1, sc: 43, sea: 'off', lanternOut: true, pos: () => lantern.position.clone().add(V3(-1.1, 0.45, -1.3)), look: () => lantern.position.clone().add(V3(0, 0.15, 0)), fov: [36, 34], focusOn: () => lantern.position, fx: { bloom: 1.0, aperture: 0.8 } },
+    { t0: W(20, 'or') - 0.1, sc: 44, sea: 'off', pos: [[27.8, 2.4, 1.0], [27.8, 2.3, 1.4]], look: [[27.0, 0.0, 7.5]], fov: [50, 50], fx: { bloom: 0.9 } },
+    // 45–47. THE NEXT NIGHT (black and grey): shutters open; the empty sky; Milo doesn't ask anymore
+    { t0: S(21) - 0.3, sc: 45, sea: 'off', grey: true, cast: 'shutters', pos: [[LW.x + 0.4, LW.y - 0.2, FZ + 3.4], [LW.x + 0.3, LW.y - 0.15, FZ + 3.0]], look: [[LW.x, LW.y, FZ]], fov: [44, 42], focusOn: () => head(nara), key: 1.2, fx: { bloom: 0.8, aperture: 0.4 } },
+    { t0: W(21, 'and') - 0.1, sc: 46, sea: 'off', grey: true, cast: 'none', pos: [[36.5, 4.3, -36.5], [36.6, 4.6, -37.0]], look: [[24, 10, 40]], fov: [54, 54], fx: { bloom: 0.8 } },
+    { t0: S(22) - 0.3, sc: 47, sea: 'off', grey: true, cast: 'porchSit', pos: (lt, p) => V3(X + 0.35, F + 0.95, lerp(-37.4, -38.0, p)), look: () => V3(X + 0.1, F + 0.75, -40.5), fov: [40, 38], focusOn: () => head(milo), key: 0.9, fx: { bloom: 0.8, aperture: 0.6 } },
+    { t0: TITLE_T, sc: 48, sea: 'off', grey: true, cast: 'none', pos: [[30, 4.4, -30], [30, 4.6, -30.4]], look: [[24, 6, 80]], fov: [52, 52], fx: { bloom: 0.8 } },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+  const shotOf = (sc) => shots.shots.find((x) => x.sc === sc);
+
+  // ---------- the world at time t ----------
+  const tmpV = new THREE.Vector3();
+  function frame(t) {
+    const s = shots.at(t), lt = t - s.t0, grey = !!s.grey;
+    env.set(night);
+    // this episode: a little more night light than the old one (dark, but every shot must read)
+    env.hemi.intensity = grey ? 1.25 : 1.0; env.fill.intensity = grey ? 0.6 : 0.42; renderer.toneMappingExposure = 1.0;
+    if (grey) { env.sky.material.uniforms.horizon.value.set('#6a6468'); env.sky.material.uniforms.top.value.set('#18171a'); }
+    // the sea: black before the Eye opens, then red; it drains in scene 42
+    let red = HOUR(t) ? 1 : 0, spread = 99999, origin = [-4, 95], glow = 1;
+    if (s.sea === 'spread') { red = t > T.red ? 1 : 0; spread = Math.pow(clamp((t - T.red) / 1.6, 0, 1), 1.3) * 175 + 1; }
+    if (s.sea === 'drain') { origin = [-60, 420]; spread = Math.max(1, (1 - ease(clamp((t - T.drain) / 1.8, 0, 1))) * 600); }
+    if (s.sea === 'off') red = grey ? 0 : 0.42;
+    bay.update(t, { red, spread, origin, glow, amp: grey ? 0.1 : 0.22, seaLight: s.interior ? 0.12 : 0.75, mist: grey ? 0.25 : 0.3, ash: 0, embers: 0 });
+    // the Eye
+    eye.sink = s.eyeSink ? ease(clamp((t - s.t0 - 0.2) / 3.0, 0, 1)) : 0;
+    const eyeGone = s.sc >= 34 || (s.sc === 33 && eye.sink > 0.99);
+    eye.group.visible = !eyeGone && !grey && s.sea !== 'off';
+    underGlow.visible = s.sc === 36; underGlow.material.opacity = 0.55 + 0.15 * Math.sin(t * 3);
+    // the living room: shutters, crack, blanket, door, lights (depend on story time)
+    const ripped = t > T.ripped && !grey, cracked = t > T.cracked && !grey;
+    const rip = ripped ? easeOut(clamp((t - T.ripped) / 0.22, 0, 1)) : 0;
+    shutL.rotation.y = -1.95 * rip + (ripped ? Math.sin((t - T.ripped) * 18) * 0.08 * Math.exp(-(t - T.ripped) * 4) : 0);
+    shutR.rotation.y = 0;
+    if (grey && s.sc >= 45) { const k = s.sc === 45 ? ease(clamp((lt - 0.4) / 0.9, 0, 1)) : 1; shutL.rotation.y = -1.85 * k; shutR.rotation.y = 1.85 * k; }
+    crack.visible = cracked; crackLine.visible = !ripped && !grey && HOUR(t);
+    const bOn = t > T.threw + 0.45 && !grey;
+    blanket.visible = !grey;
+    if (t < T.threw) { blanket.position.set(X - 2.45, F + 0.82, -47.9); blanket.rotation.set(-Math.PI / 2, 0, 0.3); blanket.scale.set(0.5, 0.6, 1); }
+    else { const k = ease(clamp((t - T.threw) / 0.45, 0, 1)), from = V3(LW.x + 0.5, F + 1.3, FZ - 1.0); blanket.position.lerpVectors(from, V3(LW.x, LW.y - 0.05, FZ - 0.16), k); blanket.rotation.set(lerp(-1.2, 0, k), lerp(0.6, 0, k), 0); blanket.scale.setScalar(lerp(0.6, 1, k)); }
+    roomLight.intensity = grey ? 0 : !HOUR(t) ? 0 : !ripped ? 0.8 : !bOn ? 2.6 : 1.0;
+    doorP.rotation.y = !grey && t > T.door ? -1.45 * ease(clamp((t - T.door) / 0.6, 0, 1)) : 0;
+    outLight.intensity = !grey && HOUR(t) && (s.interior || s.sc === 18 || s.sc === 19) ? 2.0 : 0;
+    // reflections: the window glass reflection slides in; the porch window; the water near the footprints
+    reflUp.material.uniforms.uOffset.value.set(s.reflSlide ? lerp(0.55, 0.0, ease(clamp(lt / 1.4, 0, 1))) : 0, 0);
+    reflWater.visible = s.sc === 2; prints.visible = !!s.prints; prints.userData.show(s.prints ? 14 : 0);
+    eye.tick(t);
+    // the phone: on the table (scenes 5–6), sliding out under the pier, on the sand, in her hand
+    phone.visible = !!s.phoneAt;
+    phoneScreen.material = s.phoneRefl ? phoneReflM : phoneCanvasMat;
+    phoneReflM.uniforms.uOffset.value.set(s.phoneRefl === 'creep' ? lerp(0.75, 0.12, ease(clamp((t - W(13, 'red')) / 2.0, 0, 1))) : 0, 0);
+    if (s.phoneAt === 'table') { phone.position.set(H.TABLE.x + 0.15, H.TABLE.y + 0.07, H.TABLE.z); phone.rotation.set(-Math.PI / 2, 0, 0.35);
+      if (s.phoneClock) { const m = Math.min(60, Math.floor(clamp(lt / 1.3, 0, 1) * 60)); phone.userData.setScreen(m >= 60 ? '01:00' : `00:${String(m).padStart(2, '0')}`, false, '#2a0606'); } else phone.userData.setScreen('', false, '#000000'); }
+
+    // ---------- characters (each shot places only what it shows) ----------
+    for (const c of [nara, milo, bram, townA, townB]) c.visible = false;
+    whale.visible = false; whaleHand.visible = false; lantern.visible = s.bram || s.lanternOut;
+    cut.visible = t > W(5, 'sliced') && !grey; bandage.visible = grey;
+    for (const c of [nara, milo]) { c.rig.setEyes(null); c.rig.setMouth(false); }
+    const C = s.cast;
+    // Bram on the pier: looks up (taken), then walks off the end; the lantern rolls
+    if (s.bram) {
+      const B0 = [24.2, 58.6];
+      if (s.bram === 'stand') { put(bram, B0[0], B0[1], 0, 0); bram.position.y = SP.DECK_Y + 0.07; const up = ease(clamp((t - T.bramUp) / 0.4, 0, 1));
+        A.apply(bram, Object.assign(A.pose('idle', t), { hx: -0.75 * up, aRf: 0.6, eR: 0.7 })); bram.rig.setFace(t > T.bramUp + 0.25 ? 'taken' : 'neutral'); }
+      else { const p = A.path([[B0[0], B0[1]], [24.3, 62.4]], 1.15, s.t0 - 0.1, 0.45)(t); const fall = clamp((t - (s.t0 - 0.1) - 3.38 / 1.15) / 0.7, 0, 1);
+        bram.position.set(p.x, SP.DECK_Y + 0.07 - fall * fall * 5.5, p.z + fall * 0.8); bram.rotation.set(fall * 0.6, 0, 0); bram.visible = true;
+        A.apply(bram, Object.assign(A.pose('walk', t, { phase: p.phase, amp: 0.45 }), { aLf: 0.05, aRf: 0.4, hx: -0.4 })); bram.rig.setFace('taken'); }
+      bram.rig.update(t);
+      const rl = s.bram === 'walk' ? ease(clamp((t - s.t0 - 0.6) / 1.2, 0, 1)) : 0;
+      lantern.position.set(24.55 + rl * 0.25, SP.DECK_Y + 0.08, 58.0 + rl * 0.7); lantern.rotation.set(0, 0, rl > 0 ? -Math.PI / 2 : 0); lanternLight.intensity = 1.6;
+    }
+    if (s.lanternOut) { lantern.position.set(24.8, SP.DECK_Y + 0.08, 58.7); lantern.rotation.set(0, 0, -Math.PI / 2); const f = clamp((t - s.t0 - 0.5) / 0.7, 0, 1); lanternLight.intensity = 1.6 * (1 - f) * (0.7 + 0.3 * Math.sin(t * 40));
+      lantern.userData.glass.material.emissiveIntensity = 2.2 * (1 - f); }
+    else lantern.userData.glass.material.emissiveIntensity = 2.2;
+    // the rule demo: a backlit townsperson walks in; another covers their eyes from behind at shin height
+    if (s.demo) {
+      const p = A.path([[-10, 1.5], [-10, 8]], 0.9, s.t0 - 1.6, 0.42)(Math.min(t, s.t0 + 2.4));
+      townA.position.set(p.x, gy(p.x, p.z), p.z); townA.rotation.y = 0; townA.visible = true; A.apply(townA, Object.assign(A.pose('walk', t < s.t0 + 2.4 ? t : s.t0 + 2.4, { phase: p.phase, amp: 0.45 }), { aLf: 0.05, aRf: 0.05 })); townA.rig.setFace('taken'); townA.rig.update(t);
+      const c = clamp((t - s.t0 - 1.7) / 0.5, 0, 1); townB.visible = true; townB.position.set(-10, gy(-10, p.z - 0.6), p.z - lerp(2.2, 0.6, c)); townB.rotation.y = 0;
+      A.apply(townB, c > 0 ? Object.assign(A.pose('idle', t), { aLf: 2.0 * c, aRf: 2.0 * c, eL: 0.5, eR: 0.5, lean: 0.15 }) : A.pose('run', t)); townB.rig.update(t);
+    }
+    // inside: the sofa, the rip, the blanket, the palm, the door, the drag
+    const SOFA_N = [X - 1.75, -47.75], SOFA_M = [X - 0.75, -47.75];
+    if (C === 'sofa' || C === 'sofaScared' || C === 'throw' || C === 'palm') {
+      put(milo, SOFA_M[0], SOFA_M[1], 0, 0.36); A.apply(milo, SIT(t, { hx: C === 'sofa' ? -0.05 : 0.0, hy: s.sc === 12 ? -0.35 : 0, aLf: 0.6, eL: 0.9 }));
+      milo.rig.setFace(C === 'sofa' ? (s.miloFace || 'neutral') : 'scared'); if (s.sc === 12) milo.rig.setMouth(Math.sin(t * 14) > 0.2 && t > W(4, 'i', 1) - 0.05 && t < W(4, 'once') + 0.4); milo.rig.update(t);
+    }
+    if (C === 'sofa' || C === 'sofaScared') { put(nara, SOFA_N[0], SOFA_N[1], 0, 0.22); A.apply(nara, SIT(t, { aRf: 0.75, eR: 0.9, hy: C === 'sofaScared' ? -0.45 : 0.1 })); nara.rig.setFace(C === 'sofa' ? 'determined' : 'shocked'); nara.rig.update(t); }
+    if (C === 'throw') { put(nara, LW.x + 0.55, FZ - 1.0, Math.PI + 0.35); const k = ease(clamp(lt / 0.35, 0, 1)); A.apply(nara, Object.assign(A.pose('idle', t), { aLf: lerp(1.0, 2.3, k), aRf: lerp(1.0, 2.3, k), eL: 0.3, eR: 0.3, lean: 0.15 * k }));
+      nara.rig.setFace('scared'); nara.rig.setEyes('closed'); nara.rig.update(t); }
+    if (C === 'palm') { put(nara, LW.x + 0.6, FZ - 1.05, Math.PI * 0.75); A.apply(nara, Object.assign(A.pose('idle', t), { aRf: 1.45, eR: 1.4, aRt: 0.9, hx: 0.35, hy: -0.25 })); nara.rig.setFace('crying'); nara.rig.update(t); }
+    if (C === 'door') {
+      const reach = ease(clamp((t - T.door - 0.4) / 0.8, 0, 1)); put(milo, X + 0.05, FZ - 0.55 + reach * 0.5, 0); A.apply(milo, Object.assign(A.pose('idle', t), { lean: 0.35 * reach, aRf: 1.3 * reach, eR: 0.2, hx: 0.3 * reach })); milo.rig.setFace('neutral'); milo.rig.update(t);
+      whale.visible = true; whale.position.set(X + 0.35, F + 0.12, FZ + 0.85); whale.rotation.set(0, 0.6, 0.15);
+      put(nara, X - 1.8, -46.8, 0.6); A.apply(nara, A.pose('idle', t)); nara.rig.setFace('scared'); nara.rig.update(t);
+    }
+    if (C === 'drag') {
+      const k = ease(clamp(lt / 0.55, 0, 1)); put(milo, X + 0.05, lerp(FZ + 0.1, FZ - 1.0, k), Math.PI * 0.95); A.apply(milo, Object.assign(A.pose('idle', t), { lean: -0.25, aLf: 0.5, eL: 1.0, aRf: 1.4 })); milo.rig.setFace('scared'); whaleHand.visible = true; milo.rig.update(t);
+      put(nara, X - 0.45, lerp(FZ - 0.35, FZ - 1.2, k), 0.5); A.apply(nara, Object.assign(A.pose('idle', t), { lean: -0.2, aRf: 1.2, eR: 0.5, aLf: 0.5 })); nara.rig.setFace('scared'); nara.rig.update(t);
+    }
+    if (C === 'porchWin') { put(nara, 32.5, FZ - 2.1, Math.atan2(H.PORCH_WIN.x - 32.5, 2.1)); A.apply(nara, Object.assign(A.pose('idle', t), { aLf: 0.4, hy: -0.35, hx: -0.12 })); const tk = t > T.staring; nara.rig.setFace(tk ? 'taken' : 'shocked'); nara.rig.update(t); }
+    // her legs walk (taken): porch → steps → street (scene 19)
+    if (C === 'takenWalk') { walkOn(nara, [[X - 0.1, FZ - 0.4], [X - 0.1, -40.6], [X - 0.15, -38.4], [31.2, -34.5]], 1.05, s.t0 - 0.3, t, { taken: true, stride: 0.48 }); nara.rig.setFace('taken'); nara.rig.update(t); }
+    if (C === 'miloShut') { put(milo, X + 0.1, FZ + 0.6, Math.PI * 0.05); A.apply(milo, Object.assign(A.pose('idle', t), { aLf: 0.35, eL: 0.9, hx: 0.1 })); whaleHand.visible = true; milo.rig.setFace('scared'); if (t > W(9, 'squeezed') + 0.1) milo.rig.setEyes('closed'); milo.rig.update(t); }
+    if (C === 'follow') {
+      walkOn(nara, [[30.4, -6.2], [30.5, -1.5]], 1.0, s.t0, t, { taken: true }); nara.rig.setFace('taken'); nara.rig.update(t);
+      walkOn(milo, [[30.2, -14.5], [30.3, -9.0]], 1.35, s.t0, t, { blind: true, stride: 0.34 }); whaleHand.visible = true; milo.rig.setEyes('closed'); milo.rig.setFace('scared'); milo.rig.update(t);
+    }
+    if (C === 'wade') { walkOn(nara, [[30.5, 1.2], [NWATER[0], NWATER[1]]], 2.4, s.t0, t, { taken: true }); nara.rig.setFace('taken'); nara.rig.update(t); }
+    if (C === 'cover1' || C === 'shallows') {
+      put(nara, NWATER[0], NWATER[1], 0.05); const c = C === 'cover1' ? ease(clamp((t - T.cover1) / 0.3, 0, 1)) : 1;
+      A.apply(nara, Object.assign(A.pose('idle', t), { aLf: 0.05, aRf: 0.05, hx: -0.1 * c })); if (C === 'cover1' && t < T.cover1 + 0.2) nara.rig.setFace('taken'); else { nara.rig.setFace('shocked'); nara.rig.setEyes('closed'); } nara.rig.update(t);
+      put(milo, NWATER[0] + 0.04, NWATER[1] - 0.72, 0.05); A.apply(milo, Object.assign(A.pose('idle', t), c > 0 ? { aLf: lerp(0.4, COVER_UP.aLf, c), aRf: lerp(0.4, COVER_UP.aRf, c), eL: COVER_UP.eL, eR: COVER_UP.eR, aLo: 0.12, aRo: 0.12, y: 0.06 * c, lean: 0.12 } : { aLf: 0.6, aRf: 0.6 }));
+      whaleHand.visible = c < 0.2; milo.rig.setEyes('closed'); milo.rig.setFace('scared'); milo.rig.update(t);
+    }
+    // crawling to the pier, eyes shut; the whale is dropped (26) and floats away (27)
+    if (C === 'crawl') {
+      const pn = A.path([[29.2, 2.6], [26.6, -4.0]], 0.75, shotOf(25).t0 - 0.6, 0.35)(t), pm = A.path([[29.9, 2.3], [27.3, -4.3]], 0.75, shotOf(25).t0 - 0.6, 0.35)(t);
+      nara.position.set(pn.x, gy(pn.x, pn.z), pn.z); nara.rotation.set(0, pn.yaw, 0); nara.visible = true; A.apply(nara, CRAWL(t, pn.phase)); nara.rig.setEyes('closed'); nara.rig.setFace('scared'); nara.rig.update(t);
+      milo.position.set(pm.x, gy(pm.x, pm.z), pm.z); milo.rotation.set(0, pm.yaw, 0); milo.visible = true; A.apply(milo, CRAWL(t, pm.phase + 1.2)); milo.rig.setEyes('closed'); milo.rig.setFace('scared');
+      const dropped = t > T.whaleDrop + 0.35; whaleHand.visible = !dropped; milo.rig.update(t);
+      if (s.whaleDrop && dropped) { whale.visible = true; const k = clamp((t - T.whaleDrop - 0.35) / 0.5, 0, 1); whale.position.set(pm.x + 0.5, gy(pm.x + 0.5, pm.z + 0.4) + 0.12 - k * 0.05, pm.z + 0.4); whale.rotation.set(0.3, 1.2, 0.4 * k); }
+    }
+    if (s.whaleFloat) { whale.visible = true; const k = clamp(lt / 1.8, 0, 1); whale.position.set(lerp(28.6, 29.4, k), 0.04 + Math.sin(t * 2.2) * 0.04, lerp(1.6, 4.2, k)); whale.rotation.set(Math.sin(t * 1.7) * 0.2, 1.2 + k * 0.6, Math.sin(t * 2) * 0.25); }
+    // under the pier: huddled behind the stilt; the phone; holding it out; the hand slips; Milo walks out
+    if (C === 'shelter' || C === 'holdOut' || C === 'slip' || C === 'miloTaken' || C === 'naraTurn') {
+      const out = C === 'holdOut' || C === 'slip' || C === 'miloTaken', slipK = C === 'slip' ? ease(clamp((t - W(16, 'slipped')) / 0.5, 0, 1)) : 0;
+      put(nara, SHELTER[0], SHELTER[1], out || C === 'naraTurn' ? OUT_YAW : NARA_YAW);
+      let PN = CROUCH(t);
+      if (C === 'holdOut') PN = Object.assign(PN, { aRo: 1.35, aRf: 0.95, eR: 0.1, hx: 0.05, hy: 0.25, aLo: 0.18, aLf: 0.3, eL: 0.45 });
+      if (C === 'slip') PN = Object.assign(PN, { aLo: 0.18, aLf: 0.3, eL: 0.45 + 0.6 * slipK, aRf: 0.3, eR: 0.6 });
+      if (C === 'naraTurn') PN = Object.assign(PN, { aLf: 0.25, aRf: 0.25, eL: 0.5, eR: 0.5, hx: 0.05 });
+      A.apply(nara, PN);
+      nara.rig.setFace(s.naraFace || (C === 'naraTurn' ? 'crying' : 'scared')); if (out || C === 'naraTurn' || (C === 'shelter' && s.sc === 30 && t > W(14, 'shut'))) nara.rig.setEyes('closed');
+      if (s.sc === 30) nara.rig.setMouth(Math.sin(t * 13) > 0.1 && t < W(14, 'eyes') + 0.3); nara.rig.update(t);
+      if (C !== 'naraTurn') {
+        put(milo, MILO_SH[0], MILO_SH[1], C === 'miloTaken' ? 0.1 : out ? lerp(MILO_OUT, Math.PI * 2 + 0.1, slipK) : MILO_YAW);
+        A.apply(milo, Object.assign(CROUCH(t), { hx: s.sc === 30 ? 0.18 * Math.max(0, Math.sin((t - s.t0) * 7)) : 0 }, out && C !== 'miloTaken' ? { aRo: lerp(0.4, 0.1, slipK), aRf: lerp(0.35, 0.1, slipK), eR: 0.35 } : {}));
+        if (C === 'miloTaken' || slipK > 0.6) { milo.rig.setFace('taken'); milo.rig.setEyes(null); } else { milo.rig.setFace('scared'); if (out) milo.rig.setEyes('closed'); } milo.rig.update(t); }
+    }
+    if (s.phoneAt === 'slide') { const k = ease(clamp((t - T.phoneOut) / 0.5, 0, 1)), a = handW(nara, 'R'); phone.position.lerpVectors(a.clone().add(V3(0, -0.1, 0)), V3(SHELTER[0] + 0.3, gy(SHELTER[0] + 0.3, SHELTER[1] + 0.55) + 0.04, SHELTER[1] + 0.55), k); phone.rotation.set(-Math.PI / 2 * k, 0, 0.6 * k); phone.userData.setScreen('', false, '#000000'); }
+    if (s.phoneAt === 'sand') { phone.position.set(SHELTER[0] + 0.3, gy(SHELTER[0] + 0.3, SHELTER[1] + 0.55) + 0.04, SHELTER[1] + 0.55); phone.rotation.set(-Math.PI / 2, 0, 0.6); }
+    if (s.phoneAt === 'hand') { const a = handW(nara, 'R'); phone.position.copy(a).add(V3(0.05, 0.34, 0)).addScaledVector(eye.dir, 0.12); phone.lookAt(phone.position.clone().addScaledVector(eye.dir, 10)); }
+    if (C === 'miloWalk') { walkOn(milo, [[MILO_SH[0], MILO_SH[1]], [24.2, -4.5], [24.6, 5.0], [MWATER[0], MWATER[1] + 0.7]], 1.25, s.t0 - 0.2, t, { taken: true, stride: 0.34 }); milo.rig.setFace('taken'); milo.rig.update(t);
+      put(nara, SHELTER[0], SHELTER[1], OUT_YAW); A.apply(nara, CROUCH(t)); nara.rig.setEyes('closed'); nara.rig.setFace('scared'); nara.rig.update(t); }
+    if (C === 'naraRun') { walkOn(nara, [[SHELTER[0], SHELTER[1]], [26.8, -9.2], [27.3, -2.5], [NWATER2[0], NWATER2[1] - 0.3]], 5.4, shotOf(38).t0 - 0.2, t, { run: true, P: { aLf: 0.9, aRf: 0.85, eL: 0.4, eR: 0.4 } }); nara.rig.setEyes('closed'); nara.rig.setFace('scared'); nara.rig.update(t);
+      walkOn(milo, [[26.5, 4.6], [MWATER[0], MWATER[1]]], 0.9, s.t0 - 0.6, t, { taken: true, stride: 0.32 }); milo.rig.setFace('taken'); milo.rig.update(t); }
+    if (C === 'miloDeep') { walkOn(milo, [[26.6, 5.6], [MWATER[0], MWATER[1]]], 0.8, s.t0 - 0.3, t, { taken: true, stride: 0.32 }); milo.rig.setFace('taken'); milo.rig.update(t); }
+    if (C === 'sideBySide' || C === 'cover2' || C === 'after') {
+      put(milo, MWATER[0], MWATER[1], 0.05); const c = C === 'sideBySide' ? 0 : C === 'after' ? 1 : ease(clamp((t - T.cover2) / 0.35, 0, 1));
+      A.apply(milo, Object.assign(A.pose('idle', t), { aLf: 0.05, aRf: 0.05, hx: -0.05 })); if (c > 0.5) milo.rig.setEyes('closed'); else milo.rig.setFace('taken'); if (c > 0.5) milo.rig.setFace('scared'); milo.rig.update(t);
+      const nz = C === 'sideBySide' ? NWATER2[1] + 0.35 : lerp(NWATER2[1] + 0.35, MWATER[1] - 0.55, c), nx = C === 'sideBySide' ? NWATER2[0] - 0.15 : lerp(NWATER2[0] - 0.15, MWATER[0], c);
+      put(nara, nx, nz, 0.05); A.apply(nara, Object.assign(A.pose('idle', t), c > 0 ? { aLf: lerp(0.3, COVER_DOWN.aLf, c), aRf: lerp(0.3, COVER_DOWN.aRf, c), eL: COVER_DOWN.eL, eR: COVER_DOWN.eR, aLo: 0.18, aRo: 0.18, lean: 0.2 * c, hx: 0.25 * c } : { aLf: 0.5, aRf: 0.5 }));
+      nara.rig.setEyes(C === 'after' ? null : 'closed'); nara.rig.setFace(C === 'after' ? 'crying' : 'scared'); nara.rig.update(t);
+    }
+    // the next night (grey): Nara opens the shutters; on the porch, Milo leans on her
+    if (C === 'shutters') { put(nara, LW.x + 0.05, FZ - 0.75, 0); A.apply(nara, Object.assign(A.pose('idle', t), { aLf: 1.4, aRf: 1.4, eL: 0.2, eR: 0.2 })); nara.rig.setFace('neutral'); nara.rig.update(t); }
+    if (C === 'porchSit') {
+      put(nara, X - 0.25, -40.65, 0, -0.25); A.apply(nara, SIT(t, { slump: 0.2, aRf: 0.6, eR: 0.7 })); nara.rig.setFace('sad'); nara.rig.update(t);
+      put(milo, X + 0.45, -40.6, -0.5, -0.12); A.apply(milo, SIT(t, { hy: -0.75, hx: -0.2, wz: -0.25 })); milo.rig.setFace('smiling'); milo.rig.update(t);
+    }
+    for (const c of [nara, milo, bram, townA, townB]) if (!c.visible) c.position.y = -999;
+    { const who = C === 'wade' || C === 'cover1' ? nara : C === 'miloDeep' || C === 'sideBySide' ? milo : null;
+      bay.seaM.uniforms.uRecoil.value.set(who ? who.position.x : 0, who ? who.position.z : 0, who ? 0.55 + 0.25 * Math.sin(t * 5) : 2.5, who ? 0.45 : 0); }
+
+    // camera + light
+    RT.camera.apply(camera, s, t);
+    if (s.shakeAt && t > s.shakeAt) { const k = Math.exp(-(t - s.shakeAt) * 3); camera.position.add(V3(Math.sin(t * 53) * 0.06 * k, Math.sin(t * 41) * 0.05 * k, 0)); }
+    faceLight.intensity = 0;
+    pierFill.intensity = !grey && s.sc >= 28 && s.sc <= 38 && s.sc !== 32 && s.sc !== 33 ? 2.4 : 0;
+    lampLight.intensity = s.interior || s.sc === 45 ? (grey ? 0.9 : 1.3) : 0;
+    phoneGlow.intensity = s.phoneRefl && !s.interior ? 1.6 : 0; phoneGlow.position.copy(phone.position).addScaledVector(eye.dir, 0.25);
+    if (s.focusOn) { const Fp = s.focusOn(); faceLight.position.copy(Fp).add(camera.position.clone().sub(Fp).setY(0).normalize().multiplyScalar(1.2)).add(V3(0, 0.5, 0)); faceLight.intensity = KEY * (s.key || (s.interior ? 0.7 : 1.0)) * (grey ? 0.7 : 1); }
+    camera.getWorldDirection(tmpV);
+    env.follow(camera); env.shadowFocus(camera.position.x + tmpV.x * 6, camera.position.y + tmpV.y * 6, camera.position.z + tmpV.z * 6, s.interior || s.sc >= 28 && s.sc <= 37 ? 10 : 26);
+    // the Eye (placed "at infinity", always watching Nara, or Bram on the pier)
+    eye.place(camera);
+    env.sky.material.uniforms.disc.value = eye.group.visible ? env.preset.sunDisc * (1 - eye.sink) : 0;
+    const open = s.eye === 'open' ? clamp((t - s.eyeT) / 0.7, 0, 1) : 1;
+    eye.set(open, s.eyeLook === 'bram' ? head(bram) : nara.visible ? head(nara) : V3(28, 1, -6), t, { clench: s.eyeClench ? 0.62 * ease(clamp((t - s.t0) / 0.4, 0, 1)) : 0, noBlink: !!s.eyeClench });
+  }
+
+  // post effects: grade (red/black, the epilogue grey), glow, depth/motion blur, punches, colour split at cuts
+  function fxAt(t) {
+    const s = shots.at(t), fx = Object.assign({ grade: 1, bloom: 0.9, vignette: 0.6, grain: 0.12, gamma: 1.3, redLum: 0.55, t }, s.fx);
+    if (s.focusOn) fx.focus = camera.position.distanceTo(s.focusOn()); else if (s.focusDist) fx.focus = s.focusDist;
+    if (s.punch && t > s.punch) { const k = Math.exp(-(t - s.punch) * 8); fx.zoom = 0.7 * k; fx.ca = (fx.ca || 0) + 0.7 * k; }
+    if (s.shakeAt && t > s.shakeAt) { const k = Math.exp(-(t - s.shakeAt) * 6); fx.ca = (fx.ca || 0) + 0.6 * k; fx.zoom = 0.4 * k; }
+    if (s.sc === 1 && t > T.eyeOpen) { const k = Math.exp(-(t - T.eyeOpen) * 5); fx.zoom = 0.6 * k; fx.ca = (fx.ca || 0) + 0.6 * k; }
+    for (const c of shots.cuts()) { const k = clamp(1 - Math.abs(t - c) / 0.07, 0, 1); fx.ca = (fx.ca || 0) + 0.35 * k; }
+    if (s.grey) fx.mono = 1;
+    return fx;
+  }
+  function render(t) {
+    window.__t = t;
+    const dt = 1 / 30;
+    if (t >= dt && shots.at(t - dt) === shots.at(t)) { frame(t - dt); post.capturePrev(camera); } else post.clearPrev();
+    frame(t);
+    eye.renderRT(renderer);
+    post.render(scene, camera, fxAt(t));
+  }
+  // a short fade to black between the night and "the next night"; the end card darkens
+  const black = (t) => Math.max(clamp(1 - t / 0.3, 0, 1), 1 - clamp(Math.abs(t - (S(21) - 0.3)) / 0.35, 0, 1), t > TITLE_T ? 0.5 * clamp((t - TITLE_T) / 0.4, 0, 1) : 0);
+
+  window.__shots = () => shots.shots.map((x) => [x.sc, +x.t0.toFixed(2), +x.t1.toFixed(2)]);
+  window.__dbg = () => { const P = (o) => [o.position.x, o.position.y, o.position.z].map((v) => +v.toFixed(2)); const s = shots.at(window.__t || 0);
+    return { sc: s.sc, cam: P(camera), nara: nara.visible ? P(nara) : null, milo: milo.visible ? P(milo) : null, naraHead: nara.visible ? P({ position: head(nara) }) : null, miloHead: milo.visible ? P({ position: head(milo) }) : null, nL: nara.visible ? P({ position: handW(nara, 'L') }) : null, nR: nara.visible ? P({ position: handW(nara, 'R') }) : null, mR: milo.visible ? P({ position: handW(milo, 'R') }) : null, phone: phone.visible ? P(phone) : null }; };
+  RT.player.start({
+    name: 'eye', duration: DURATION, renderer, scene, camera, frame, render, narration: NAR, speakers: {},
+    black, white: () => 0, audio: '../audio/mix/eye_mix.mp3',
+    title: { t0: TITLE_T + 0.1, html: '<div class="t1" style="color:#ff4a3a;text-shadow:0 0 calc(var(--u)*6) rgba(255,40,20,.6),0 calc(var(--u)*.6) calc(var(--u)*1.2) #000">THE MIDNIGHT EYE</div><div class="t2">AN “IN THIS TOWN” STORY</div><div class="t3" style="color:#ffe45c">Follow for more.</div>' },
+    menu: { title: 'The Midnight Eye', sub: 'In this town, a giant Eye opens in the sky at midnight…' },
+    thumbnail(n) {
+      render(n === '2' ? 84.6 : 2.95);
+      const d = document.createElement('div');
+      d.style.cssText = 'position:absolute;left:4%;right:4%;top:' + (n === '2' ? '62%' : '9%') + ';text-align:center;font:900 calc(var(--u)*13.5) Montserrat,Arial Black,sans-serif;line-height:1.0;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.9) 0 #000';
+      d.innerHTML = n === '2' ? 'DON’T<br><span style="color:#ffe45c">LOOK UP</span>' : 'IF YOU SEE IT<br>YOU <span style="color:#ffe45c">WALK INTO</span><br>THE SEA';
+      document.getElementById('stage').appendChild(d);
+    },
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Echo Breakers · location preview</title>
+<!--
+  One preview image per location, vertical like the video (1080 × 1920):
+    node echo-breakers/tools/shot.js "echo-breakers/previews/location.html?loc=piazza" echo-breakers/previews/loc-piazza.jpg 1080 1920
+  ?loc= stairway | recordShop | piazza | promenade | fortress | arena | darkRoom
+  ?cam=x,y,z&look=x,y,z&fov=50  override the camera (handy for finding shots).  ?t=  time in seconds (waves, birds).
+  ?people=0  hides the characters (they are only there to show the scale).
+-->
+<link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="../fonts/fonts-jp.css">
+<style>
+  html,body{margin:0;background:#000;overflow:hidden}
+  #lab{position:absolute;left:0;right:0;top:4%;text-align:center;color:#fff;font:900 64px Montserrat,sans-serif;letter-spacing:.04em;text-shadow:0 4px 12px rgba(0,0,0,.7)}
+  #lab small{display:block;font:700 30px Inter,sans-serif;letter-spacing:.18em;opacity:.9;margin-top:10px}
+</style></head><body><div id="lab"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../engine/vendor/CopyShader.js"></script><script src="../engine/vendor/LuminosityHighPassShader.js"></script>
+<script src="../engine/vendor/EffectComposer.js"></script><script src="../engine/vendor/RenderPass.js"></script>
+<script src="../engine/vendor/ShaderPass.js"></script><script src="../engine/vendor/UnrealBloomPass.js"></script>
+<script src="../engine/common.js"></script><script src="../engine/mood.js"></script><script src="../engine/characters.js"></script>
+<script src="../engine/animations.js"></script><script src="../engine/cast.js"></script><script src="../engine/echoes.js"></script><script src="../engine/glow.js"></script>
+<script src="../engine/world.js"></script><script src="../engine/locations.js"></script>
+<script>
+const q = new URLSearchParams(location.search), LOC = q.get('loc') || 'stairway', T = +(q.get('t') || 2);
+const TITLES = { stairway: ['OLD TOWN STAIRWAY', 'CHAPTER 1'], recordShop: ['THE RECORD SHOP', 'CHAPTER 1'], piazza: ['FOUNTAIN PIAZZA', 'CHAPTER 2'], promenade: ['SEASIDE PROMENADE', 'CHAPTER 3'], fortress: ['SEA FORTRESS', 'CHAPTER 4'], arena: ['ANCIENT ARENA', 'CHAPTER 5'], darkRoom: ['THE DARK ROOM', 'ENDING'] };
+document.fonts.load('900 64px Montserrat').catch(() => {}).then(() => {
+  const W = innerWidth, H = innerHeight;
+  const renderer = RT.mood.renderer(null, { preserve: true }); renderer.setPixelRatio(1); renderer.setSize(W, H); document.body.prepend(renderer.domElement);
+  const scene = new THREE.Scene(), loc = RT.locations[LOC](); scene.add(loc);
+  const pv = loc.preview, v = (k, d) => (q.get(k) ? q.get(k).split(',').map(Number) : d);
+  const camera = new THREE.PerspectiveCamera(+(q.get('fov') || pv.fov), W / H, 0.1, 5000);
+  const cam = v('cam', pv.cam), look = v('look', pv.look); camera.position.set(...cam); camera.lookAt(...look);
+  const env = RT.mood.create(scene, renderer, { mood: loc.mood }); env.follow(camera);
+  // shadow box around what the camera looks at
+  env.shadowFocus(look[0], look[1], look[2], LOC === 'arena' ? 55 : LOC === 'promenade' ? 40 : 32);
+  // a few characters for scale
+  // positions below are in DESIGN units (like locations.js), converted with RT.locations.SCALE
+  const A = RT.anim, C = RT.cast, E = RT.echoes, SC = RT.locations.SCALE, put = (ch, p, yaw, mv, face) => { ch.position.set(...p.map((n) => n * SC)); ch.rotation.y = yaw; scene.add(ch); A.set(ch, mv || 'idle', T); if (face && ch.rig.setFace) ch.rig.setFace(face); if (ch.rig.update) ch.rig.update(T); return ch; };
+  if (q.get('people') !== '0') {
+    if (LOC === 'stairway') { put(C.dante(), [1.5, 15, -46], 0.3, 'idle', 'happy'); put(C.walker(7), [-4, 10, -29], 0.2, 'walk'); put(C.walker(3), [-6, 0, 8], 2.5, 'walk'); put(C.walker(5), [5, 0, 4], -0.6, 'idle'); }
+    if (LOC === 'recordShop') { put(C.dante(), [-3.2, 0, -4.6], -1.75, 'idle', 'surprised'); put(C.walker(9), [5, 0, -1.3], 0, 'idle'); }
+    if (LOC === 'piazza') { put(C.dante(), [7, 0, 24], 3.3, 'idle', 'surprised'); put(C.aurora(), [0, 1.45, 8.9], 0.1, 'crossArms', 'calm'); }
+    if (LOC === 'promenade') { put(C.dante(), [22, 0.3, -9], 1.4, 'run', 'scared'); put(C.aurora(), [17, 0.3, -10.5], 1.4, 'run'); put(C.grant(), [11, 0.3, -9.5], 1.5, 'run', 'scared'); put(C.hunter(1), [2, 0, -2], 1.5, 'run'); put(C.hunter(2), [-3, 0, 1], 1.5, 'run'); }
+    if (LOC === 'fortress') { put(C.dante(), [-6, 0, 6], 1.2, 'idle', 'determined'); put(C.hale(), [6, 0, -2], -1.9, 'handsOnHips', 'cold'); const ts = E.tsurara(); put(ts, [9, 0.7, -5], -1.9, 'idle'); ts.echo.update(T, { power: 1, light: 0.5 }); }
+    if (LOC === 'arena') { put(C.vahl(), [0, 0, 0], 0, 'present'); const sh = E.shuen(); put(sh, [0, 0.8, -8], 0, 'raiseHand'); sh.echo.update(T, { power: 1 }); put(C.dante(), [0, 0, 26], Math.PI, 'idle', 'determined'); }
+  }
+  // world animation at time T (water, birds, smoke)
+  loc.update(T, { smile: 1 }); scene.traverse((o) => { if (o.update && o !== loc && typeof o.update === 'function' && !o.rig && !o.echo) try { o.update(T); } catch (e) {} });
+  const [a, b] = TITLES[LOC] || [LOC, '']; document.getElementById('lab').innerHTML = q.get('label') === '0' ? '' : `${a}<small>${b}</small>`;
+  const glow = RT.glow.create(renderer, scene, camera, { strength: ['halcyon', 'sunset', 'dawn'].includes(loc.mood) ? 0.55 : 0.9, radius: 0.6, scale: 0.5 });   // bright daylight needs less bloom
+  glow.render(); window.sceneReady = true;
+}).catch((e) => { window.sceneError = String(e.stack || e); console.error(e); });
+</script></body></html>

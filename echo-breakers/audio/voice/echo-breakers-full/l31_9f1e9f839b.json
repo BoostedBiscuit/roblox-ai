@@ -1,0 +1,27 @@
+{
+ "text": "凍りつけ。",
+ "voice": "Daniel",
+ "alignment": {
+  "characters": [
+   "凍",
+   "り",
+   "つ",
+   "け",
+   "。"
+  ],
+  "character_start_times_seconds": [
+   0,
+   0.406,
+   0.522,
+   0.697,
+   0.94
+  ],
+  "character_end_times_seconds": [
+   0.406,
+   0.522,
+   0.697,
+   0.94,
+   1.161
+  ]
+ }
+}

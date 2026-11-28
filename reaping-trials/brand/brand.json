@@ -1,0 +1,9 @@
+{
+  "_note": "Watermark for every video: width/x/y are fractions of the 1080 x 1920 frame (y 0.105 = just below the app's top bar, clear of the Reels/Shorts buttons). opacity 0.4 = 40 %.",
+  "name": "Blocktale Studios",
+  "opacity": 0.4,
+  "width": 0.36,
+  "x": 0.6,
+  "y": 0.105,
+  "onRender": true
+}

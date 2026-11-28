@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Midnight Sea · look test</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<!--
+=====================================================================================
+THE MIDNIGHT SEA · LOOK TEST (about 9 s): the red-and-black grade, glow, depth blur, motion blur, whip pans,
+zoom punch, colour split and the phone-footage glitch, on the Hollow Bay set with the locked cast.
+No narrator yet: the captions are sample words from the approved script (not timed to a voice).
+Render:  node midnight-sea/tools/render.js midnight-looktest      → out/midnight-sea/looktest.mp4
+
+=== CUE SHEET ===  (time, sound, volume, options; music 0.50 = 50 %)
+time    sound                     volume  options
+0.00    music:dreamcore           0.50    from=0 fadein=0.8
+=== END ===
+=====================================================================================
+-->
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../post.js"></script>
+<script src="../cast.js"></script>
+<script src="../skyeye.js"></script>
+<script src="../bay.js"></script>
+<script>
+(function () {
+  'use strict';
+  const RT = window.RT, A = RT.anim, { clamp, lerp, ease } = RT;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const DURATION = 9.2;
+  let rec = null;   // phone-footage overlay (made after the player builds the stage)
+
+  const renderer = RT.mood.renderer(null, { pixelRatio: 1 });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.05, 1800);
+  const env = RT.mood.create(scene, renderer, { mood: 'midnight', shadowSize: 2048 });
+  const bay = RT.bay.build(scene, env);
+  const post = RT.post.create(renderer);
+  const faceLight = new THREE.PointLight('#ff4a36', 0, 6, 2); scene.add(faceLight);
+  const SP = bay.spots, gy = SP.ground;
+
+  // ---------- cast ----------
+  const nara = RT.cast.nara(), shadow = RT.cast.nara({ shadow: true }), milo = RT.cast.milo();
+  const odell = RT.cast.odell(), bram = RT.cast.bram(), pike = RT.cast.pike();
+  const sleepers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => RT.cast.sleeper(s));
+  for (const c of [nara, shadow, milo, odell, bram, pike, ...sleepers]) scene.add(c);
+  for (const c of [milo, odell, bram, pike, ...sleepers]) c.rig.setEyes('closed');
+  milo.rig.setFace('neutral');
+  const phone = RT.cast.phone(); nara.rig.hold('R', phone); phone.position.set(0, -0.2, 0.25); phone.rotation.set(-1.2, 0, 0);
+
+  // the sleepwalkers: straight lines from the stairs down to the sea (feet follow the sand, so the sea swallows them)
+  const LINES = [];
+  const walkers = [odell, bram, pike, ...sleepers];
+  walkers.forEach((w, i) => {
+    const x = -5 + (i % 6) * 2.1 + (i > 5 ? 1 : 0), z0 = -27 + Math.floor(i / 6) * -2.5 - (i % 3) * 1.2;
+    LINES.push({ w, path: A.path([[x, z0], [x, 60]], 0.95, -10 - i * 0.7, 0.42) });
+  });
+  function sleepwalk(w, t, p) {
+    w.position.set(p.x, gy(p.x, p.z), p.z); w.rotation.y = p.yaw;
+    const P = A.pose('walk', t, { phase: p.phase, amp: 0.55 });
+    P.aLf = P.aLf * 0.4 + 0.18; P.aRf = P.aRf * 0.4 + 0.18; P.hx = 0.18; P.lean = 0.04;
+    A.apply(w, P); w.rig.update(t);
+  }
+
+  // Nara crouched behind the third stilt from the shore, peeking at the beach; Milo shuffling toward the sea
+  const NARA_AT = SP.STILT3.clone().add(V3(-0.15, 0, -0.75));
+  const MILO_PATH = A.path([[7.5, -9], [6.6, 4]], 0.45, 0, 0.3);
+  function crouch(ch, t) {
+    A.apply(ch, { y: -0.9, lLf: 1.35, kL: 2.0, lRf: 0.55, kR: 1.55, lean: 0.38, hx: -0.32, hy: 0.25, aLf: 0.55, eL: 1.2, aRf: 1.05, eR: 1.3, aRo: 0.15, wx: 0.05 + Math.sin(t * 1.4) * 0.01 });
+  }
+
+  // ---------- shots ----------
+  const head = (ch, dy = 0) => { ch.rig.head.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(ch.rig.head.matrixWorld).add(V3(0, dy, 0)); };
+  const shots = RT.camera.list([
+    // 1. the sea turns red: the glow races in from the horizon (low, at the waterline, pier on the left, moon right of it)
+    { t0: 0.0, pos: [[16.5, 1.15, -3.5], [16.2, 1.05, -2.6]], look: [[3, 12, 120], [3, 9, 120]], fov: [58, 54], fx: { bloom: 1.1, ca: 0.15, motion: 0 } },
+    // 2. extreme close-up: Mrs. Odell's closed eyes, sleepwalking toward the red sea (camera backs away in front of her)
+    { t0: 2.0, pos: () => head(odell, 0.02).add(V3(0.45, 0.02, 2.0)), look: () => head(odell, -0.05), fov: [33, 31], focusOn: () => head(odell), fx: { bloom: 0.9, aperture: 0.9, motion: 0.5 } },
+    // 3. low at the waterline: feet stepping into the red water
+    { t0: 3.5, pos: [[1.2, 0.28, -4.2], [1.0, 0.3, -3.4]], look: [[0.2, 0.35, 6], [0.2, 0.4, 6]], fov: [42, 40], focusDist: 4.5, fx: { bloom: 1.0, aperture: 0.7, ca: 0.2 } },
+    // 4. Nara behind the stilt, slats of red moonlight, extreme close-up on her eyes, then a whip pan
+    { t0: 5.0, pos: (lt, p) => head(nara, 0.0).add(V3(Math.sin(nara.rotation.y + 0.35) * lerp(1.7, 1.45, p), 0.06, Math.cos(nara.rotation.y + 0.35) * lerp(1.7, 1.45, p))), look: () => head(nara, 0.0), fov: [31, 29], focusOn: () => head(nara), key: [-1.2, 0.5, 1.2, 1.6], fx: { bloom: 0.9, aperture: 1.0 }, whipOut: -1 },
+    // 5. Milo shuffling toward the sea, plush whale in his left hand; push-in with handheld shake, zoom punch at the end
+    { t0: 6.6, pos: (lt, p) => head(milo, -0.2).add(V3(lerp(-4.2, -3.0, p), 0.1, lerp(3.6, 2.6, p))), look: () => head(milo, -0.3), fov: [44, 38], shake: 0.012, focusOn: () => head(milo), fx: { bloom: 1.1, aperture: 0.55, motion: 0.4 }, whipIn: -1, punch: 8.0 },
+    // 6. phone footage: the shadow, black eyes, ash; REC overlay and glitch
+    { t0: 8.2, pos: () => head(shadow, 0.0).add(V3(Math.sin(shadow.rotation.y) * 1.6, 0.05, Math.cos(shadow.rotation.y) * 1.6)), look: () => head(shadow, 0.0), fov: [30, 26], focusOn: () => head(shadow), fx: { bloom: 1.2, aperture: 0.8, glitch: 0.35, grain: 0.32, ca: 0.4 }, footage: true },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+
+  // ---------- the world at time t ----------
+  function frame(t) {
+    const s = shots.at(t);
+    // the sea: black until 0.25 s, then the red spreads from the horizon to the shore by 1.9 s
+    const spread = t < 0.7 ? 0 : t < 2.0 ? Math.pow((t - 0.7) / 1.3, 1.3) * 175 : 99999;
+    bay.update(t, { seaLight: 0.7, red: t < 0.7 ? 0 : 1, spread, origin: [-4, 95], mist: 0.32, ash: s.footage ? 0.8 : 0.35, ashAt: camera.position.clone().add(camera.getWorldDirection(V3(0, 0, 0)).multiplyScalar(4)) });
+    // walkers
+    for (const L of LINES) sleepwalk(L.w, t, L.path(t + 14));
+    // Nara (crouched under the pier) and the shadow (walking out from under it, only in the footage shot)
+    nara.position.copy(NARA_AT); nara.rotation.y = -Math.PI / 2 - 0.35; crouch(nara, t); nara.rig.setFace('scared'); nara.rig.update(t);
+    nara.visible = !s.footage;
+    shadow.visible = !!s.footage;
+    if (s.footage) { const p = A.path([[21, -13], [13, -9]], 1.4, 7.8, 0.5)(t); shadow.position.set(p.x, gy(p.x, p.z), p.z); shadow.rotation.y = p.yaw;
+      A.set(shadow, 'walk', t, { phase: p.phase }); shadow.rig.setFace('blank'); shadow.rig.update(t); }
+    // Milo
+    const m = MILO_PATH(t + 2.0); milo.position.set(m.x, gy(m.x, m.z), m.z); milo.rotation.y = m.yaw;
+    const P = A.pose('walk', t, { phase: m.phase, amp: 0.4 }); P.aLf = 0.35; P.eL = 0.9; P.aRf = P.aRf * 0.4 + 0.1; P.hx = 0.22; A.apply(milo, P); milo.rig.update(t);
+    // camera + light
+    RT.camera.apply(camera, s, t);
+    bay.eye.place(camera); bay.eye.set(clamp((t - 0.15) / 0.75, 0, 1), head(s.footage ? shadow : nara), t);
+    faceLight.intensity = s.key ? s.key[3] : 0;
+    if (s.key && s.focusOn) faceLight.position.copy(s.focusOn()).add(V3(s.key[0], s.key[1], s.key[2]));
+    const L = new THREE.Vector3(); camera.getWorldDirection(L);
+    env.follow(camera); env.shadowFocus(camera.position.x + L.x * 6, camera.position.y + L.y * 6, camera.position.z + L.z * 6, s.i === 3 ? 10 : s.i === 0 ? 70 : 22);
+    if (rec) rec.style.opacity = s.footage ? '1' : '0';
+    if (rec && s.footage) rec.querySelector('.ts').textContent = `00:00:${String(47 + Math.floor(t - 8.2)).padStart(2, '0')}`;
+  }
+
+  // post effects for time t (cuts: whip-pan smear, a little colour split; zoom punches)
+  function fxAt(t) {
+    const s = shots.at(t), fx = Object.assign({ grade: 1, bloom: 0.9, vignette: 0.6, grain: 0.13, t }, s.fx);
+    if (s.focusOn) fx.focus = camera.position.distanceTo(s.focusOn()); else if (s.focusDist) fx.focus = s.focusDist;
+    const next = shots.shots[s.i + 1];
+    if (s.whipOut && next) fx.whip = s.whipOut * clamp(1 - (next.t0 - t) / 0.16, 0, 1);
+    if (s.whipIn) fx.whip = s.whipIn * clamp(1 - (t - s.t0) / 0.16, 0, 1);
+    if (s.punch && t > s.punch) { const k = Math.exp(-(t - s.punch) * 9); fx.zoom = 0.9 * k; fx.ca = (fx.ca || 0) + 0.8 * k; }
+    for (const c of shots.cuts()) { const k = clamp(1 - Math.abs(t - c) / 0.08, 0, 1); fx.ca = (fx.ca || 0) + 0.5 * k; }
+    if (s.footage) fx.glitch = (s.fx.glitch || 0) * (0.35 + 0.65 * (Math.sin(t * 37) > 0.55 ? 1 : 0)) + (t - s.t0 < 0.12 ? 0.8 : 0);
+    return fx;
+  }
+  function render(t) {
+    const dt = 1 / 30;
+    if (t >= dt && shots.at(t - dt) === shots.at(t)) { frame(t - dt); post.capturePrev(camera); } else post.clearPrev();
+    frame(t);
+    post.render(scene, camera, fxAt(t));
+  }
+
+  // sample caption words from the approved script (no voice yet)
+  const W = (pairs, who = 'narrator') => ({ who, start: pairs[0][1], end: pairs[pairs.length - 1][1] + 0.4, words: pairs.map(([w, s]) => ({ w, start: s })) });
+  const narration = { lines: [
+    W([['the', 0.5], ['sea', 0.75], ['turns', 1.05], ['red…', 1.35]]),
+    W([['and', 2.15], ['everyone', 2.4], ['walks', 2.85], ['into', 3.1], ['it', 3.3]]),
+    W([['in', 3.6], ['their', 3.8], ['sleep.', 4.05]]),
+    W([['so', 5.1], ['tonight,', 5.35], ['I', 5.75], ['hid', 5.95], ['under', 6.15], ['the', 6.35], ['pier,', 6.45]]),
+    W([['except', 6.75], ['Milo.', 7.15], ['still', 7.6], ['ten', 7.85], ['steps', 8.05]]),
+    W([['just', 8.35], ['me.', 8.6]]),
+  ] };
+
+  const player = RT.player.start({
+    name: 'looktest', duration: DURATION, renderer, scene, camera, frame, render, narration, speakers: {},
+    black: (t) => clamp(1 - t / 0.25, 0, 1), white: () => 0,
+    menu: { title: 'The Midnight Sea', sub: 'Look test: red and black, glow, depth blur, motion blur, whip pans, glitch.' },
+    thumbnail() { render(5.6); },
+  });
+  // phone-footage overlay (REC + timestamp), shown only in the footage shot
+  const stage = document.getElementById('stage');
+  rec = document.createElement('div');
+  rec.innerHTML = '<div style="position:absolute;left:7%;top:6%;display:flex;align-items:center;gap:calc(var(--u)*1.6);font:800 calc(var(--u)*4.2) Inter,system-ui,sans-serif;color:#fff;text-shadow:0 0 6px #000"><span style="width:calc(var(--u)*3);height:calc(var(--u)*3);border-radius:50%;background:#ff2a2a;display:inline-block"></span>REC</div>' +
+    '<div class="ts" style="position:absolute;right:7%;top:6%;font:700 calc(var(--u)*4) ui-monospace,Menlo,monospace;color:#fff;text-shadow:0 0 6px #000">00:00:47</div>' +
+    '<div style="position:absolute;inset:4%;border:calc(var(--u)*0.5) solid rgba(255,255,255,0.75);clip-path:polygon(0 0,12% 0,12% 0.6%,0.9% 0.6%,0.9% 7%,0 7%,0 93%,0.9% 93%,0.9% 99.4%,12% 99.4%,12% 100%,0 100%,0 0,100% 0,100% 7%,99.1% 7%,99.1% 0.6%,88% 0.6%,88% 0,100% 0,100% 100%,88% 100%,88% 99.4%,99.1% 99.4%,99.1% 93%,100% 93%,100% 100%)"></div>';
+  rec.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;';
+  stage.insertBefore(rec, document.getElementById('cap'));
+})();
+</script>
+</body>
+</html>

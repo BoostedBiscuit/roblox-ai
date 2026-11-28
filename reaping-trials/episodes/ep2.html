@@ -1,0 +1,704 @@
+<!--
+=====================================================================================
+THE REAPING TRIALS · EPISODE 2 · THE CAPITAL
+1080 × 1920 · 30 fps · about 2:00 (max 3:00)
+Render:  npm run render -- reaping-ep2        → out/reaping-trials/ep2.mp4 (+ ep2-no-voice.mp4, ep2-voice.mp3)
+Voice:   npm run narrate -- ep2                (after changing NARRATION lines)
+
+=== VOICE ===  (narrator of this episode: name + ElevenLabs voice id [+ rant=1.3: sped up 1.3x, pitch rises with it]; without this block voice.json decides)
+Adam  pNInz6obpgDQGcFmaJgB  rant=1.3
+=== END ===
+
+=== NARRATION ===  (start: seconds, or +gap after the previous line · who: narrator = big captions, others = speaker subtitle · *word* = yellow · word⬆ = the voice rises)
+at     who       text
++0.6   narrator  In this town? Nobody has ever been *hungry.* Not once.
++0.4   narrator  My name is Rhea Vance. Three days ago, I took my little brother's place in the Trials.
++2.35  narrator  The train took me straight to the Capital. Glass towers. Golden streets. And everyone was *staring* at me.
++0.75  narrator  Old Haskin came with me. He's supposed to keep me alive.
++0.55  haskin    Rule one, kid. Trust nobody in this city. *Especially* the ones who smile.
++1.15  narrator  That's when I met Dax Morrow. Sector 1. They train their kids for the Trials their whole lives.
++0.65  dax       Sector 7? Did you bring your pitchfork, farm girl?
++0.75  narrator  Everyone laughed. I didn't.
++2.25  narrator  Training started the next morning. Swords. Ropes. Climbing walls. I was *terrible* at all of it.
++0.75  narrator  And Dax hit every single target… without ever taking his eyes off me.
++0.95  narrator  But in the corner, a quiet girl was building something out of scrap metal.
++0.65  juno      Step on the wire, the net drops. Simple.
++1.35  narrator  Juno Castell. Sector 3. Nobody was watching her. Except me.
++1.55  narrator  On the last day, we had to show the Council our best skill.
++0.65  narrator  I picked up a bow… and missed. Three times.
++1.15  narrator  So I pulled out the sling I use to chase crows off the wheat… and hit the center. From *fifty* steps.
++1.35  narrator  Up on the balcony, Vire stopped smiling.
++2.35  narrator  That night were the interviews. Bright lights. Cameras. The whole nation watching.
++0.75  vire      So, Rhea. You took your brother's place. Are you brave… or just foolish?
++0.85  rhea      I keep my promises.
++0.95  narrator  The crowd went *wild.* For one second, I forgot where I was.
++1.15  narrator  Then it was Dax's turn.
++0.55  dax       Scared? Me? I've been waiting for this my whole life.
++0.95  narrator  But his hands were shaking. Just like Pip's.
++2.35  narrator  Later, Haskin found me on the roof. He didn't have his flask.
++0.75  haskin    They changed the arena this year, kid. And they built it… for *you.*
++1.55  narrator  Tomorrow, the Trials begin.
+=== END ===
+
+=== CUE SHEET ===  (time, sound, volume, options; music 0.50 = 50 %; see the trailer for all options)
+time    sound                     volume  options
+0.00    music:dreamcore           0.50    from=0 fadein=1.5 fadeout=117.60-119.60 duck=0.7
+0.00    title_boom                1.00    align=onset dur=1.6 fadeout=0.7
+0.60    city_hum                  0.22    dur=33.77 loop fadein=1.0 fadeout=1.0
+4.28    train_glide               0.55    dur=4.2 fadeout=1.2
+7.87    whoosh                    0.40    align=peak
+9.77    train_doors               0.60    dur=2.2 fadeout=0.5
+10.22   footsteps_stone           0.30    dur=7.5 loop fadeout=0.6
+13.41   crowd_murmur              0.28    dur=4.0 fadein=0.4 fadeout=1.0
+22.45   footsteps_stone           0.28    dur=5.2 loop fadeout=0.6
+22.50   braam_hit                 0.45    align=onset dur=1.6 fadeout=0.8
+30.73   crowd_murmur              0.38    dur=2.4 fadeout=0.8
+32.46   heartbeat                 0.45    dur=1.3 fadeout=0.3
+34.37   whoosh                    0.45    align=peak
+35.77   arrow_whoosh              0.30
+36.07   arrow_thunk               0.50    dur=0.7 fadeout=0.2
+36.25   sword_swing               0.80
+36.40   body_thump                0.45    dur=0.6 fadeout=0.2
+36.74   arrow_thunk               0.50    dur=0.5 fadeout=0.2
+36.97   sling_whoosh              0.40
+37.20   body_thump                0.55    dur=0.8 fadeout=0.3
+37.85   whoosh                    0.35    align=peak
+38.22   body_thump                0.80    dur=1.0 fadeout=0.3
+40.50   arrow_whoosh              0.60
+40.80   arrow_thunk               0.80    dur=0.7 fadeout=0.2
+41.44   arrow_whoosh              0.60
+41.74   arrow_thunk               0.80    dur=0.7 fadeout=0.2
+42.58   arrow_whoosh              0.60
+42.88   arrow_thunk               0.80    dur=0.7 fadeout=0.2
+44.65   trap_click                0.25
+48.35   sling_whoosh              0.35
+48.77   trap_click                0.80
+49.32   net_drop                  0.85    dur=1.2 fadeout=0.3
+55.88   whoosh                    0.40    align=peak
+56.18   fanfare                   0.30    dur=2.6 fadeout=1.0
+60.88   arrow_whoosh              0.60
+61.24   arrow_thunk               0.45    dur=0.6 fadeout=0.2
+61.55   arrow_whoosh              0.60
+61.91   arrow_thunk               0.45    dur=0.6 fadeout=0.2
+62.09   arrow_whoosh              0.60
+62.45   arrow_thunk               0.45    dur=0.6 fadeout=0.2
+63.19   body_thump                0.30    dur=0.6 fadeout=0.2
+64.75   sling_whoosh              0.45
+65.20   sling_whoosh              0.50
+65.65   sling_whoosh              0.55
+66.12   sling_whoosh              0.80
+66.52   arrow_thunk               1.00    dur=0.8 fadeout=0.2
+66.52   braam_hit                 0.60    align=onset dur=1.8 fadeout=0.8
+66.67   crowd_gasp                0.35    dur=1.6 fadeout=0.6
+69.21   heartbeat                 0.50    dur=2.6 fadeout=0.4
+73.39   whoosh                    0.45    align=peak
+73.39   crowd_murmur              0.30    dur=13.95 loop fadein=0.6 fadeout=0.6
+77.02   camera_shutter            0.60
+77.34   camera_shutter            0.50
+79.60   mic_tap                   0.35    dur=0.6
+87.25   crowd_cheer               0.95    dur=4.2 fadeout=1.2
+95.97   crowd_cheer               0.45    dur=2.0 fadeout=0.8
+97.02   heartbeat                 0.60    dur=2.6 fadeout=0.4
+101.30  whoosh                    0.40    align=peak
+101.30  wind_night                0.30    dur=17.30 loop fadein=1.0 fadeout=1.5
+107.07  braam_hit                 0.80    align=onset dur=1.8 fadeout=0.8
+108.83  riser                     0.45    dur=2.6 fadeout=0.3
+113.20  title_boom                1.00    align=onset
+=== END ===
+
+Every episode opens with the narrator saying "In this town…" (line 0) and has dreamcore.mp3 under the whole episode at 50 %.
+SHOTS follow the narration automatically (S(n) / E(n) = start / end of story line n, W(n, 'word') = when that word is said).
+Places (capital.js): the city + station (morning), the training court (morning), the interview stage (night), the rooftop (night).
+=====================================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>The Reaping Trials · Episode 2</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../fonts/fonts.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../scenery.js"></script>
+<script src="../capital.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../audio/voice/ep2_narration.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { clamp, lerp, ease, easeOut } = RT, C = RT.characters, A = RT.anim, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const RENDER = RT.player.RENDER || !!RT.player.THUMB;
+
+  // ---------- narration timing (L(0) = "In this town…", L(n) = story line n) ----------
+  const NAR = window.RT_NARRATION.ep2, L = (n) => NAR.lines[n], S = (n) => L(n).start, E = (n) => L(n).end;
+  const W = (n, w) => { const x = L(n).words.find((k) => k.w.toLowerCase().replace(/[^a-z0-9']/g, '') === w); return x ? x.start : S(n); };
+  const TITLE_T = E(26) + 1.6, DURATION = +(TITLE_T + 6.4).toFixed(2);
+
+  // ---------- renderer, camera, light ----------
+  const renderer = RT.mood.renderer(null, { preserve: RENDER });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.1, 4200);
+  const env = RT.mood.create(scene, renderer, { mood: 'studio', shadowSize: 2048 });
+  const key = new THREE.DirectionalLight('#fff1e0', 0); scene.add(key); scene.add(key.target);   // soft face light for close-ups (no shadows)
+  const MOOD = RT.capital.MOODS;
+
+  // ---------- places (one city; each place is centered in its middle) ----------
+  const city = RT.capital.skyline(); scene.add(city);
+  const station = RT.capital.station(), court = RT.capital.trainingCourt(), show = RT.capital.showStage(), roof = RT.capital.rooftop();
+  const SETS = { city: station, court, show, roof };
+  for (const k in SETS) { scene.add(SETS[k]); SETS[k].visible = false; }
+  const CS = court.spots, SS = show.spots, RS = roof.spots, RY = RS.Y;
+
+  // ---------- cast ----------
+  const rhea = C.rhea(), haskin = C.haskin(), dax = C.dax(), juno = C.juno(), vire = C.vire();
+  rhea.name = 'Rhea'; haskin.name = 'Haskin'; dax.name = 'Dax'; juno.name = 'Juno'; vire.name = 'Vire';
+  const yawTo = (from, to) => Math.atan2(to[0] - from[0], to[2] - from[2]);
+  const head = (ch, dy = 0) => { const v = new THREE.Vector3(); ch.rig.head.getWorldPosition(v); v.y += dy; return v; };
+  const handPos = (ch, side = 'R') => { const v = new THREE.Vector3(); (side === 'L' ? ch.rig.handL : ch.rig.handR).getWorldPosition(v); return v; };
+  // Haskin's flask moves into his right hand (he has it at the station, NOT on the roof)
+  const flask = haskin.rig.props.flask; flask.parent.remove(flask); haskin.rig.hold('R', flask); flask.position.set(0, -0.1, 0.05); flask.rotation.set(0, Math.PI / 2, 0);
+  // props: a training sword, two bows, a sling, Juno's rod
+  const wood = RT.plastic('#8a5a34', { roughness: 0.6 }), steel = RT.metal('#d5dae2', { roughness: 0.25 }), goldM = RT.metal('#e2b54a');
+  const sword = new THREE.Group(); sword.add(RT.mesh(new THREE.BoxGeometry(0.1, 1.35, 0.22), steel).translateY(0.85)); sword.add(RT.mesh(new THREE.BoxGeometry(0.5, 0.08, 0.12), goldM).translateY(0.16)); sword.add(RT.mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.32, 8), wood));
+  rhea.rig.hold('R', sword); sword.rotation.set(Math.PI / 2, 0, 0); sword.position.set(0, -0.05, 0.05);
+  // bow: the arc's belly is at the grip (origin) and points forward (+z), the string 0.66 behind it, limbs up and down
+  const strM = RT.plastic('#f2efe8'), Y_UP = new THREE.Vector3(0, 1, 0);
+  const seg = (m, a, b) => { const d = b.clone().sub(a), L = d.length(); m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(Y_UP, d.normalize()); m.scale.set(1, L, 1); };
+  const makeBow = () => { const b = new THREE.Group(), inner = new THREE.Group(); b.add(inner); inner.rotation.y = -Math.PI / 2;
+    const arc = RT.mesh(new THREE.TorusGeometry(0.95, 0.045, 6, 24, Math.PI * 0.8), wood); arc.rotation.z = -Math.PI * 0.4; arc.position.x = -0.95; inner.add(arc);
+    const str = RT.mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.8, 4), strM); str.position.x = 0.95 * Math.cos(Math.PI * 0.4) - 0.95; inner.add(str);
+    inner.add(RT.mesh(new THREE.BoxGeometry(0.14, 0.3, 0.14), goldM)); scene.add(b);
+    const sA = RT.mesh(new THREE.CylinderGeometry(0.013, 0.013, 1, 4), strM, false), sB = sA.clone(); scene.add(sA, sB); sA.visible = sB.visible = false;
+    b.userData = { str, sA, sB, tips: [V3(0, 0.9035, -0.656), V3(0, -0.9035, -0.656)] };
+    return b; };
+  // the string: straight (rest) or pulled back to the drawing hand (nock = world point)
+  const setString = (bow, nock) => { const u = bow.userData; u.str.visible = bow.visible && !nock; u.sA.visible = u.sB.visible = bow.visible && !!nock;
+    if (!nock || !bow.visible) return; bow.updateMatrixWorld(true); seg(u.sA, bow.localToWorld(u.tips[0].clone()), nock); seg(u.sB, nock, bow.localToWorld(u.tips[1].clone())); };
+  const daxBow = makeBow(), rheaBow = makeBow();
+  const holdBow = (bow, ch) => { if (!bow.visible) return; ch.updateMatrixWorld(true); bow.position.copy(handPos(ch, 'L')); bow.rotation.set(0, ch.rotation.y, 0); };
+  const fwd = (ch) => V3(Math.sin(ch.rotation.y), 0, Math.cos(ch.rotation.y));
+  const sling = new THREE.Group(); sling.add(RT.mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.9, 4), RT.plastic('#7a5233')).translateY(-0.45));
+  sling.add(RT.mesh(new THREE.SphereGeometry(0.1, 8, 6), RT.plastic('#6b3b22')).translateY(-0.92)); rhea.rig.hold('R', sling);
+  const whirl = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.035, 4, 40), new THREE.MeshBasicMaterial({ color: '#f2e6c8', transparent: true, opacity: 0.45 })); whirl.rotation.x = Math.PI / 2; scene.add(whirl);
+  const rod = RT.mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.6, 6), RT.metal('#9aa3ad')); rod.rotation.x = Math.PI / 2; rod.position.set(0, -0.08, 0.75); juno.rig.hold('R', rod);
+  // the Capital: rich citizens (bright clothes) at the station, guards, other tributes, the Council
+  const citizens = [[-3, -3.2], [-5.5, 0.5], [-1.5, 4.2], [1.0, 5.6], [5.5, 5.8], [-7.5, -1.8], [-3, 7.4], [9.5, 5.6], [-6, 5], [1.2, -4.6], [12.5, 4.0], [-9.5, 2.6]]
+    .map(([x, z], i) => { const c = C.citizen(500 + i * 7, { palette: 'capital', kid: false }); c.name = 'Citizen ' + (i + 1); scene.add(c); return { c, x, z, i }; });
+  const guards = [[-8, -3.6], [16.5, -3.6]].map(([x, z], i) => { const g = C.guard({ seed: 40 + i }); g.name = 'Guard ' + (i + 1); scene.add(g); return { g, x, z }; });
+  const s1a = C.tribute(1, 3), s1b = C.tribute(1, 8, { hair: 'spiky' }); s1a.name = 'Sector 1 A'; s1b.name = 'Sector 1 B';
+  const trainees = [C.tribute(2, 4), C.tribute(4, 6), C.tribute(5, 2), C.tribute(6, 9), C.tribute(8, 5)]; trainees.forEach((x, i) => (x.name = 'Trainee ' + (i + 1)));
+  const council = [C.citizen(901, { palette: 'capital', top: 'vest', kid: false }), C.citizen(907, { palette: 'capital', top: 'shirt', kid: false }), C.citizen(913, { palette: 'capital', top: 'vest', kid: false })];
+  council.forEach((x, i) => (x.name = 'Councillor ' + (i + 1)));
+  const PEOPLE = [rhea, haskin, dax, juno, vire, s1a, s1b, ...trainees, ...council];
+  for (const p of PEOPLE) scene.add(p);
+  const sliders = [whirl];
+  const trBows = [0, 1].map(() => makeBow());
+
+  // who is speaking (Adam voices every line; the character's mouth moves on their own lines)
+  const SPEAK = { haskin: [haskin], dax: [dax], juno: [juno], vire: [vire], rhea: [rhea] };
+  function lips(t) {
+    for (const k in SPEAK) for (const ch of SPEAK[k]) ch.rig.setMouth(false);
+    const l = NAR.lines.find((x) => SPEAK[x.who] && t >= x.start && t < x.end);
+    if (!l) return;
+    const n = Math.floor(t * 7.5), open = RT.hash(n * 3.1 + l.start) > 0.3 && t * 7.5 - n < 0.72;
+    for (const ch of SPEAK[l.who]) ch.rig.setMouth(open);
+  }
+
+  // =====================================================================================
+  // THE STATION (lines 0–7). The train glides in from the east and stops at x = 0; doors open at DOOR_T.
+  // =====================================================================================
+  const T_ARR = S(2) - 0.5, DOOR_T = S(2) - 0.35;
+  const trainX = (t) => 260 * Math.pow(1 - clamp(t / T_ARR, 0, 1), 3);
+  const RHEA_C = [3.4, 0, 0.6], HASK_C = [4.9, 0, 1.5], DAX_C = [7.2, 0, 1.0];
+  const playRheaC = A.actor(rhea, [
+    { at: 0, pos: [3.95, 0, -9.0], yaw: 0, move: 'idle', face: 'neutral' },
+    { at: DOOR_T + 0.45, to: [3.95, 0, -5.6], speed: 1.4, gait: 'walk', move: 'look', opts: { turn: 0.25, nod: -0.4, dur: 0.6 }, yaw: 0.1 },
+    { at: W(2, 'glass') - 0.1, to: RHEA_C, speed: 1.25, gait: 'walk', move: 'look', opts: { turn: -0.2, nod: -0.25 }, yaw: 0.25, face: 'neutral' },
+    { at: S(4) - 0.4, yaw: yawTo(RHEA_C, HASK_C), move: 'idle', face: 'neutral' },
+    { at: S(5) - 0.1, yaw: yawTo(RHEA_C, DAX_C), move: 'idle', face: 'neutral' },
+    { at: S(6) + 0.3, move: 'idle', face: 'determined' },
+  ]);
+  const playHaskinC = A.actor(haskin, [
+    { at: 0, pos: [4.05, 0, -9.2], yaw: 0, move: 'idle', face: 'neutral' },
+    { at: DOOR_T + 1.6, to: [4.05, 0, -5.4], speed: 1.2, gait: 'walk', move: 'idle' },
+    { at: DOOR_T + 3.0, to: HASK_C, speed: 1.2, gait: 'walk', move: 'idle', yaw: yawTo(HASK_C, RHEA_C) },
+    { at: S(4) - 0.1, move: 'talk', opts: { seed: 2 }, face: 'neutral' },
+    { at: E(4) + 0.2, move: 'idle', yaw: yawTo(HASK_C, DAX_C) },
+  ]);
+  const playDaxC = A.actor(dax, [
+    { at: 0, pos: [12.6, 0, -9.0], yaw: 0, move: 'idle', face: 'smirk' },
+    { at: S(5) - 0.5, to: [12.6, 0, -5.8], speed: 1.5, gait: 'walk', move: 'idle', yaw: yawTo([12.6, 0, -5.8], RHEA_C) },
+    { at: S(5) + 0.9, via: [[11.8, 0, 0.2]], to: DAX_C, speed: 1.45, gait: 'walk', move: 'handsOnHips', yaw: yawTo(DAX_C, RHEA_C), face: 'smirk' },   // (around the canopy column at x 10)
+    { at: S(6) - 0.1, move: 'talk', opts: { seed: 5 } },
+    { at: E(6) + 0.1, move: 'laugh' },
+    { at: E(7) - 0.2, move: 'crossArms', face: 'smirk' },
+  ]);
+  const S1A_C = [9.6, 0, 2.8], S1B_C = [10.4, 0, 0.7];
+  const playS1a = A.actor(s1a, [{ at: 0, pos: [20.6, 0, -9.0], yaw: 0, move: 'idle', face: 'smirk' }, { at: S(5) + 0.3, to: [20.6, 0, -5.8], speed: 1.4, gait: 'walk' }, { at: S(5) + 2.2, to: S1A_C, speed: 1.6, gait: 'walk', move: 'crossArms', yaw: yawTo(S1A_C, RHEA_C) }, { at: E(6) + 0.1, move: 'laugh' }]);
+  const playS1b = A.actor(s1b, [{ at: 0, pos: [20.6, 0, -9.2], yaw: 0, move: 'idle', face: 'smirk' }, { at: S(5) + 0.9, to: [20.6, 0, -5.8], speed: 1.4, gait: 'walk' }, { at: S(5) + 2.5, to: S1B_C, speed: 1.6, gait: 'walk', move: 'handsOnHips', yaw: yawTo(S1B_C, RHEA_C) }, { at: E(6) + 0.15, move: 'laugh' }]);
+  function cityCast(t) {
+    station.update(t, { trainX: trainX(t), doors: ease(clamp((t - DOOR_T) / 0.6, 0, 1)) });
+    playRheaC(t); playHaskinC(t); playDaxC(t); playS1a(t); playS1b(t);
+    rhea.visible = t > DOOR_T + 0.25; haskin.visible = t > DOOR_T + 1.3; dax.visible = s1a.visible = s1b.visible = t > S(5) - 0.7;
+    // citizens stare at Rhea (some point, some whisper), then laugh with Dax
+    const rp = rhea.position;
+    for (const { c, x, z, i } of citizens) {
+      c.visible = true; c.position.set(x, 0, z); c.rotation.y = yawTo([x, 0, z], [rp.x, 0, rp.z]) + (i % 3 - 1) * 0.15;
+      const laugh = t > E(6) + 0.1 + (i % 4) * 0.08 && t < E(7) + 0.6;
+      if (laugh) A.set(c, 'laugh', t - E(6) + i * 0.13);
+      else if (i % 4 === 1 && t > S(2) + 3) A.set(c, 'point', t - S(2) - 3);
+      else A.set(c, i % 3 === 0 ? 'crossArms' : 'idle', t + i);
+      c.rig.setFace(laugh ? 'smiling' : i % 2 ? 'smirk' : 'neutral');
+      c.rig.update(t);
+    }
+    for (const { g, x, z } of guards) { g.visible = true; g.position.set(x, 0, z); g.rotation.y = Math.PI * 0.15 * Math.sign(-x); A.set(g, 'idle', t + x); g.rig.update(t); }
+    flask.visible = true; sword.visible = daxBow.visible = rheaBow.visible = sling.visible = rod.visible = false;
+    for (const p of [rhea, haskin, dax, s1a, s1b]) p.rig.update(t);
+  }
+
+  // =====================================================================================
+  // THE TRAINING COURT (lines 8–16). Every action is one continuous, eased performance (keyframed poses that blend
+  // smoothly), so each cut lands inside a fluid motion. The montage uses three "takes" of Rhea (one per station).
+  // =====================================================================================
+  const COURT_T = S(8) - 0.9;
+  const M_SW = W(8, 'swords') - 0.15, M_RO = W(8, 'ropes') - 0.12, M_CL = W(8, 'climbing') - 0.12, M_TER = W(8, 'i') - 0.12;
+  const DUMMY1 = [-14.5, 0, 15.6], ROPE_AT = [-5.3, 0, 10.05], WALL_AT = [-13, 0, 7.75];
+  const DAX_LINE = [12.5, 0, 30.2], TGT = V3(12.5, 2.0, 7.95), RHEA_LINE = [12.5, 0, 33.6];
+  const RHEA_WATCH = [-12.6, 0, 27.4], JUNO_BENCH = [CS.JX, 0, CS.JZ + 1.3], WIRE = V3(CS.NET.x, 0.25, CS.NET.z);
+  const NET_DROP = W(11, 'drops') - 0.12;                                     // the trap springs (the net starts to fall)
+  const DAX_SHOTS = [COURT_T + 1.4, W(9, 'hit') - 0.05, W(9, 'target') + 0.2, W(9, 'eyes') - 0.1];
+  const RHEA_SHOTS = [W(14, 'missed') - 0.1, W(14, 'three') - 0.05, W(14, 'times') + 0.25];
+  const SLING_T = W(15, 'chase') - 0.35, THROW = W(15, 'center') - 0.42, HIT = THROW + 0.4;
+  const MISS = [V3(10.6, 0.06, 12.4), V3(15.6, 3.2, 5.4), V3(13.9, 0.06, 10.2)];
+  const DAX_HITS = [V3(-0.2, 0.25, 0), V3(0.12, 0.08, 0), V3(-0.1, -0.05, 0), V3(0.03, 0.16, 0)];
+  const LAST_T = S(13) - 0.7;                          // the last day: the court is empty, only Rhea and the Council
+  // --- keyframed poses: keys = [[time, pose], …]; values blend with an ease between neighbouring keys ---
+  const keyPose = (keys, lt) => {
+    if (lt <= keys[0][0]) return Object.assign({}, keys[0][1]);
+    for (let i = 0; i < keys.length - 1; i++) { const [ta, a] = keys[i], [tb, b] = keys[i + 1]; if (lt < tb) return A.mix(a, b, ease((lt - ta) / (tb - ta))); }
+    return Object.assign({}, keys[keys.length - 1][1]);
+  };
+  // --- the montage takes of Rhea, the effects ---
+  const rheaSw = C.rhea(), rheaRo = C.rhea(), rheaCl = C.rhea(); rheaSw.name = 'Rhea (sword)'; rheaRo.name = 'Rhea (rope)'; rheaCl.name = 'Rhea (wall)';
+  for (const x of [rheaSw, rheaRo, rheaCl]) { scene.add(x); PEOPLE.push(x); }
+  rheaSw.rig.hold('R', sword);
+  const FX = RT.capital.fx;
+  const straw = FX.burst('#e6c46a', 18, 0.12), straw2 = FX.burst('#e6c46a', 10, 0.1), chips = FX.burst('#caa070', 14, 0.1), chips2 = FX.burst('#caa070', 8, 0.09), chips3 = FX.burst('#caa070', 8, 0.09), stoneChips = FX.burst('#f3e2b0', 22, 0.13);
+  const dustWall = FX.puffs('#eef0f4', 10), dustRope = FX.puffs('#eef0f4', 8), dustNet = FX.puffs('#efe7d6', 12), dustBow = FX.puffs('#eef0f4', 6);
+  const swing = FX.arc('#e8f6ff'), sStone = FX.streak('#fff3c8');
+  const gear = RT.mesh(new THREE.TorusGeometry(0.13, 0.05, 6, 10), RT.metal('#c8743a'));
+  for (const o of [straw, straw2, chips, chips2, chips3, stoneChips, dustWall, dustRope, dustNet, dustBow, swing, sStone, gear]) { scene.add(o); o.visible = false; }
+  const COURT_FX = [straw, straw2, chips, chips2, chips3, stoneChips, dustWall, dustRope, dustNet, dustBow, swing, sStone, gear];
+  // arrows: a pool (shaft along +z, tip forward) with a motion streak each
+  const makeArrow = () => { const a = new THREE.Group(); a.add(RT.mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4, 6), RT.plastic('#f2efe8')).rotateX(Math.PI / 2));
+    const tip = RT.mesh(new THREE.ConeGeometry(0.07, 0.2, 6), RT.metal('#cfd5dd')); tip.rotation.x = Math.PI / 2; tip.position.z = 0.78; a.add(tip);
+    const f = RT.mesh(new THREE.BoxGeometry(0.02, 0.16, 0.3), RT.plastic('#c0262f')); f.position.z = -0.6; a.add(f); a.visible = false; scene.add(a);
+    const st = FX.streak('#ffffff'); scene.add(st); a.userData.streak = st; COURT_FX.push(a, st); return a; };
+  const ARROWS = Array.from({ length: 14 }, makeArrow);
+  // an arrow: nocked → flies (with a streak) → sticks and quivers
+  const flyArrow = (a, t0, from, to, t, dur) => {
+    const st = a.userData.streak;
+    if (t < t0) { a.visible = false; st.visible = false; return; }
+    const k = clamp((t - t0) / dur, 0, 1), p = from.clone().lerp(to, k), dir = to.clone().sub(from).normalize(); p.y += Math.sin(k * Math.PI) * from.distanceTo(to) * 0.025;
+    a.visible = true; a.position.copy(p); a.lookAt(p.clone().add(dir));
+    if (k >= 1) { const q = t - t0 - dur, w = Math.sin(q * 45) * 0.06 * Math.exp(-q * 7); a.rotateX(w); a.rotateY(w * 0.6); st.visible = false; }
+    else st.set(from.clone().lerp(to, Math.max(0, k - 0.22)), p, 0.55);
+  };
+  const nockArrow = (a, nock, grip) => { if (!nock) return; const dir = grip.clone().sub(nock).normalize(); a.visible = true; a.userData.streak.visible = false; a.position.copy(nock).addScaledVector(dir, 0.72); a.lookAt(nock.clone().addScaledVector(dir, 3)); };
+  // archery: the bow arm stays up; the right hand draws back to the cheek, snaps on the release, follows through
+  const BOW_ARM = { aLf: 1.55, aLo: -0.05, aLt: 0.2, eL: 0.05, wy: 0.32, lLo: 0.12, lRo: 0.12, hx: -0.04 };
+  const NOCK = Object.assign({}, BOW_ARM, { aRf: 1.52, aRo: 0.08, eR: 0.35 }), DRAWN = Object.assign({}, BOW_ARM, { aRf: 1.47, aRo: -0.32, eR: 2.0, hx: -0.06 }), FOLLOW = Object.assign({}, BOW_ARM, { aRf: 1.3, aRo: -0.8, eR: 1.25 });
+  const archState = (t, rels, drawT = 0.6, gap = 0.35) => {
+    let prev = -99;
+    for (const rel of rels) { const st = Math.max(prev + gap, rel - drawT);
+      if (t < st) return { d: 0, f: prev > -99 && t < prev + 0.35 ? 1 - ease((t - prev) / 0.35) : 0, drawing: false };
+      if (t < rel) return { d: ease((t - st) / (rel - st)), f: 0, drawing: true };
+      prev = rel; }
+    return { d: 0, f: t < prev + 0.35 ? 1 - ease((t - prev) / 0.35) : 0, drawing: false };
+  };
+  const archer = (ch, bow, t, rels, look, o = {}) => {
+    const s0 = archState(t, rels, o.drawT, o.gap), P = A.mix(A.mix(NOCK, DRAWN, s0.d), FOLLOW, s0.f);
+    P.hy = look; P.y = Math.sin(t * 2) * 0.01; A.apply(ch, P); ch.rig.update(t); ch.updateMatrixWorld(true);
+    bow.visible = true; holdBow(bow, ch);
+    const nock = s0.d > 0.03 ? handPos(ch, 'R') : null; setString(bow, nock); return { s: s0, nock, grip: bow.position.clone() };
+  };
+  const wobble = (g, hits, t, amt = 0.08) => { let w = 0; for (const h of hits) if (t > h && t < h + 0.8) w += Math.sin((t - h) * 42) * amt * Math.exp(-(t - h) * 6); g.rotation.set(w, 0, w * 0.4); };
+  // --- the sword take: ready → wind-up → strike (straw flies) → the dummy's arm swings round and bonks her ---
+  const SW0 = M_SW - 0.5, SW_HIT = SW0 + 0.58, SW_BONK = SW0 + 0.92;
+  const SW_KEYS = [
+    [0.0, { aRf: 0.9, eR: 0.6, aRo: 0.1, aLf: 0.5, eL: 0.6, lLf: 0.3, lRf: -0.2, kL: 0.15, kR: 0.1, hx: 0.05, face: 'determined' }],
+    [0.4, { aRf: 2.9, aRo: -0.25, eR: 0.5, wy: 0.35, lean: -0.08, aLf: 0.7, eL: 0.6, lLf: 0.35, lRf: -0.25, kL: 0.2, face: 'determined' }],
+    [0.58, { aRf: 0.75, aRo: 0.3, eR: 0.1, wy: -0.4, lean: 0.18, aLf: 0.2, lLf: 0.55, lRf: -0.35, kL: 0.45, hx: 0.15, face: 'determined' }],
+    [0.78, { aRf: 0.35, aRo: 0.5, eR: 0.15, wy: -0.55, lean: 0.24, lLf: 0.6, lRf: -0.4, kL: 0.5, hx: 0.2, face: 'determined' }],
+    [0.95, { lean: -0.28, hx: -0.4, hz: 0.2, aLf: 1.3, aRf: 0.7, aLo: 0.5, aRo: 0.6, eL: 0.4, lLf: -0.35, lRf: 0.35, y: -0.05, face: 'shocked' }],
+    [1.35, { lean: -0.12, hx: -0.15, hz: 0.12, aLf: 1.6, eL: 1.8, aLt: 0.6, aRf: 0.4, aRo: 0.3, lLf: -0.15, lRf: 0.2, face: 'sad' }],
+  ];
+  // --- the rope take: hand over hand up → hands slip → slides down → lands on the mat ---
+  const RO0 = M_RO - 0.6, RO_SLIP = RO0 + 0.75, RO_LAND = RO0 + 0.98, MAT_Y = 0.35;
+  const ropeY = (lt) => lt < 0.75 ? lerp(0.7, 1.9, ease(lt / 0.75)) : lt < 0.98 ? 1.9 - (1.9 - MAT_Y) * ((lt - 0.75) / 0.23) ** 2 : MAT_Y;
+  // --- the wall take: climbs smoothly → reaches → the hold slips → falls backward onto the crash mat → lies there → sits up ---
+  const CL0 = M_CL - 0.9, CL_SLIP = W(8, 'walls') - 0.03, CL_LAND = CL_SLIP + 0.42, CL_UP = W(9, 'and') - 0.9;
+  const wallY = (t) => t < CL_SLIP - 0.15 ? lerp(1.0, 2.6, clamp((t - CL0) / (CL_SLIP - 0.15 - CL0), 0, 1)) : 2.6;
+  // --- Juno: tinkers → turns to the trap → tosses a gear onto the wire → the net drops ---
+  const J_TURN = S(11) - 0.5, J_THROW = NET_DROP - 0.42;
+  const playJuno = (t) => {
+    juno.position.set(...JUNO_BENCH);
+    const toWire = yawTo(JUNO_BENCH, [WIRE.x, 0, WIRE.z]), turn = ease(clamp((t - J_TURN) / 0.45, 0, 1));
+    juno.rotation.y = lerp(Math.PI, toWire, turn);
+    let P = A.pose('tinker', t);
+    if (t > J_TURN) { const th = keyPose([[0, { aRf: 0.3, eR: 0.4, hx: 0.1 }], [0.25, { aRf: 2.4, aRo: 0.2, eR: 0.9, wy: 0.25, hx: -0.05 }], [0.42, { aRf: 1.2, aRo: 0.1, eR: 0.1, wy: -0.2, lean: 0.08 }], [0.9, { aRf: 0.2, eR: 0.2, aLf: 0.1, hx: 0.05 }]], t - (J_THROW - 0.25));
+      P = A.mix(P, Object.assign(A.pose('idle', t), th), clamp((t - J_TURN) / 0.3, 0, 1)); }
+    A.apply(juno, P); juno.rig.setFace(t > NET_DROP + 0.6 ? 'smirk' : 'neutral');
+    // the gear: from her hand to the wire
+    gear.visible = t > J_THROW && t < NET_DROP + 0.4;
+    if (gear.visible) { juno.updateMatrixWorld(true); const k = clamp((t - J_THROW) / (NET_DROP - J_THROW), 0, 1), from = V3(juno.position.x + Math.sin(toWire) * 0.5, 2.6, juno.position.z + Math.cos(toWire) * 0.5);
+      gear.position.copy(from.lerp(WIRE, k)); gear.position.y += Math.sin(k * Math.PI) * 1.4 + (t > NET_DROP ? 0 : 0); gear.rotation.set(t * 12, t * 7, 0); if (t > NET_DROP) gear.position.copy(WIRE); }
+    dustNet.set(V3(WIRE.x, 0.1, WIRE.z), t - NET_DROP - 0.55, 1.8);
+  };
+  function courtCast(t) {
+    const testDay = t >= LAST_T;
+    court.update(t, { netT: t - NET_DROP });
+    for (const o of COURT_FX) o.visible = false;
+    rhea.visible = rheaSw.visible = rheaRo.visible = rheaCl.visible = false;
+    sword.visible = rheaBow.visible = sling.visible = whirl.visible = rod.visible = false; daxBow.visible = false; trBows.forEach((b) => (b.visible = false));
+    for (const b of [rheaBow, daxBow, ...trBows]) setString(b, null);
+    if (!testDay) {
+      // ---- the montage takes (each only on screen in its own shot) ----
+      const sh = shots.at(t);
+      if (sh.t0 === M_SW || sh.t0 === COURT_T) {                          // SWORD
+        rheaSw.visible = true; sword.visible = true; rheaSw.position.set(...DUMMY1); rheaSw.rotation.y = Math.PI;
+        const P = keyPose(SW_KEYS, t - SW0); A.apply(rheaSw, P); if (P.face) rheaSw.rig.setFace(P.face); rheaSw.rig.update(t); rheaSw.updateMatrixWorld(true);
+        const sa = clamp(1 - Math.abs(t - SW_HIT + 0.04) / 0.12, 0, 1); if (sa > 0) swing.set(head(rheaSw, -0.75), Math.PI, -0.3, 1.9, 0.7, 2.05, sa * 0.55);
+        straw.set(V3(DUMMY1[0], 2.5, DUMMY1[2] - 1.35), t - SW_HIT, V3(0, 0.3, -1), 3.2);
+        const dz = t - SW_HIT; CS.dummies[0].rotation.set(dz > 0 ? 0.08 * Math.exp(-dz * 5) * Math.sin(dz * 30) : 0, dz > 0 ? 1.7 * Math.exp(-dz * 2.0) * Math.sin(dz * 7.5) : 0, 0);   // the dummy spins: its arm comes round
+      }
+      if (sh.t0 === M_RO) {                                                // ROPE
+        rheaRo.visible = true; const lt = t - RO0; rheaRo.position.set(ROPE_AT[0], ropeY(lt), ROPE_AT[2]); rheaRo.rotation.y = Math.PI;
+        const s1 = Math.sin(lt * 9), slip = clamp((t - RO_SLIP) / 0.1, 0, 1), land = clamp((t - RO_LAND) / 0.15, 0, 1);
+        const climbP = { aLf: 2.85 + s1 * 0.25, aRf: 2.85 - s1 * 0.25, eL: 0.35 + Math.max(0, s1) * 0.4, eR: 0.35 + Math.max(0, -s1) * 0.4, lLf: 0.6, lRf: 0.45, kL: 0.9 + s1 * 0.2, kR: 0.9 - s1 * 0.2, hx: -0.35 };
+        const slipP = { aLf: 3.05, aRf: 3.0, eL: 0.05, eR: 0.05, lLf: 0.25, lRf: 0.15, kL: 0.3, kR: 0.3, hx: -0.5, face: 'shocked' };
+        const landP = { y: -0.45, lLf: 1.1, lRf: 1.0, kL: 1.6, kR: 1.5, aLf: 1.2, aRf: 1.1, aLo: 0.4, aRo: 0.4, eL: 0.3, eR: 0.3, hx: 0.2, lean: 0.15, face: 'shocked' };
+        const P = A.mix(A.mix(climbP, slipP, slip), landP, land); A.apply(rheaRo, P); rheaRo.rig.setFace(slip > 0.5 ? 'shocked' : 'determined'); rheaRo.rig.update(t);
+        dustRope.set(V3(ROPE_AT[0], MAT_Y, ROPE_AT[2]), t - RO_LAND, 1.0);
+      }
+      if (sh.t0 === M_CL || sh.t0 === M_TER) {                             // CLIMBING WALL → fall → lying
+        rheaCl.visible = true;
+        if (t < CL_SLIP) { const y = wallY(t), ph = y * Math.PI * 2.2, sx = Math.sin(ph), reach = clamp((t - (CL_SLIP - 0.32)) / 0.2, 0, 1);
+          rheaCl.position.set(WALL_AT[0], y, WALL_AT[2]); rheaCl.rotation.y = Math.PI;
+          const P = { aLf: 2.75 + sx * 0.3, aRf: lerp(2.75 - sx * 0.3, 3.1, reach), eL: 0.4 + Math.max(0, sx) * 0.5, eR: lerp(0.4 + Math.max(0, -sx) * 0.5, 0.02, reach), lLf: 0.7 + sx * 0.45, lRf: 0.7 - sx * 0.45, kL: 0.9 + sx * 0.4, kR: 0.9 - sx * 0.4, hx: -0.35, lean: -0.05 };
+          A.apply(rheaCl, P); rheaCl.rig.setFace('determined');
+        } else {
+          const k = clamp((t - CL_SLIP) / (CL_LAND - CL_SLIP), 0, 1), up = clamp((t - CL_UP) / 0.7, 0, 1);
+          const bounce = t > CL_LAND ? 0.12 * Math.abs(Math.sin((t - CL_LAND) * 10)) * Math.exp(-(t - CL_LAND) * 6) : 0;
+          rheaCl.position.set(WALL_AT[0], lerp(2.6, MAT_Y, k * k), lerp(WALL_AT[2], WALL_AT[2] + 1.5, ease(k))); rheaCl.rotation.y = Math.PI;
+          const fall = lerp(0, Math.PI / 2, ease(k)) - bounce, sit = lerp(fall, 0.85, ease(up));
+          A.apply(rheaCl, { fallX: sit, lift: 0.5 * Math.sin(sit), aLf: lerp(2.9, 0.6, k) + Math.sin(t * 14) * 0.2 * (1 - k), aRf: lerp(3.0, 0.5, k) - Math.sin(t * 14) * 0.2 * (1 - k), aLo: 0.4 * k, aRo: 0.4 * k, lLf: lerp(0.6, 0.15, k) + 0.6 * up, lRf: lerp(0.4, 0.1, k) + 0.5 * up, kL: 0.8 * up, kR: 0.7 * up, hx: -0.2 + 0.4 * up, eL: 0.3, eR: 0.3 });
+          rheaCl.rig.setFace(up > 0.3 ? 'sad' : 'shocked');
+          dustWall.set(V3(WALL_AT[0], MAT_Y, WALL_AT[2] + 1.6), t - CL_LAND, 1.3);
+        }
+        rheaCl.rig.update(t);
+      }
+      if (t >= M_TER + 1.6 && t < S(10) - 0.2) { rheaSw.visible = true; sword.visible = true; rheaSw.position.set(...DUMMY1); rheaSw.rotation.y = Math.PI;   // (seen far behind Dax)
+        A.set(rheaSw, 'swordSwing', t, { every: 1.3 }); rheaSw.rig.update(t); }
+      if (t >= S(10) - 0.2) { rhea.visible = true; rhea.position.set(...RHEA_WATCH); rhea.rotation.y = yawTo(RHEA_WATCH, JUNO_BENCH); A.set(rhea, 'idle', t); rhea.rig.setFace('neutral'); rhea.rig.update(t); }
+      // ---- Dax: a smooth draw-release rhythm, eyes on Rhea ----
+      dax.visible = true; dax.position.set(...DAX_LINE); dax.rotation.y = Math.PI;
+      const da = archer(dax, daxBow, t, DAX_SHOTS, t > S(9) - 0.2 ? 0.8 : 0.05); dax.rig.setFace('smirk');
+      if (da.s.drawing) nockArrow(ARROWS[13], da.nock, da.grip);
+      const DAX_FROM = V3(DAX_LINE[0] + 0.1, 2.25, DAX_LINE[2] - 0.9);
+      DAX_SHOTS.forEach((r0, i) => flyArrow(ARROWS[i], r0, DAX_FROM, TGT.clone().add(DAX_HITS[i]).add(V3(0, 0, 0.12)), t, 0.3));
+      wobble(CS.targets[1], DAX_SHOTS.map((x) => x + 0.3), t);
+      const lastHit = DAX_SHOTS.filter((x) => x + 0.3 <= t).pop(); if (lastHit) chips.set(TGT.clone().add(V3(0, 0, 0.3)), t - lastHit - 0.3, V3(0, 0.2, 1), 2.0);
+      // ---- the other tributes: smooth, continuous training ----
+      trainees.forEach((x) => (x.visible = true));
+      const swT = trainees[0], d2 = CS.dummies[1]; swT.position.set(-14.5, 0, 21.6); swT.rotation.y = Math.PI;
+      const cyc = (t + 0.4) % 1.5, swHit = t - cyc + 0.58 + 0.0; A.apply(swT, keyPose(SW_KEYS.slice(0, 4).concat([[1.5, SW_KEYS[0][1]]]), cyc)); swT.rig.setFace('determined'); swT.rig.update(t);
+      const lastSw = t - ((t + 0.4 - 0.58 + 15) % 1.5); d2.rotation.set(0, Math.sin((t - lastSw) * 12) * 0.25 * Math.exp(-(t - lastSw) * 4), 0); straw2.set(V3(-14.5, 2.5, 20.0), t - lastSw, V3(0, 0.3, -1), 2.2);
+      d2.position.y = 1.7;
+      const clT = trainees[1], cy = 1.4 + 1.2 * (0.5 - 0.5 * Math.cos(t * 0.55)), cph = cy * Math.PI * 2.2, csx = Math.sin(cph); clT.position.set(-11.0, cy, 7.75); clT.rotation.y = Math.PI;
+      A.apply(clT, { aLf: 2.75 + csx * 0.3, aRf: 2.75 - csx * 0.3, eL: 0.4 + Math.max(0, csx) * 0.5, eR: 0.4 + Math.max(0, -csx) * 0.5, lLf: 0.7 + csx * 0.45, lRf: 0.7 - csx * 0.45, kL: 0.9 + csx * 0.4, kR: 0.9 - csx * 0.4, hx: -0.35 }); clT.rig.update(t);
+      const roT = trainees[2], ry = 0.9 + 1.0 * (0.5 - 0.5 * Math.cos(t * 0.7)), rsx = Math.sin(ry * Math.PI * 3); roT.position.set(-3.7, ry, 10.05); roT.rotation.y = Math.PI;
+      A.apply(roT, { aLf: 2.85 + rsx * 0.25, aRf: 2.85 - rsx * 0.25, eL: 0.35 + Math.max(0, rsx) * 0.4, eR: 0.35 + Math.max(0, -rsx) * 0.4, lLf: 0.6, lRf: 0.45, kL: 0.9 + rsx * 0.2, kR: 0.9 - rsx * 0.2, hx: -0.35 }); roT.rig.update(t);
+      [[trainees[3], trBows[0], [8.0, 0, 30.2], 0, 0.3], [trainees[4], trBows[1], [17.0, 0, 30.2], 2, 1.5]].forEach(([ch, bow, pos, ti, off], k) => {
+        ch.position.set(...pos); ch.rotation.y = Math.PI;
+        const rels = []; for (let r0 = COURT_T + 0.8 + off; r0 < LAST_T; r0 += 2.6) rels.push(r0);
+        const st = archer(ch, bow, t, rels, 0); ch.rig.setFace('determined'); if (st.s.drawing) nockArrow(ARROWS[11 + k], st.nock, st.grip);
+        const tg = CS.targets[ti], aim = V3(tg.position.x, 2.0, tg.position.z + 0.12), last = rels.filter((x) => x <= t);
+        const from = V3(pos[0] + 0.1, 2.25, pos[2] - 0.9);
+        last.slice(-2).forEach((r0, j) => flyArrow(ARROWS[5 + k * 2 + j], r0, from, aim.clone().add(V3(((r0 * 7) % 1 - 0.5) * 0.5, ((r0 * 13) % 1 - 0.5) * 0.5, 0)), t, 0.3));
+        wobble(tg, rels.map((x) => x + 0.3), t); (k ? chips3 : chips2).set(aim, t - (last[last.length - 1] ?? -9) - 0.3, V3(0, 0.2, 1), 1.6);
+      });
+      // ---- Juno ----
+      juno.visible = true; playJuno(t);
+    } else {
+      // ---- the last day: Rhea's test (three misses, the bow drops, the sling) ----
+      rhea.visible = true; const put = (p, yaw) => { rhea.position.set(p[0], p[1], p[2]); rhea.rotation.y = yaw; };
+      if (t < S(14) - 0.6) { put([0, 0, 25], Math.PI); A.set(rhea, 'idle', t); rhea.rig.setFace('determined'); rhea.rig.update(t); }
+      else {
+        put(RHEA_LINE, Math.PI);
+        const DROP = RHEA_SHOTS[2] + 0.55, BELT = DROP + 0.5;
+        if (t < DROP) {
+          const st = archer(rhea, rheaBow, t, RHEA_SHOTS, 0, { drawT: 0.55, gap: 0.16 }); rhea.rig.setFace(t < RHEA_SHOTS[0] + 0.3 ? 'determined' : t < RHEA_SHOTS[2] + 0.2 ? 'scared' : 'sad');
+          if (st.s.drawing) nockArrow(ARROWS[12], st.nock, st.grip);
+        } else {
+          // lower the bow and let it fall; reach for the sling on the belt; spin; release
+          const lt = t - DROP, low = keyPose([[0, NOCK], [0.35, { aLf: 0.5, eL: 0.2, aRf: 0.3, eR: 0.3, hx: 0.25 }], [0.5, { aRf: 0.2, aRo: 0.3, eR: 0.9, aRt: 0.6, hx: 0.3, wy: -0.15 }], [0.9, { aRf: 0.6, eR: 0.5, aLf: 0.3, hx: 0.05 }]], lt);
+          let P = Object.assign(A.pose('idle', t), low);
+          if (t > SLING_T) P = A.mix(P, A.pose('slingSpin', t - SLING_T, { throwAt: THROW - SLING_T }), clamp((t - SLING_T) / 0.3, 0, 1));
+          A.apply(rhea, P); rhea.rig.setFace(t > HIT + 0.3 ? 'determined' : t > SLING_T ? 'determined' : 'sad'); rhea.rig.update(t); rhea.updateMatrixWorld(true);
+          // the dropped bow falls to the ground
+          if (t < DROP + 0.5) { rheaBow.visible = true; holdBow(rheaBow, rhea); const k = clamp((t - DROP - 0.25) / 0.3, 0, 1); rheaBow.position.y = lerp(rheaBow.position.y, 0.08, k * k); rheaBow.rotation.z = k * 1.45; }
+          else { rheaBow.visible = true; rheaBow.position.set(RHEA_LINE[0] - 0.7, 0.08, RHEA_LINE[2] - 0.5); rheaBow.rotation.set(0, Math.PI, 1.45); }
+          setString(rheaBow, null); dustBow.set(V3(RHEA_LINE[0] - 0.7, 0.05, RHEA_LINE[2] - 0.5), t - DROP - 0.55, 0.5);
+          sling.visible = t > BELT;
+          if (t > SLING_T && t < THROW) { whirl.visible = true; const hp = handPos(rhea); whirl.position.set(hp.x, hp.y + 0.15, hp.z); whirl.rotation.set(Math.PI / 2, 0, t * 14); whirl.material.opacity = 0.35 + 0.25 * clamp((t - SLING_T) / 0.6, 0, 1); }
+        }
+        if (t < S(14) - 0.6 + 0.1) rhea.rig.update(t);
+      }
+      // the misses: they stick in the floor and the wall and quiver
+      const RHEA_FROM = V3(RHEA_LINE[0] + 0.1, 2.15, RHEA_LINE[2] - 0.9);
+      RHEA_SHOTS.forEach((r0, i) => flyArrow(ARROWS[3 + i], r0, RHEA_FROM, MISS[i], t, 0.36));
+      // the stone: a bright streak to the bull's-eye, splinters, the target shakes
+      const st = CS.stone; st.visible = t > THROW && t < HIT + 0.02;
+      if (st.visible) { const k = clamp((t - THROW) / (HIT - THROW), 0, 1), from = V3(RHEA_LINE[0] + 0.3, 3.0, RHEA_LINE[2] - 0.5), to = TGT.clone().add(V3(0, 0, 0.2));
+        st.position.copy(from.clone().lerp(to, k)); st.position.y += Math.sin(k * Math.PI) * 1.2; sStone.set(from.clone().lerp(to, Math.max(0, k - 0.25)).add(V3(0, Math.sin(Math.max(0, k - 0.25) * Math.PI) * 1.2, 0)), st.position, 0.8); }
+      stoneChips.set(TGT.clone().add(V3(0, 0, 0.3)), t - HIT, V3(0, 0.3, 1), 3.4);
+      wobble(CS.targets[1], [HIT], t, 0.14);
+      dax.visible = juno.visible = false; trainees.forEach((x) => (x.visible = false));
+    }
+    // --- the Council on the balcony (Vire in the big seat) ---
+    vire.visible = true; const seats = CS.seats, sy = CS.BAL_Y + 0.5 - 0.26;
+    vire.position.set(seats[2][0], sy, seats[2][2] - 0.4); vire.rotation.y = 0; A.set(vire, 'sit', t, { slump: 0.05 }); vire.rig.setFace(t > W(16, 'stopped') ? 'neutral' : 'smiling');
+    [0, 1, 3].forEach((si, k) => { const c = council[k]; c.visible = true; c.position.set(seats[si][0], sy, seats[si][2] - 0.4); c.rotation.y = 0;
+      const laugh = t > RHEA_SHOTS[1] && t < SLING_T, sp = A.pose('sit', t + k, { slump: 0.1 });
+      A.apply(c, laugh ? Object.assign(A.pose('laugh', t + k), { y: sp.y, lLf: sp.lLf, lRf: sp.lRf, kL: sp.kL, kR: sp.kR }) : t > HIT + 0.15 ? Object.assign(sp, { lean: -0.1, hx: -0.15, aLf: 0.9, aRf: 0.9, eL: 0.2, eR: 0.2 }) : sp);
+      c.rig.setFace(t > HIT + 0.15 ? 'shocked' : laugh ? 'smiling' : 'smirk'); c.rig.update(t); });
+    for (const p of [rhea, vire, juno, dax]) if (p.visible) p.rig.update(t);
+    holdBow(daxBow, dax);
+  }
+
+  // =====================================================================================
+  // THE INTERVIEW (lines 17–23): Vire in the host chair, Rhea in the guest chair; then Dax
+  // =====================================================================================
+  const SHOW_T = S(17) - 0.6, DAX_IN = S(21) - 1.0;
+  const seatAt = (c) => [c.position.x, SS.STAGE_Y + 0.59, c.position.z];
+  const HOST = SS.chairs[0], GUEST = SS.chairs[1];
+  function showCast(t) {
+    const daxTurn = t >= DAX_IN;
+    const shS = shots.at(t), wideShow = shS.t0 === SHOW_T || shS.t0 === W(17, 'bright') - 0.1 || shS.t0 === W(17, 'the') - 0.05 || shS.t0 === S(20) - 0.25 || shS.t0 === DAX_IN;
+    show.update(t, { beams: wideShow ? 1 : 0.15, cheer: t > S(20) - 0.1 && t < E(20) + 0.8 ? clamp((t - S(20) + 0.1) / 0.3, 0, 1) : t > E(22) - 0.6 && t < E(22) + 0.6 ? 0.5 : 0,
+      lookAt: V3(daxTurn ? 2.4 : 1, 2.6, SS.SZ), screen: daxTurn ? ['DAX MORROW', 'SECTOR 1', '#ff5e5e'] : ['RHEA VANCE', 'SECTOR 7', '#ffd23f'] });
+    vire.visible = true; vire.position.set(...seatAt(HOST)); vire.rotation.y = HOST.rotation.y;
+    const vTalk = (t >= S(18) && t < E(18)) || (t >= S(21) - 0.3 && t < S(22) - 0.2);
+    A.set(vire, 'sitTalk', t, { silent: !vTalk, turn: 0.15 }); vire.rig.setFace('smiling');
+    rhea.visible = !daxTurn; dax.visible = daxTurn;
+    if (!daxTurn) { rhea.position.set(...seatAt(GUEST)); rhea.rotation.y = GUEST.rotation.y; A.set(rhea, 'sitTalk', t, { silent: true, turn: -0.15 });
+      rhea.rig.setFace(t > S(20) + 1.2 ? 'smiling' : t > S(18) ? 'determined' : 'neutral'); }
+    else {
+      const walkEnd = DAX_IN + 1.9;
+      if (t < walkEnd) { const k = clamp((t - DAX_IN) / 1.9, 0, 1), from = [7.2, SS.STAGE_Y, 12.8], to = [GUEST.position.x + 0.3, SS.STAGE_Y, GUEST.position.z + 1.1];
+        dax.position.set(lerp(from[0], to[0], k), SS.STAGE_Y, lerp(from[2], to[2], k)); dax.rotation.y = yawTo(from, to); A.set(dax, 'walk', 0, { phase: k * 9 }); }
+      else { dax.position.set(...seatAt(GUEST)); dax.rotation.y = GUEST.rotation.y;
+        if (t >= S(23) - 0.4) A.set(dax, 'shakyHands', t, { seated: true }); else A.set(dax, 'sitTalk', t, { silent: !(t >= S(22) && t < E(22)), turn: -0.1 }); }
+      dax.rig.setFace(t >= S(23) - 0.4 ? 'scared' : 'smirk');
+    }
+    sword.visible = sling.visible = rod.visible = whirl.visible = false;
+    for (const p of [rhea, dax, vire]) p.rig.update(t);
+  }
+
+  // =====================================================================================
+  // THE ROOFTOP (lines 24–26): Rhea at the railing; Haskin comes out without his flask
+  // =====================================================================================
+  const ROOF_T = S(24) - 0.5, R_RHEA = [1.2, RY, 28.1], R_HASK = [-0.4, RY, 27.7], R_DOOR = [-3, RY, 15.6];
+  const playHaskinR = A.actor(haskin, [
+    { at: 0, pos: R_DOOR, yaw: 0, move: 'idle', face: 'sad' },
+    { at: W(24, 'haskin') - 0.2, via: [[-2.2, RY, 22]], to: R_HASK, speed: 1.35, gait: 'walk', move: 'idle', yaw: yawTo(R_HASK, R_RHEA) + 0.2 },
+    { at: S(25) - 0.1, move: 'talk', opts: { seed: 4 }, face: 'sad' },
+    { at: E(25) + 0.2, move: 'idle', yaw: 0.05 },
+  ]);
+  function roofCast(t) {
+    roof.update(t);
+    rhea.visible = haskin.visible = true; flask.visible = false;
+    rhea.position.set(...R_RHEA); rhea.rotation.y = t < S(25) - 0.2 ? 0 : t < E(25) + 0.3 ? yawTo(R_RHEA, R_HASK) + 0.3 : 0.05;
+    A.set(rhea, 'idle', t); rhea.rig.setFace(t > W(25, 'built') ? 'shocked' : t > S(26) ? 'determined' : 'sad');
+    if (t > S(26) - 0.2) rhea.rig.setFace('determined');
+    playHaskinR(t);
+    daxBow.visible = rheaBow.visible = sword.visible = sling.visible = rod.visible = whirl.visible = false;
+    for (const p of [rhea, haskin]) p.rig.update(t);
+  }
+
+  // =====================================================================================
+  // SHOTS (anchored to the narration)
+  // =====================================================================================
+  const nose = (t) => V3(trainX(t) - 30.2, 2.0, -9.5);
+  const TITLE1 = [E(1) + 0.1, S(2) - 0.25];             // "EPISODE 2 · THE CAPITAL" over a wide shot
+  const shots = RT.camera.list([
+    // --- the city ---
+    { t0: 0, set: 'city', mood: 'capitalMorning', pos: [[150, 150, 330], [44, 58, 150]], look: [[0, 60, -150], [0, 14, -10]], fov: [55, 50], ease: 'out', moveDur: S(1) },
+    { t0: S(1) - 0.3, set: 'city', mood: 'capitalMorning', pos: [[-36, 2.0, -5.0], [-35, 2.1, -4.6]], look: (lt) => { const n = nose(S(1) - 0.3 + lt); return n.x > -24 ? n.lerp(V3(-24, 2.2, -9.5), 0.35) : V3(-24, 2.2, -9.5); }, fov: [44, 42], ease: 'linear', moveDur: 4 },
+    { t0: TITLE1[0], set: 'city', mood: 'capitalMorning', pos: [[0, 30, 96], [0, 24, 80]], look: [[0, 32, -150], [0, 40, -150]], fov: [52, 50] },
+    { t0: TITLE1[1], set: 'city', mood: 'capitalMorning', pos: [[9.2, 1.7, -1.0], [8.8, 1.7, -0.8]], look: [[4.0, 1.7, -7.2], [4.0, 1.8, -6.4]], fov: [50, 50], subj: [rhea], pull: 1 },
+    { t0: W(2, 'glass') - 0.15, set: 'city', mood: 'capitalMorning', pos: [[3.2, 0.9, -7.2], [3.0, 1.0, -4.4]], look: [[2.6, 10, 20], [2.0, 16, 40]], fov: [60, 58], subj: [rhea] },
+    { t0: W(2, 'everyone') - 0.15, set: 'city', mood: 'capitalMorning', pos: [[5.4, 3.1, -5.2], [5.3, 3.0, -4.9]], look: [[-1.2, 1.6, 4.0], [-1.4, 1.6, 4.2]], fov: [52, 50] },
+    { t0: S(3) - 0.25, set: 'city', mood: 'capitalMorning', pos: () => head(haskin, -0.25).add(V3(1.6, 0.05, 2.6)), look: () => head(haskin, -0.35), fov: [42, 40], subj: [haskin] },
+    { t0: S(4) - 0.3, set: 'city', mood: 'capitalMorning', pos: [[3.6, 2.2, 5.6], [3.7, 2.2, 5.3]], look: [[4.15, 2.0, 1.05]], fov: [46, 44], subj: [haskin, rhea] },
+    { t0: S(5) - 0.4, set: 'city', mood: 'capitalMorning', pos: [[10.0, 1.0, -3.0], [9.8, 1.0, -2.8]], look: () => head(dax, -0.6), fov: [46, 44], subj: [dax] },
+    { t0: W(5, 'they') - 0.2, set: 'city', mood: 'capitalMorning', pos: () => head(dax, -0.3).add(V3(-1.6, 0.1, 3.4)), look: () => head(dax, -0.45), fov: [44, 44], ease: 'linear', subj: [dax] },
+    { t0: S(6) - 0.3, set: 'city', mood: 'capitalMorning', pos: [[2.3, 2.4, -0.1], [2.4, 2.4, 0.0]], look: () => head(dax, -0.15), fov: [38, 36], subj: [dax] },
+    { t0: S(7) - 0.2, set: 'city', mood: 'capitalMorning', pos: [[6.2, 2.3, 4.4], [6.3, 2.3, 4.6]], look: [[8.6, 1.8, 0.8]], fov: [46, 44] },
+    { t0: W(7, 'i') - 0.1, set: 'city', mood: 'capitalMorning', pos: () => head(rhea, -0.05).add(V3(1.5, 0.0, -0.95)), look: () => head(rhea, -0.05), fov: [36, 34], subj: [rhea] },
+    // --- the training court ---
+    { t0: COURT_T, set: 'court', mood: 'capitalCourt', pos: [[6, 17, 52], [4, 13, 44]], look: [[0, 0, 18], [-2, 0, 18]], fov: [56, 54], ease: 'out' },
+    { t0: M_SW, set: 'court', mood: 'capitalCourt', pos: [[-11.6, 2.2, 12.4], [-11.8, 2.2, 12.6]], look: [[-14.5, 1.8, 15.3]], fov: [50, 50], subj: [rheaSw] },
+    { t0: M_RO, set: 'court', mood: 'capitalCourt', pos: [[-3.6, 1.8, 6.4], [-3.7, 1.6, 6.6]], look: () => head(rheaRo, -0.4), fov: [50, 48], subj: [rheaRo] },
+    { t0: M_CL, set: 'court', mood: 'capitalCourt', pos: [[-9.6, 1.5, 14.6], [-9.8, 1.4, 14.4]], look: () => head(rheaCl, -0.8).lerp(V3(-13, 1.6, 8.6), 0.3), fov: [52, 52], subj: [rheaCl] },
+    { t0: M_TER, set: 'court', mood: 'capitalCourt', pos: [[-10.2, 3.4, 14.4], [-10.3, 3.2, 14.2]], look: [[-13.0, 0.6, 9.4]], fov: [48, 46], subj: [rheaCl] },
+    { t0: S(9) - 0.2, set: 'court', mood: 'capitalCourt', pos: [[10.0, 2.3, 26.4], [10.2, 2.3, 26.6]], look: () => head(dax, -0.3), fov: [44, 42], subj: [dax] },
+    { t0: W(9, 'target') - 0.25, set: 'court', mood: 'capitalCourt', pos: [[13.8, 2.4, 11.6], [13.7, 2.4, 11.4]], look: [[12.5, 2.0, 7.9]], fov: [40, 38] },
+    { t0: W(9, 'without') - 0.15, set: 'court', mood: 'capitalCourt', pos: [[14.4, 2.9, 32.6], [14.2, 2.9, 32.3]], look: [[-10, 1.6, 17], [-11, 1.6, 17]], fov: [40, 38], subj: [dax] },
+    { t0: S(10) - 0.25, set: 'court', mood: 'capitalCourt', pos: [[-8.6, 2.5, 25.2], [-9.2, 2.4, 26.0]], look: [[-15.3, 1.3, 33.4]], fov: [48, 44], subj: [juno] },
+    { t0: W(10, 'building') - 0.2, set: 'court', mood: 'capitalCourt', pos: [[-14.4, 2.2, 31.0], [-14.5, 2.2, 31.2]], look: () => head(juno, -0.55), fov: [42, 40], subj: [juno] },
+    { t0: S(11) - 0.3, set: 'court', mood: 'capitalCourt', pos: [[-8.2, 2.0, 33.6], [-8.3, 2.0, 33.8]], look: () => head(juno, -0.15), fov: [42, 40], subj: [juno] },
+    { t0: W(11, 'net') - 0.25, set: 'court', mood: 'capitalCourt', pos: [[-4.2, 3.4, 38.0], [-4.4, 3.4, 38.2]], look: [[-10.7, 1.6, 34.0]], fov: [46, 46] },
+    { t0: S(12) - 0.3, set: 'court', mood: 'capitalCourt', pos: [[-10.0, 2.1, 33.9], [-10.1, 2.1, 34.0]], look: () => head(juno, -0.15), fov: [40, 38], subj: [juno] },
+    { t0: W(12, 'except') - 0.2, set: 'court', mood: 'capitalCourt', pos: [[-11.0, 2.6, 25.0], [-11.2, 2.6, 25.2]], look: [[-11.4, 1.4, 34.2]], fov: [44, 42], subj: [rhea] },
+    { t0: LAST_T, set: 'court', mood: 'capitalCourt', pos: [[0.3, 1.2, 30.4], [0.25, 1.3, 29.8]], look: [[0, 6.2, 3.0], [0, 6.5, 3.0]], fov: [52, 50], subj: [rhea] },
+    { t0: S(14) - 0.25, set: 'court', mood: 'capitalCourt', pos: [[15.4, 2.2, 31.2], [15.3, 2.2, 31.0]], look: () => head(rhea, -0.3), fov: [44, 42], subj: [rhea] },
+    { t0: RHEA_SHOTS[0] - 0.12, set: 'court', mood: 'capitalCourt', pos: [[9.2, 1.6, 15.6], [9.4, 1.6, 15.4]], look: [[12.6, 1.4, 9.0]], fov: [46, 46] },
+    { t0: W(14, 'three') - 0.15, set: 'court', mood: 'capitalCourt', pos: () => head(rhea, -0.1).add(V3(-1.2, 0.05, -1.6)), look: () => head(rhea, -0.1), fov: [36, 34], subj: [rhea] },
+    { t0: S(15) - 0.25, set: 'court', mood: 'capitalCourt', pos: [[14.6, 1.5, 30.4], [14.4, 1.4, 30.6]], look: () => head(rhea, 0.1), fov: [46, 46], subj: [rhea] },
+    { t0: THROW - 0.15, set: 'court', mood: 'capitalCourt', pos: [[14.6, 2.6, 11.2], [14.5, 2.6, 11.0]], look: [[12.5, 2.0, 7.9]], fov: [38, 36], shake: 0.004 },
+    { t0: W(15, 'from') - 0.2, set: 'court', mood: 'capitalCourt', pos: [[12.0, 2.2, 41.0], [12.0, 2.3, 40.6]], look: [[12.5, 2.0, 7.9]], fov: [26, 24], subj: [rhea] },
+    { t0: S(16) - 0.3, set: 'court', mood: 'capitalCourt', pos: () => head(vire, -0.05).add(V3(0.5, -0.4, 2.4)), look: () => head(vire, -0.05), fov: [34, 32], subj: [vire] },
+    // --- the interview ---
+    { t0: SHOW_T, set: 'show', mood: 'capitalShow', pos: [[0, 18, 56], [0, 11, 42]], look: [[0, 6, 4], [0, 5, 8]], fov: [55, 52], ease: 'out' },
+    { t0: W(17, 'bright') - 0.1, set: 'show', mood: 'capitalShow', pos: [[-2.0, 2.2, 20.5], [-1.8, 2.3, 20.2]], look: [[5, 9.5, 8], [5.5, 10.5, 8]], fov: [58, 56] },
+    { t0: W(17, 'cameras') - 0.1, set: 'show', mood: 'capitalShow', pos: [[-3.0, 2.8, 15.5], [-3.1, 2.8, 15.7]], look: [[-5.6, 2.1, 19.8]], fov: [44, 42] },
+    { t0: W(17, 'the') - 0.05, set: 'show', mood: 'capitalShow', pos: [[3.2, 6.0, 30.5], [2.8, 5.8, 29.5]], look: [[0, 3.6, 8], [0, 3.6, 8]], fov: [46, 44] },
+    { t0: S(18) - 0.3, set: 'show', mood: 'capitalShow', pos: [[3.9, 3.1, 12.5], [3.8, 3.1, 12.3]], look: () => head(vire, -0.15), fov: [40, 38], subj: [vire] },
+    { t0: S(19) - 0.25, set: 'show', mood: 'capitalShow', pos: () => head(rhea, -0.05).add(V3(-1.0, 0.05, 2.0)), look: () => head(rhea, -0.1), fov: [34, 32], subj: [rhea] },
+    { t0: S(20) - 0.25, set: 'show', mood: 'capitalShow', pos: [[5.6, 3.0, 9.2], [5.4, 3.2, 8.9]], look: [[0, 3.6, 30]], fov: [56, 56] },
+    { t0: W(20, 'for') - 0.15, set: 'show', mood: 'capitalShow', pos: () => head(rhea, -0.05).add(V3(-1.2, 0.08, 1.9)), look: () => head(rhea, -0.05), fov: [34, 32], subj: [rhea] },
+    { t0: DAX_IN, set: 'show', mood: 'capitalShow', pos: [[0.5, 3.6, 22], [0.8, 3.5, 21]], look: [[3.6, 2.4, 11.5], [2.6, 2.4, 10.8]], fov: [40, 40], subj: [dax] },
+    { t0: S(22) - 0.3, set: 'show', mood: 'capitalShow', pos: () => head(dax, -0.05).add(V3(-1.1, 0.05, 2.1)), look: () => head(dax, 0.02), fov: [38, 36], subj: [dax] },
+    { t0: S(23) - 0.2, set: 'show', mood: 'capitalShow', fov: [40, 38], shake: 0.006, subj: [dax], pos: () => head(dax, -0.9).add(fwd(dax).multiplyScalar(2.6)).add(V3(0.3, 0, 0)), look: () => head(dax, -1.0) },
+    { t0: W(23, 'just') - 0.12, set: 'show', mood: 'capitalShow', pos: () => head(dax, -0.05).add(V3(-0.9, 0.0, 1.7)), look: () => head(dax, -0.1), fov: [32, 30], subj: [dax] },
+    // --- the roof ---
+    { t0: ROOF_T, set: 'roof', mood: 'capitalNight', pos: [[-2.4, RY + 2.8, 22.0], [-2.0, RY + 2.6, 22.6]], look: [[1.6, RY + 0.4, 34], [1.6, RY + 0.3, 34]], fov: [54, 52], subj: [rhea] },
+    { t0: W(24, 'he') - 0.12, set: 'roof', mood: 'capitalNight', pos: () => head(haskin, -0.5).add(fwd(haskin).multiplyScalar(3.0)).add(V3(0.6, -0.1, 0)), look: () => head(haskin, -0.8), fov: [42, 40], subj: [haskin] },
+    { t0: S(25) - 0.3, set: 'roof', mood: 'capitalNight', pos: [[3.4, RY + 2.5, 28.9], [3.3, RY + 2.5, 28.8]], look: () => head(haskin, -0.1), fov: [40, 38], subj: [haskin] },
+    { t0: W(25, 'built') - 0.1, set: 'roof', mood: 'capitalNight', pos: () => head(rhea, -0.05).add(fwd(rhea).multiplyScalar(1.7)).add(V3(0.2, 0.02, 0)), look: () => head(rhea, -0.05), fov: [38, 36], subj: [rhea] },
+    { t0: S(26) - 0.35, set: 'roof', mood: 'capitalNight', ease: 'linear', moveDur: TITLE_T - S(26) + 0.35, fov: [40, 34], subj: [rhea],
+      pos: (lt, p) => head(rhea, -0.02).add(fwd(rhea).multiplyScalar(lerp(2.3, 1.45, p))).add(V3(-0.3, 0.05, 0)), look: () => head(rhea, -0.05) },
+    { t0: TITLE_T, set: 'roof', mood: 'capitalNight', pos: [[0, 170, 170], [0, 175, 150]], look: [[0, 120, -150], [0, 130, -150]], fov: [55, 52], moveDur: 6.4 },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+  const PLACE_CUTS = [COURT_T, SHOW_T, ROOF_T];
+  const CUTS = shots.cuts().filter((c) => c > TITLE1[1] - 0.05 && c < TITLE_T - 0.1 && !PLACE_CUTS.includes(c));
+
+  // ---------- everything that moves (pure function of t) ----------
+  const PULL = 1.35;                                    // close shots on a character: the camera backs off 35 % (wider framing)
+  let curMood = '', curSet = '';
+  function frame(t) {
+    const s = shots.at(t);
+    if (s.mood !== curMood) { curMood = s.mood; env.set(MOOD[s.mood]); city.setNight(s.mood === 'capitalShow' || s.mood === 'capitalNight' ? 1 : 0); }
+    if (s.set !== curSet) { for (const k in SETS) SETS[k].visible = k === s.set; curSet = s.set; }
+    for (const p of PEOPLE) p.visible = false;
+    for (const { c } of citizens) c.visible = false; for (const { g } of guards) g.visible = false;
+    if (s.set === 'city') cityCast(t); else if (s.set === 'court') courtCast(t); else if (s.set === 'show') showCast(t); else roofCast(t);
+    if (s.set !== 'court') { for (const a of CS.arrows) a.visible = false; CS.stone.visible = false; for (const o of COURT_FX) o.visible = false; for (const b of [rheaBow, daxBow, ...trBows]) { b.visible = false; setString(b, null); } }
+    for (const a of CS.arrows) a.visible = false;
+    lips(t);
+    RT.camera.apply(camera, s, t);
+    const pull = s.pull ?? PULL;
+    if (s.subj && pull !== 1 && s.subj[0].visible) { const tg = head(s.subj[0], -0.3), d = camera.position.distanceTo(tg); if (d < 7.5) camera.position.addScaledVector(camera.position.clone().sub(tg).normalize(), d * (pull - 1)); }
+    env.follow(camera);
+    const look = camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(s.set === 'city' && s.i < 3 ? 90 : 12).add(camera.position);
+    env.shadowFocus(look.x, look.y, look.z, s.i < 3 || s.t0 === COURT_T || s.t0 === SHOW_T || s.t0 >= TITLE_T ? 60 : 16);
+    key.intensity = s.subj ? (s.set === 'show' ? 0.15 : 0.35) : 0; key.position.copy(camera.position).add(V3(-1, 1.5, 0)); key.target.position.copy(look);
+  }
+
+  function black(t) {
+    if (t < 0.6) return 1 - t / 0.6;
+    if (t >= TITLE1[0] && t < TITLE1[1]) return 0.45;
+    for (const c of PLACE_CUTS) if (t > c - 0.5 && t < c + 0.45) return 1 - Math.abs(t - c) / (t < c ? 0.5 : 0.45);   // dip to black between places
+    if (t >= TITLE_T) return Math.max(0.42, clamp((t - DURATION + 0.7) / 0.7, 0, 1));
+    return RT.camera.dips(t, CUTS, 0.1);
+  }
+  function white(t) { const fl = (c, d, a = 1) => (t >= c && t < c + d ? (1 - (t - c) / d) * a : 0); return Math.max(fl(HIT, 0.22, 0.85), fl(NET_DROP + 0.32, 0.15, 0.4), fl(TITLE_T, 0.2, 0.6)); }
+
+  // ---------- THUMBNAILS (Part 7D): npm run render -- reaping-ep2 --thumbs → out/reaping-trials/ep2-thumb-option1.png / 2.png ----------
+  function thumbnail(n) {
+    const T = Number(n) || 1, stage = document.getElementById('stage');
+    renderer.domElement.style.filter = 'saturate(1.25) contrast(1.08) brightness(1.03)';
+    // place a character at a point of the picture (sx, sy in % of the frame), d units from the camera, turned toward it
+    const placeAt = (obj, sx, sy, d, lift) => {
+      camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+      const v = V3((sx / 100) * 2 - 1, 1 - (sy / 100) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
+      const p = camera.position.clone().addScaledVector(v, d); obj.position.set(p.x, p.y - lift, p.z);
+      obj.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z);
+      return V3(p.x, p.y, p.z);
+    };
+    let subject, aim;
+    if (T === 1) {   // "50 STEPS?!": Rhea up close spinning her sling, the stone in the bull's-eye behind her (red arrow)
+      frame(THROW - 0.3);
+      camera.fov = 46; camera.position.set(13.7, 2.3, 21.5); camera.lookAt(12.5, 2.5, 7.95); camera.updateProjectionMatrix();
+      placeAt(rhea, 30, 72, 2.7, 2.05); rhea.rotation.y += 0.45;
+      A.set(rhea, 'slingSpin', 0.6, { throwAt: 99 }); rhea.rig.setFace('determined'); rhea.rig.setEyes('open'); rhea.rig.setMouth(false);
+      sling.visible = true; rheaBow.visible = false; rhea.updateMatrixWorld(true);
+      whirl.visible = false;
+      CS.stone.visible = true; CS.stone.position.copy(TGT).add(V3(0, 0, 0.22)); CS.stone.scale.setScalar(2.2);
+      subject = rhea; aim = TGT.clone();
+    } else {         // "HE STOPPED SMILING": Vire's cold face up close on the balcony (red arrow at his mouth: no smile)
+      frame(W(16, 'smiling') + 0.4);
+      const h = head(vire, 0); camera.fov = 38; camera.position.copy(h).add(V3(1.0, -0.05, 2.7)); camera.lookAt(h.clone().add(V3(0.1, 0.3, 0))); camera.updateProjectionMatrix();
+      vire.rig.setFace('neutral'); vire.rig.setEyes('open'); vire.rig.setMouth(false); subject = vire; aim = head(vire, -0.1).add(V3(0.05, 0, 0.62));
+    }
+    key.intensity = 0.6; key.position.copy(camera.position).add(V3(-1, 1, 0)); key.target.position.copy(subject.position);
+    subject.rig.update(0); env.follow(camera); env.shadowFocus(subject.position.x, subject.position.y, subject.position.z, 14);
+    renderer.render(scene, camera);
+    const proj = (v) => { const q = v.clone().project(camera); return [(q.x * 0.5 + 0.5) * 100, (-q.y * 0.5 + 0.5) * 177.8]; };
+    const [ax, ay] = proj(aim);
+    const css = document.createElement('style'); css.textContent = `
+      .th{position:absolute;left:0;right:0;text-align:center;font-family:Montserrat,'Arial Black',sans-serif;font-weight:900;line-height:.95;color:#fff;
+          -webkit-text-stroke:calc(var(--u)*1.6) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*1) 0 #000,0 0 calc(var(--u)*4) rgba(0,0,0,.6);transform:rotate(-3deg);}
+      .th .y{color:#ffd23f;}`;
+    document.head.appendChild(css);
+    const add = (html) => { const d = document.createElement('div'); d.innerHTML = html; stage.appendChild(d.firstChild); };
+    if (T === 1) add('<div class="th" style="top:13%"><div class="y" style="font-size:calc(var(--u)*21)">50 STEPS?!</div></div>');
+    else add('<div class="th" style="top:12%"><div style="font-size:calc(var(--u)*13.5)">HE STOPPED</div><div class="y" style="font-size:calc(var(--u)*15)">SMILING</div></div>');
+    let svg;
+    if (true) {
+      const sgn = T === 1 ? 1 : -1, p0 = [ax + 26 * sgn, ay - 24], c = [ax + 22 * sgn, ay - 4], p1 = [ax + 6 * sgn, ay - 2], d = [p1[0] - c[0], p1[1] - c[1]], L2 = Math.hypot(d[0], d[1]), u = [d[0] / L2, d[1] / L2], nn = [-u[1], u[0]];
+      const tip = [p1[0] + u[0] * 4, p1[1] + u[1] * 4], h1 = [p1[0] + nn[0] * 3.6, p1[1] + nn[1] * 3.6], h2 = [p1[0] - nn[0] * 3.6, p1[1] - nn[1] * 3.6], path = `M ${p0} Q ${c} ${p1}`;
+      svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><path d="${path}" fill="none" stroke="#000" stroke-width="5.6" stroke-linecap="round"/><path d="${path}" fill="none" stroke="#ff2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M ${tip} L ${h1} L ${h2} Z" fill="#ff2a2a" stroke="#000" stroke-width="1" stroke-linejoin="round"/></svg>`;
+    } else { const rad = 8; svg = `<svg viewBox="0 0 100 177.8" style="position:absolute;inset:0;width:100%;height:100%"><ellipse cx="${ax}" cy="${ay}" rx="${rad}" ry="${rad * 1.35}" fill="none" stroke="#000" stroke-width="4.6"/><ellipse cx="${ax}" cy="${ay}" rx="${rad}" ry="${rad * 1.35}" fill="none" stroke="#ff2a2a" stroke-width="2.8"/></svg>`; }
+    add(svg);
+    if (window.RT_BRAND !== false) add('<img src="../brand/watermark.png" style="position:absolute;left:60%;top:10.5%;width:36%;opacity:.4">');
+  }
+
+  RT.player.start({
+    name: 'ep2', duration: DURATION, renderer, scene, camera, frame, black, white,
+    narration: NAR,
+    speakers: { haskin: 'HASKIN', dax: 'DAX', juno: 'JUNO', vire: 'VIRE', rhea: 'RHEA' },
+    noCaptions: [[TITLE1[0], TITLE1[1]], [TITLE_T, 9999]],
+    hooks: [{ t0: TITLE1[0] + 0.1, t1: TITLE1[1] - 0.05, html: 'EPISODE 2<br><span style="font-size:.62em">THE CAPITAL</span>' }],
+    title: { t0: TITLE_T, stagger: [0, 0.6, 1.3], html: '<div class="t1">THE REAPING<br>TRIALS</div><div class="t2">EPISODE 3 · THE ARENA OPENS<br>COMING SOON</div><div class="t3">Follow so you don\'t miss it.</div>' },
+    audio: '../audio/mix/ep2_mix.mp3',
+    menu: { title: 'The Reaping Trials', sub: 'Episode 2 · The Capital' },
+    thumbnail,
+    idleTime: (x) => 14 + (x % 3) * 0.2,
+    stills: shots.shots.map((x) => +((x.t0 + x.t1) / 2).toFixed(2)).sort((a, b) => a - b),
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2788 @@
+{
+ "video": "echo-breakers-full",
+ "voices": {
+  "narrator": "Adam ×1.3",
+  "dante": "Adam ×1.3",
+  "aurora": "Adam ×1.3",
+  "grant": "Adam ×1.3",
+  "hale": "Adam ×1.3",
+  "vahl": "Adam ×1.3",
+  "think": "Adam ×1.3 fx=think",
+  "vahlthink": "Adam ×1.3 fx=think",
+  "hibiki": "Brian ×0.891 fx=hibiki",
+  "kagerou": "Sarah fx=kagerou",
+  "omamori": "Jessica ×1.414 fx=omamori",
+  "tsurara": "Daniel fx=tsurara",
+  "shuen": "George ×0.75 fx=shuen"
+ },
+ "lines": [
+  {
+   "at": 0.5,
+   "who": "narrator",
+   "label": "town",
+   "text": "In this town, one note can change everything.",
+   "raw": "audio/voice/echo-breakers-full/l01_d5eb630410.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l01_d5eb630410_67f0d1.wav",
+   "start": 0.5,
+   "end": 2.279,
+   "tail": 2.287,
+   "words": [
+    {
+     "w": "In",
+     "start": 0.5,
+     "end": 0.598
+    },
+    {
+     "w": "this",
+     "start": 0.634,
+     "end": 0.741
+    },
+    {
+     "w": "town,",
+     "start": 0.786,
+     "end": 0.982
+    },
+    {
+     "w": "one",
+     "start": 1.045,
+     "end": 1.178
+    },
+    {
+     "w": "note",
+     "start": 1.215,
+     "end": 1.358
+    },
+    {
+     "w": "can",
+     "start": 1.384,
+     "end": 1.492
+    },
+    {
+     "w": "change",
+     "start": 1.536,
+     "end": 1.777
+    },
+    {
+     "w": "everything.",
+     "start": 1.804,
+     "end": 2.179
+    }
+   ]
+  },
+  {
+   "at": 2.579,
+   "who": "narrator",
+   "label": "me",
+   "text": "That's me. About to get crushed by a giant sign.",
+   "raw": "audio/voice/echo-breakers-full/l02_d437e62662.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l02_d437e62662_67f0d1.wav",
+   "start": 2.579,
+   "end": 5.046,
+   "tail": 5.054,
+   "words": [
+    {
+     "w": "That's",
+     "start": 2.579,
+     "end": 2.794
+    },
+    {
+     "w": "me.",
+     "start": 2.829,
+     "end": 3.044
+    },
+    {
+     "w": "About",
+     "start": 3.428,
+     "end": 3.607
+    },
+    {
+     "w": "to",
+     "start": 3.624,
+     "end": 3.661
+    },
+    {
+     "w": "get",
+     "start": 3.696,
+     "end": 3.776
+    },
+    {
+     "w": "crushed",
+     "start": 3.812,
+     "end": 4.044
+    },
+    {
+     "w": "by",
+     "start": 4.062,
+     "end": 4.169
+    },
+    {
+     "w": "a",
+     "start": 4.214,
+     "end": 4.232
+    },
+    {
+     "w": "giant",
+     "start": 4.285,
+     "end": 4.562
+    },
+    {
+     "w": "sign.",
+     "start": 4.607,
+     "end": 4.946
+    }
+   ]
+  },
+  {
+   "at": 6.746,
+   "who": "narrator",
+   "label": "name",
+   "text": "My name is Dante Ferro.",
+   "raw": "audio/voice/echo-breakers-full/l03_8cffb03a60.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l03_8cffb03a60_67f0d1.wav",
+   "start": 6.746,
+   "end": 7.793,
+   "tail": 7.801,
+   "words": [
+    {
+     "w": "My",
+     "start": 6.746,
+     "end": 6.853
+    },
+    {
+     "w": "name",
+     "start": 6.898,
+     "end": 6.996
+    },
+    {
+     "w": "is",
+     "start": 7.023,
+     "end": 7.068
+    },
+    {
+     "w": "Dante",
+     "start": 7.112,
+     "end": 7.353
+    },
+    {
+     "w": "Ferro.",
+     "start": 7.407,
+     "end": 7.693
+    }
+   ]
+  },
+  {
+   "at": 7.943,
+   "who": "narrator",
+   "label": "nobody",
+   "text": "Sixteen. Headphones always on. In Port Halcyon, I'm the kid nobody notices.",
+   "raw": "audio/voice/echo-breakers-full/l04_648c1b3b46.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l04_648c1b3b46_67f0d1.wav",
+   "start": 7.943,
+   "end": 12.508,
+   "tail": 12.516,
+   "words": [
+    {
+     "w": "Sixteen.",
+     "start": 7.943,
+     "end": 8.586
+    },
+    {
+     "w": "Headphones",
+     "start": 8.97,
+     "end": 9.398
+    },
+    {
+     "w": "always",
+     "start": 9.435,
+     "end": 9.711
+    },
+    {
+     "w": "on.",
+     "start": 9.765,
+     "end": 10.024
+    },
+    {
+     "w": "In",
+     "start": 10.345,
+     "end": 10.444
+    },
+    {
+     "w": "Port",
+     "start": 10.497,
+     "end": 10.667
+    },
+    {
+     "w": "Halcyon,",
+     "start": 10.694,
+     "end": 11.114
+    },
+    {
+     "w": "I'm",
+     "start": 11.185,
+     "end": 11.319
+    },
+    {
+     "w": "the",
+     "start": 11.355,
+     "end": 11.408
+    },
+    {
+     "w": "kid",
+     "start": 11.435,
+     "end": 11.622
+    },
+    {
+     "w": "nobody",
+     "start": 11.676,
+     "end": 11.953
+    },
+    {
+     "w": "notices.",
+     "start": 12.007,
+     "end": 12.408
+    }
+   ]
+  },
+  {
+   "at": 12.758,
+   "who": "narrator",
+   "label": "shop",
+   "text": "That morning, I found a record shop I'd never seen before.",
+   "raw": "audio/voice/echo-breakers-full/l05_320c6c4230.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l05_320c6c4230_67f0d1.wav",
+   "start": 12.758,
+   "end": 15.109,
+   "tail": 15.116,
+   "words": [
+    {
+     "w": "That",
+     "start": 12.758,
+     "end": 12.936
+    },
+    {
+     "w": "morning,",
+     "start": 12.99,
+     "end": 13.231
+    },
+    {
+     "w": "I",
+     "start": 13.285,
+     "end": 13.303
+    },
+    {
+     "w": "found",
+     "start": 13.383,
+     "end": 13.544
+    },
+    {
+     "w": "a",
+     "start": 13.58,
+     "end": 13.606
+    },
+    {
+     "w": "record",
+     "start": 13.66,
+     "end": 13.874
+    },
+    {
+     "w": "shop",
+     "start": 13.901,
+     "end": 14.08
+    },
+    {
+     "w": "I'd",
+     "start": 14.133,
+     "end": 14.24
+    },
+    {
+     "w": "never",
+     "start": 14.267,
+     "end": 14.401
+    },
+    {
+     "w": "seen",
+     "start": 14.446,
+     "end": 14.606
+    },
+    {
+     "w": "before.",
+     "start": 14.66,
+     "end": 15.009
+    }
+   ]
+  },
+  {
+   "at": 15.409,
+   "who": "narrator",
+   "label": "back",
+   "text": "In the back… a golden record. No name. No price.",
+   "raw": "audio/voice/echo-breakers-full/l06_f206e167a6.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l06_f206e167a6_67f0d1.wav",
+   "start": 15.409,
+   "end": 19.199,
+   "tail": 19.207,
+   "words": [
+    {
+     "w": "In",
+     "start": 15.409,
+     "end": 15.516
+    },
+    {
+     "w": "the",
+     "start": 15.552,
+     "end": 15.605
+    },
+    {
+     "w": "back…",
+     "start": 15.65,
+     "end": 15.918
+    },
+    {
+     "w": "a",
+     "start": 16.303,
+     "end": 16.357
+    },
+    {
+     "w": "golden",
+     "start": 16.419,
+     "end": 16.767
+    },
+    {
+     "w": "record.",
+     "start": 16.847,
+     "end": 17.205
+    },
+    {
+     "w": "No",
+     "start": 17.59,
+     "end": 17.724
+    },
+    {
+     "w": "name.",
+     "start": 17.787,
+     "end": 18.134
+    },
+    {
+     "w": "No",
+     "start": 18.519,
+     "end": 18.634
+    },
+    {
+     "w": "price.",
+     "start": 18.697,
+     "end": 19.099
+    }
+   ]
+  },
+  {
+   "at": 19.499,
+   "who": "narrator",
+   "label": "play",
+   "text": "So I took it to the top of the old stairs… and pressed play.",
+   "raw": "audio/voice/echo-breakers-full/l07_dd192f0023.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l07_dd192f0023_67f0d1.wav",
+   "start": 19.499,
+   "end": 21.877,
+   "tail": 21.884,
+   "words": [
+    {
+     "w": "So",
+     "start": 19.499,
+     "end": 19.615
+    },
+    {
+     "w": "I",
+     "start": 19.669,
+     "end": 19.687
+    },
+    {
+     "w": "took",
+     "start": 19.722,
+     "end": 19.838
+    },
+    {
+     "w": "it",
+     "start": 19.865,
+     "end": 19.91
+    },
+    {
+     "w": "to",
+     "start": 19.927,
+     "end": 19.972
+    },
+    {
+     "w": "the",
+     "start": 20.017,
+     "end": 20.071
+    },
+    {
+     "w": "top",
+     "start": 20.106,
+     "end": 20.267
+    },
+    {
+     "w": "of",
+     "start": 20.312,
+     "end": 20.357
+    },
+    {
+     "w": "the",
+     "start": 20.401,
+     "end": 20.454
+    },
+    {
+     "w": "old",
+     "start": 20.508,
+     "end": 20.651
+    },
+    {
+     "w": "stairs…",
+     "start": 20.696,
+     "end": 20.999
+    },
+    {
+     "w": "and",
+     "start": 21.107,
+     "end": 21.169
+    },
+    {
+     "w": "pressed",
+     "start": 21.223,
+     "end": 21.455
+    },
+    {
+     "w": "play.",
+     "start": 21.5,
+     "end": 21.777
+    }
+   ]
+  },
+  {
+   "at": 24.077,
+   "who": "narrator",
+   "label": "silent",
+   "text": "One note. And the whole city went silent.",
+   "raw": "audio/voice/echo-breakers-full/l08_722135fee5.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l08_722135fee5_67f0d1.wav",
+   "start": 24.077,
+   "end": 26.463,
+   "tail": 26.471,
+   "words": [
+    {
+     "w": "One",
+     "start": 24.077,
+     "end": 24.22
+    },
+    {
+     "w": "note.",
+     "start": 24.273,
+     "end": 24.586
+    },
+    {
+     "w": "And",
+     "start": 24.961,
+     "end": 25.086
+    },
+    {
+     "w": "the",
+     "start": 25.131,
+     "end": 25.185
+    },
+    {
+     "w": "whole",
+     "start": 25.22,
+     "end": 25.416
+    },
+    {
+     "w": "city",
+     "start": 25.47,
+     "end": 25.685
+    },
+    {
+     "w": "went",
+     "start": 25.738,
+     "end": 25.917
+    },
+    {
+     "w": "silent.",
+     "start": 25.97,
+     "end": 26.363
+    }
+   ]
+  },
+  {
+   "at": 29.863,
+   "who": "dante",
+   "label": "what",
+   "text": "What… are you?",
+   "raw": "audio/voice/echo-breakers-full/l09_acd48c948e.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l09_acd48c948e_67f0d1.wav",
+   "start": 29.863,
+   "end": 30.875,
+   "tail": 30.882,
+   "words": [
+    {
+     "w": "What…",
+     "start": 29.863,
+     "end": 30.078
+    },
+    {
+     "w": "are",
+     "start": 30.462,
+     "end": 30.605
+    },
+    {
+     "w": "you?",
+     "start": 30.641,
+     "end": 30.775
+    }
+   ]
+  },
+  {
+   "at": 31.175,
+   "who": "hibiki",
+   "label": "echo1",
+   "text": "俺はお前の響きだ。",
+   "en": "I am your echo.",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l10_01a81a7534.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l10_01a81a7534_3d2e59.wav",
+   "start": 31.175,
+   "end": 33.099,
+   "tail": 33.236,
+   "words": [
+    {
+     "w": "俺はお前の響きだ。",
+     "start": 31.175,
+     "end": 32.999
+    }
+   ]
+  },
+  {
+   "at": 34.699,
+   "who": "narrator",
+   "label": "made",
+   "text": "A spirit made of sound. Made from… me. And I was about to find out… I wasn't the only one.",
+   "raw": "audio/voice/echo-breakers-full/l11_4f65a9b9bc.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l11_4f65a9b9bc_67f0d1.wav",
+   "start": 34.699,
+   "end": 39.666,
+   "tail": 39.674,
+   "words": [
+    {
+     "w": "A",
+     "start": 34.699,
+     "end": 34.753
+    },
+    {
+     "w": "spirit",
+     "start": 34.806,
+     "end": 35.074
+    },
+    {
+     "w": "made",
+     "start": 35.11,
+     "end": 35.253
+    },
+    {
+     "w": "of",
+     "start": 35.271,
+     "end": 35.315
+    },
+    {
+     "w": "sound.",
+     "start": 35.36,
+     "end": 35.735
+    },
+    {
+     "w": "Made",
+     "start": 35.815,
+     "end": 36.065
+    },
+    {
+     "w": "from…",
+     "start": 36.092,
+     "end": 36.289
+    },
+    {
+     "w": "me.",
+     "start": 36.673,
+     "end": 36.958
+    },
+    {
+     "w": "And",
+     "start": 37.253,
+     "end": 37.378
+    },
+    {
+     "w": "I",
+     "start": 37.432,
+     "end": 37.45
+    },
+    {
+     "w": "was",
+     "start": 37.504,
+     "end": 37.593
+    },
+    {
+     "w": "about",
+     "start": 37.637,
+     "end": 37.834
+    },
+    {
+     "w": "to",
+     "start": 37.87,
+     "end": 37.905
+    },
+    {
+     "w": "find",
+     "start": 37.959,
+     "end": 38.2
+    },
+    {
+     "w": "out…",
+     "start": 38.254,
+     "end": 38.414
+    },
+    {
+     "w": "I",
+     "start": 38.539,
+     "end": 38.593
+    },
+    {
+     "w": "wasn't",
+     "start": 38.673,
+     "end": 38.897
+    },
+    {
+     "w": "the",
+     "start": 38.924,
+     "end": 38.994
+    },
+    {
+     "w": "only",
+     "start": 39.048,
+     "end": 39.244
+    },
+    {
+     "w": "one.",
+     "start": 39.298,
+     "end": 39.566
+    }
+   ]
+  },
+  {
+   "at": 40.566,
+   "who": "narrator",
+   "label": "punched",
+   "text": "Next day, in the Fountain Piazza… I got punched in the face. By me.",
+   "raw": "audio/voice/echo-breakers-full/l12_6dcfae3232.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l12_6dcfae3232_67f0d1.wav",
+   "start": 40.566,
+   "end": 44.194,
+   "tail": 44.202,
+   "words": [
+    {
+     "w": "Next",
+     "start": 40.566,
+     "end": 40.789
+    },
+    {
+     "w": "day,",
+     "start": 40.825,
+     "end": 40.986
+    },
+    {
+     "w": "in",
+     "start": 41.031,
+     "end": 41.111
+    },
+    {
+     "w": "the",
+     "start": 41.147,
+     "end": 41.2
+    },
+    {
+     "w": "Fountain",
+     "start": 41.254,
+     "end": 41.539
+    },
+    {
+     "w": "Piazza…",
+     "start": 41.593,
+     "end": 42.075
+    },
+    {
+     "w": "I",
+     "start": 42.46,
+     "end": 42.496
+    },
+    {
+     "w": "got",
+     "start": 42.558,
+     "end": 42.674
+    },
+    {
+     "w": "punched",
+     "start": 42.728,
+     "end": 42.96
+    },
+    {
+     "w": "in",
+     "start": 42.987,
+     "end": 43.031
+    },
+    {
+     "w": "the",
+     "start": 43.058,
+     "end": 43.112
+    },
+    {
+     "w": "face.",
+     "start": 43.148,
+     "end": 43.442
+    },
+    {
+     "w": "By",
+     "start": 43.594,
+     "end": 43.737
+    },
+    {
+     "w": "me.",
+     "start": 43.8,
+     "end": 44.094
+    }
+   ]
+  },
+  {
+   "at": 46.194,
+   "who": "narrator",
+   "label": "ten",
+   "text": "Then there were ten of me. Fake walls. Fake doors. The whole piazza was lying to me.",
+   "raw": "audio/voice/echo-breakers-full/l13_c9529f0f25.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l13_c9529f0f25_67f0d1.wav",
+   "start": 46.194,
+   "end": 50.715,
+   "tail": 50.722,
+   "words": [
+    {
+     "w": "Then",
+     "start": 46.194,
+     "end": 46.346
+    },
+    {
+     "w": "there",
+     "start": 46.372,
+     "end": 46.48
+    },
+    {
+     "w": "were",
+     "start": 46.498,
+     "end": 46.596
+    },
+    {
+     "w": "ten",
+     "start": 46.622,
+     "end": 46.775
+    },
+    {
+     "w": "of",
+     "start": 46.81,
+     "end": 46.855
+    },
+    {
+     "w": "me.",
+     "start": 46.909,
+     "end": 47.087
+    },
+    {
+     "w": "Fake",
+     "start": 47.418,
+     "end": 47.641
+    },
+    {
+     "w": "walls.",
+     "start": 47.676,
+     "end": 48.087
+    },
+    {
+     "w": "Fake",
+     "start": 48.275,
+     "end": 48.489
+    },
+    {
+     "w": "doors.",
+     "start": 48.525,
+     "end": 48.909
+    },
+    {
+     "w": "The",
+     "start": 49.123,
+     "end": 49.212
+    },
+    {
+     "w": "whole",
+     "start": 49.249,
+     "end": 49.4
+    },
+    {
+     "w": "piazza",
+     "start": 49.427,
+     "end": 49.776
+    },
+    {
+     "w": "was",
+     "start": 49.82,
+     "end": 49.909
+    },
+    {
+     "w": "lying",
+     "start": 49.962,
+     "end": 50.284
+    },
+    {
+     "w": "to",
+     "start": 50.338,
+     "end": 50.392
+    },
+    {
+     "w": "me.",
+     "start": 50.445,
+     "end": 50.615
+    }
+   ]
+  },
+  {
+   "at": 55.215,
+   "who": "aurora",
+   "label": "hunters",
+   "text": "You're not one of Vahl's hunters… are you?",
+   "raw": "audio/voice/echo-breakers-full/l14_5b9aee54a2.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l14_5b9aee54a2_67f0d1.wav",
+   "start": 55.215,
+   "end": 57.003,
+   "tail": 57.01,
+   "words": [
+    {
+     "w": "You're",
+     "start": 55.215,
+     "end": 55.403
+    },
+    {
+     "w": "not",
+     "start": 55.43,
+     "end": 55.527
+    },
+    {
+     "w": "one",
+     "start": 55.572,
+     "end": 55.661
+    },
+    {
+     "w": "of",
+     "start": 55.68,
+     "end": 55.724
+    },
+    {
+     "w": "Vahl's",
+     "start": 55.76,
+     "end": 56.019
+    },
+    {
+     "w": "hunters…",
+     "start": 56.046,
+     "end": 56.34
+    },
+    {
+     "w": "are",
+     "start": 56.457,
+     "end": 56.662
+    },
+    {
+     "w": "you?",
+     "start": 56.715,
+     "end": 56.903
+    }
+   ]
+  },
+  {
+   "at": 57.303,
+   "who": "kagerou",
+   "label": "kagerou",
+   "text": "見えるものが、真実とは限らない。",
+   "en": "What you see isn't always the truth.",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l15_70fae542a7.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l15_70fae542a7_1013b8.wav",
+   "start": 57.303,
+   "end": 60.108,
+   "tail": 60.295,
+   "words": [
+    {
+     "w": "見えるものが、真実とは限らない。",
+     "start": 57.303,
+     "end": 60.008
+    }
+   ]
+  },
+  {
+   "at": 61.608,
+   "who": "narrator",
+   "label": "aurora",
+   "text": "Aurora Vesper. Street artist. Her Echo, Kagerou, makes mirages.",
+   "raw": "audio/voice/echo-breakers-full/l16_0eb74a4b07.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l16_0eb74a4b07_67f0d1.wav",
+   "start": 61.608,
+   "end": 65.834,
+   "tail": 65.842,
+   "words": [
+    {
+     "w": "Aurora",
+     "start": 61.608,
+     "end": 61.947
+    },
+    {
+     "w": "Vesper.",
+     "start": 61.992,
+     "end": 62.296
+    },
+    {
+     "w": "Street",
+     "start": 62.68,
+     "end": 62.94
+    },
+    {
+     "w": "artist.",
+     "start": 62.975,
+     "end": 63.287
+    },
+    {
+     "w": "Her",
+     "start": 63.52,
+     "end": 63.636
+    },
+    {
+     "w": "Echo,",
+     "start": 63.69,
+     "end": 63.966
+    },
+    {
+     "w": "Kagerou,",
+     "start": 64.073,
+     "end": 64.556
+    },
+    {
+     "w": "makes",
+     "start": 64.86,
+     "end": 65.065
+    },
+    {
+     "w": "mirages.",
+     "start": 65.127,
+     "end": 65.734
+    }
+   ]
+  },
+  {
+   "at": 66.134,
+   "who": "aurora",
+   "label": "vahl",
+   "text": "The man hunting us is called Maestro Vahl. He steals Echoes. Yours is next.",
+   "raw": "audio/voice/echo-breakers-full/l17_de1191847f.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l17_de1191847f_67f0d1.wav",
+   "start": 66.134,
+   "end": 69.61,
+   "tail": 69.618,
+   "words": [
+    {
+     "w": "The",
+     "start": 66.134,
+     "end": 66.241
+    },
+    {
+     "w": "man",
+     "start": 66.286,
+     "end": 66.446
+    },
+    {
+     "w": "hunting",
+     "start": 66.5,
+     "end": 66.732
+    },
+    {
+     "w": "us",
+     "start": 66.777,
+     "end": 66.849
+    },
+    {
+     "w": "is",
+     "start": 66.884,
+     "end": 66.929
+    },
+    {
+     "w": "called",
+     "start": 66.965,
+     "end": 67.161
+    },
+    {
+     "w": "Maestro",
+     "start": 67.206,
+     "end": 67.509
+    },
+    {
+     "w": "Vahl.",
+     "start": 67.563,
+     "end": 67.876
+    },
+    {
+     "w": "He",
+     "start": 68.019,
+     "end": 68.116
+    },
+    {
+     "w": "steals",
+     "start": 68.161,
+     "end": 68.429
+    },
+    {
+     "w": "Echoes.",
+     "start": 68.482,
+     "end": 68.822
+    },
+    {
+     "w": "Yours",
+     "start": 68.876,
+     "end": 69.09
+    },
+    {
+     "w": "is",
+     "start": 69.126,
+     "end": 69.179
+    },
+    {
+     "w": "next.",
+     "start": 69.233,
+     "end": 69.51
+    }
+   ]
+  },
+  {
+   "at": 70.01,
+   "who": "narrator",
+   "label": "boss",
+   "text": "Great. Two days with superpowers… and I already have a final boss.",
+   "raw": "audio/voice/echo-breakers-full/l18_c809e55c71.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l18_c809e55c71_67f0d1.wav",
+   "start": 70.01,
+   "end": 73.826,
+   "tail": 73.834,
+   "words": [
+    {
+     "w": "Great.",
+     "start": 70.01,
+     "end": 70.314
+    },
+    {
+     "w": "Two",
+     "start": 70.698,
+     "end": 70.832
+    },
+    {
+     "w": "days",
+     "start": 70.877,
+     "end": 71.172
+    },
+    {
+     "w": "with",
+     "start": 71.208,
+     "end": 71.324
+    },
+    {
+     "w": "superpowers…",
+     "start": 71.359,
+     "end": 71.948
+    },
+    {
+     "w": "and",
+     "start": 72.333,
+     "end": 72.458
+    },
+    {
+     "w": "I",
+     "start": 72.512,
+     "end": 72.538
+    },
+    {
+     "w": "already",
+     "start": 72.618,
+     "end": 72.868
+    },
+    {
+     "w": "have",
+     "start": 72.905,
+     "end": 73.056
+    },
+    {
+     "w": "a",
+     "start": 73.083,
+     "end": 73.101
+    },
+    {
+     "w": "final",
+     "start": 73.145,
+     "end": 73.378
+    },
+    {
+     "w": "boss.",
+     "start": 73.413,
+     "end": 73.726
+    }
+   ]
+  },
+  {
+   "at": 74.726,
+   "who": "narrator",
+   "label": "road",
+   "text": "Vahl's hunters found us on the seaside road.",
+   "raw": "audio/voice/echo-breakers-full/l19_42c23762f7.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l19_42c23762f7_67f0d1.wav",
+   "start": 74.726,
+   "end": 76.835,
+   "tail": 76.843,
+   "words": [
+    {
+     "w": "Vahl's",
+     "start": 74.726,
+     "end": 75.048
+    },
+    {
+     "w": "hunters",
+     "start": 75.083,
+     "end": 75.36
+    },
+    {
+     "w": "found",
+     "start": 75.404,
+     "end": 75.61
+    },
+    {
+     "w": "us",
+     "start": 75.654,
+     "end": 75.726
+    },
+    {
+     "w": "on",
+     "start": 75.78,
+     "end": 75.851
+    },
+    {
+     "w": "the",
+     "start": 75.887,
+     "end": 75.941
+    },
+    {
+     "w": "seaside",
+     "start": 75.968,
+     "end": 76.361
+    },
+    {
+     "w": "road.",
+     "start": 76.405,
+     "end": 76.735
+    }
+   ]
+  },
+  {
+   "at": 80.635,
+   "who": "grant",
+   "label": "always",
+   "text": "Why is it ALWAYS me?!",
+   "raw": "audio/voice/echo-breakers-full/l20_a12721fbf0.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l20_a12721fbf0_67f0d1.wav",
+   "start": 80.635,
+   "end": 81.717,
+   "tail": 81.725,
+   "words": [
+    {
+     "w": "Why",
+     "start": 80.635,
+     "end": 80.805
+    },
+    {
+     "w": "is",
+     "start": 80.85,
+     "end": 80.921
+    },
+    {
+     "w": "it",
+     "start": 80.957,
+     "end": 81.01
+    },
+    {
+     "w": "ALWAYS",
+     "start": 81.046,
+     "end": 81.367
+    },
+    {
+     "w": "me?!",
+     "start": 81.421,
+     "end": 81.617
+    }
+   ]
+  },
+  {
+   "at": 82.017,
+   "who": "narrator",
+   "label": "grant",
+   "text": "That's Grant Azzardo. He heard the record too. He's scared of literally everything.",
+   "raw": "audio/voice/echo-breakers-full/l21_071e0fa1f0.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l21_071e0fa1f0_67f0d1.wav",
+   "start": 82.017,
+   "end": 85.976,
+   "tail": 85.984,
+   "words": [
+    {
+     "w": "That's",
+     "start": 82.017,
+     "end": 82.213
+    },
+    {
+     "w": "Grant",
+     "start": 82.249,
+     "end": 82.463
+    },
+    {
+     "w": "Azzardo.",
+     "start": 82.49,
+     "end": 82.875
+    },
+    {
+     "w": "He",
+     "start": 83.259,
+     "end": 83.339
+    },
+    {
+     "w": "heard",
+     "start": 83.393,
+     "end": 83.509
+    },
+    {
+     "w": "the",
+     "start": 83.527,
+     "end": 83.581
+    },
+    {
+     "w": "record",
+     "start": 83.635,
+     "end": 83.885
+    },
+    {
+     "w": "too.",
+     "start": 83.912,
+     "end": 84.099
+    },
+    {
+     "w": "He's",
+     "start": 84.483,
+     "end": 84.635
+    },
+    {
+     "w": "scared",
+     "start": 84.662,
+     "end": 84.948
+    },
+    {
+     "w": "of",
+     "start": 84.974,
+     "end": 85.019
+    },
+    {
+     "w": "literally",
+     "start": 85.072,
+     "end": 85.376
+    },
+    {
+     "w": "everything.",
+     "start": 85.429,
+     "end": 85.876
+    }
+   ]
+  },
+  {
+   "at": 86.276,
+   "who": "omamori",
+   "label": "tensec",
+   "text": "十秒だけだぞ！",
+   "en": "Only ten seconds!",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l22_55ff1e9ed8.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l22_55ff1e9ed8_00bd30.wav",
+   "start": 86.276,
+   "end": 87.017,
+   "tail": 87.046,
+   "words": [
+    {
+     "w": "十秒だけだぞ！",
+     "start": 86.276,
+     "end": 86.917
+    }
+   ]
+  },
+  {
+   "at": 88.617,
+   "who": "narrator",
+   "label": "luck",
+   "text": "Ten seconds of perfect luck.",
+   "raw": "audio/voice/echo-breakers-full/l23_b6835f2b79.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l23_b6835f2b79_67f0d1.wav",
+   "start": 88.617,
+   "end": 89.744,
+   "tail": 89.752,
+   "words": [
+    {
+     "w": "Ten",
+     "start": 88.617,
+     "end": 88.795
+    },
+    {
+     "w": "seconds",
+     "start": 88.849,
+     "end": 89.082
+    },
+    {
+     "w": "of",
+     "start": 89.109,
+     "end": 89.144
+    },
+    {
+     "w": "perfect",
+     "start": 89.189,
+     "end": 89.421
+    },
+    {
+     "w": "luck.",
+     "start": 89.456,
+     "end": 89.644
+    }
+   ]
+  },
+  {
+   "at": 93.944,
+   "who": "omamori",
+   "label": "timeup",
+   "text": "あっ…時間切れ。",
+   "en": "Oops… time's up.",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l24_9a0281ff05.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l24_9a0281ff05_00bd30.wav",
+   "start": 93.944,
+   "end": 94.849,
+   "tail": 94.878,
+   "words": [
+    {
+     "w": "あっ…時間切れ。",
+     "start": 93.944,
+     "end": 94.749
+    }
+   ]
+  },
+  {
+   "at": 95.149,
+   "who": "narrator",
+   "label": "worst",
+   "text": "…then ten seconds of the worst luck ever.",
+   "raw": "audio/voice/echo-breakers-full/l25_17cc794d7c.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l25_17cc794d7c_67f0d1.wav",
+   "start": 95.149,
+   "end": 96.762,
+   "tail": 96.77,
+   "words": [
+    {
+     "w": "…then",
+     "start": 95.18,
+     "end": 95.322
+    },
+    {
+     "w": "ten",
+     "start": 95.367,
+     "end": 95.519
+    },
+    {
+     "w": "seconds",
+     "start": 95.573,
+     "end": 95.841
+    },
+    {
+     "w": "of",
+     "start": 95.858,
+     "end": 95.903
+    },
+    {
+     "w": "the",
+     "start": 95.939,
+     "end": 95.992
+    },
+    {
+     "w": "worst",
+     "start": 96.028,
+     "end": 96.215
+    },
+    {
+     "w": "luck",
+     "start": 96.269,
+     "end": 96.43
+    },
+    {
+     "w": "ever.",
+     "start": 96.474,
+     "end": 96.662
+    }
+   ]
+  },
+  {
+   "at": 100.362,
+   "who": "grant",
+   "label": "hat",
+   "text": "My HAT!",
+   "raw": "audio/voice/echo-breakers-full/l26_fddbf11d91.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l26_fddbf11d91_67f0d1.wav",
+   "start": 100.362,
+   "end": 100.917,
+   "tail": 100.925,
+   "words": [
+    {
+     "w": "My",
+     "start": 100.362,
+     "end": 100.523
+    },
+    {
+     "w": "HAT!",
+     "start": 100.577,
+     "end": 100.817
+    }
+   ]
+  },
+  {
+   "at": 101.217,
+   "who": "narrator",
+   "label": "escaped",
+   "text": "We escaped. His hat didn't.",
+   "raw": "audio/voice/echo-breakers-full/l27_fbc578d4e2.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l27_fbc578d4e2_67f0d1.wav",
+   "start": 101.217,
+   "end": 102.996,
+   "tail": 103.004,
+   "words": [
+    {
+     "w": "We",
+     "start": 101.217,
+     "end": 101.342
+    },
+    {
+     "w": "escaped.",
+     "start": 101.395,
+     "end": 101.824
+    },
+    {
+     "w": "His",
+     "start": 102.209,
+     "end": 102.333
+    },
+    {
+     "w": "hat",
+     "start": 102.378,
+     "end": 102.548
+    },
+    {
+     "w": "didn't.",
+     "start": 102.602,
+     "end": 102.896
+    }
+   ]
+  },
+  {
+   "at": 103.896,
+   "who": "narrator",
+   "label": "sunset",
+   "text": "At sunset, someone was waiting for me on the old sea fortress.",
+   "raw": "audio/voice/echo-breakers-full/l28_5b3714fb18.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l28_5b3714fb18_67f0d1.wav",
+   "start": 103.896,
+   "end": 106.648,
+   "tail": 106.656,
+   "words": [
+    {
+     "w": "At",
+     "start": 103.896,
+     "end": 104.012
+    },
+    {
+     "w": "sunset,",
+     "start": 104.066,
+     "end": 104.485
+    },
+    {
+     "w": "someone",
+     "start": 104.53,
+     "end": 104.807
+    },
+    {
+     "w": "was",
+     "start": 104.824,
+     "end": 104.905
+    },
+    {
+     "w": "waiting",
+     "start": 104.95,
+     "end": 105.146
+    },
+    {
+     "w": "for",
+     "start": 105.182,
+     "end": 105.289
+    },
+    {
+     "w": "me",
+     "start": 105.334,
+     "end": 105.396
+    },
+    {
+     "w": "on",
+     "start": 105.45,
+     "end": 105.521
+    },
+    {
+     "w": "the",
+     "start": 105.548,
+     "end": 105.611
+    },
+    {
+     "w": "old",
+     "start": 105.664,
+     "end": 105.861
+    },
+    {
+     "w": "sea",
+     "start": 105.923,
+     "end": 106.075
+    },
+    {
+     "w": "fortress.",
+     "start": 106.128,
+     "end": 106.548
+    }
+   ]
+  },
+  {
+   "at": 107.048,
+   "who": "hale",
+   "label": "show",
+   "text": "So you're the new kid with the loud Echo. Show me.",
+   "raw": "audio/voice/echo-breakers-full/l29_6a78b1f8c6.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l29_6a78b1f8c6_67f0d1.wav",
+   "start": 107.048,
+   "end": 108.925,
+   "tail": 108.933,
+   "words": [
+    {
+     "w": "So",
+     "start": 107.048,
+     "end": 107.164
+    },
+    {
+     "w": "you're",
+     "start": 107.209,
+     "end": 107.343
+    },
+    {
+     "w": "the",
+     "start": 107.36,
+     "end": 107.414
+    },
+    {
+     "w": "new",
+     "start": 107.459,
+     "end": 107.566
+    },
+    {
+     "w": "kid",
+     "start": 107.602,
+     "end": 107.736
+    },
+    {
+     "w": "with",
+     "start": 107.763,
+     "end": 107.852
+    },
+    {
+     "w": "the",
+     "start": 107.879,
+     "end": 107.932
+    },
+    {
+     "w": "loud",
+     "start": 107.976,
+     "end": 108.146
+    },
+    {
+     "w": "Echo.",
+     "start": 108.182,
+     "end": 108.414
+    },
+    {
+     "w": "Show",
+     "start": 108.495,
+     "end": 108.656
+    },
+    {
+     "w": "me.",
+     "start": 108.709,
+     "end": 108.825
+    }
+   ]
+  },
+  {
+   "at": 109.225,
+   "who": "narrator",
+   "label": "hale",
+   "text": "Hale Inverno. Rich. Cold. And his Echo… was even colder.",
+   "raw": "audio/voice/echo-breakers-full/l30_5536619734.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l30_5536619734_67f0d1.wav",
+   "start": 109.225,
+   "end": 113.309,
+   "tail": 113.317,
+   "words": [
+    {
+     "w": "Hale",
+     "start": 109.225,
+     "end": 109.502
+    },
+    {
+     "w": "Inverno.",
+     "start": 109.529,
+     "end": 109.948
+    },
+    {
+     "w": "Rich.",
+     "start": 110.288,
+     "end": 110.556
+    },
+    {
+     "w": "Cold.",
+     "start": 110.806,
+     "end": 111.226
+    },
+    {
+     "w": "And",
+     "start": 111.457,
+     "end": 111.583
+    },
+    {
+     "w": "his",
+     "start": 111.627,
+     "end": 111.717
+    },
+    {
+     "w": "Echo…",
+     "start": 111.797,
+     "end": 112.083
+    },
+    {
+     "w": "was",
+     "start": 112.467,
+     "end": 112.583
+    },
+    {
+     "w": "even",
+     "start": 112.628,
+     "end": 112.762
+    },
+    {
+     "w": "colder.",
+     "start": 112.816,
+     "end": 113.209
+    }
+   ]
+  },
+  {
+   "at": 113.709,
+   "who": "tsurara",
+   "label": "freeze",
+   "text": "凍りつけ。",
+   "en": "Freeze.",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l31_9f1e9f839b.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l31_9f1e9f839b_8e9c13.wav",
+   "start": 113.709,
+   "end": 114.749,
+   "tail": 114.929,
+   "words": [
+    {
+     "w": "凍りつけ。",
+     "start": 113.709,
+     "end": 114.649
+    }
+   ]
+  },
+  {
+   "at": 124.249,
+   "who": "think",
+   "label": "cold",
+   "text": "Cold… I can't move. Hibiki's fists are slowing down…",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l32_6804b49d1a.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l32_6804b49d1a_4993a6.wav",
+   "start": 124.249,
+   "end": 127.475,
+   "tail": 127.953,
+   "words": [
+    {
+     "w": "Cold…",
+     "start": 124.249,
+     "end": 124.651
+    },
+    {
+     "w": "I",
+     "start": 125.035,
+     "end": 125.071
+    },
+    {
+     "w": "can't",
+     "start": 125.124,
+     "end": 125.285
+    },
+    {
+     "w": "move.",
+     "start": 125.321,
+     "end": 125.624
+    },
+    {
+     "w": "Hibiki's",
+     "start": 126.009,
+     "end": 126.375
+    },
+    {
+     "w": "fists",
+     "start": 126.428,
+     "end": 126.652
+    },
+    {
+     "w": "are",
+     "start": 126.687,
+     "end": 126.759
+    },
+    {
+     "w": "slowing",
+     "start": 126.777,
+     "end": 127.044
+    },
+    {
+     "w": "down…",
+     "start": 127.098,
+     "end": 127.375
+    }
+   ]
+  },
+  {
+   "at": 127.775,
+   "who": "think",
+   "label": "crack",
+   "text": "Wait. That sound. The ice is… cracking.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l33_3500bb4b49.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l33_3500bb4b49_4993a6.wav",
+   "start": 127.775,
+   "end": 130.296,
+   "tail": 130.773,
+   "words": [
+    {
+     "w": "Wait.",
+     "start": 127.775,
+     "end": 127.963
+    },
+    {
+     "w": "That",
+     "start": 127.998,
+     "end": 128.123
+    },
+    {
+     "w": "sound.",
+     "start": 128.177,
+     "end": 128.588
+    },
+    {
+     "w": "The",
+     "start": 128.945,
+     "end": 129.043
+    },
+    {
+     "w": "ice",
+     "start": 129.097,
+     "end": 129.257
+    },
+    {
+     "w": "is…",
+     "start": 129.284,
+     "end": 129.418
+    },
+    {
+     "w": "cracking.",
+     "start": 129.803,
+     "end": 130.196
+    }
+   ]
+  },
+  {
+   "at": 131.096,
+   "who": "think",
+   "label": "power",
+   "text": "Every crack is a sound. And every sound… is power.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l34_cd16579564.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l34_cd16579564_4993a6.wav",
+   "start": 131.096,
+   "end": 133.955,
+   "tail": 134.433,
+   "words": [
+    {
+     "w": "Every",
+     "start": 131.096,
+     "end": 131.301
+    },
+    {
+     "w": "crack",
+     "start": 131.346,
+     "end": 131.551
+    },
+    {
+     "w": "is",
+     "start": 131.588,
+     "end": 131.641
+    },
+    {
+     "w": "a",
+     "start": 131.685,
+     "end": 131.703
+    },
+    {
+     "w": "sound.",
+     "start": 131.766,
+     "end": 132.15
+    },
+    {
+     "w": "And",
+     "start": 132.248,
+     "end": 132.382
+    },
+    {
+     "w": "every",
+     "start": 132.435,
+     "end": 132.605
+    },
+    {
+     "w": "sound…",
+     "start": 132.659,
+     "end": 133.07
+    },
+    {
+     "w": "is",
+     "start": 133.347,
+     "end": 133.463
+    },
+    {
+     "w": "power.",
+     "start": 133.516,
+     "end": 133.855
+    }
+   ]
+  },
+  {
+   "at": 135.055,
+   "who": "hibiki",
+   "label": "resound1",
+   "text": "響け！響け！響け！",
+   "en": "Resound! Resound! Resound!",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l35_11b9830a4d.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l35_11b9830a4d_3d2e59.wav",
+   "start": 135.055,
+   "end": 137.826,
+   "tail": 137.963,
+   "words": [
+    {
+     "w": "響け！響け！響け！",
+     "start": 135.055,
+     "end": 137.726
+    }
+   ]
+  },
+  {
+   "at": 140.026,
+   "who": "hale",
+   "label": "arena",
+   "text": "Not bad. Vahl is at the old arena. Tonight.",
+   "raw": "audio/voice/echo-breakers-full/l36_f089d891b9.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l36_f089d891b9_67f0d1.wav",
+   "start": 140.026,
+   "end": 142.091,
+   "tail": 142.098,
+   "words": [
+    {
+     "w": "Not",
+     "start": 140.026,
+     "end": 140.178
+    },
+    {
+     "w": "bad.",
+     "start": 140.214,
+     "end": 140.419
+    },
+    {
+     "w": "Vahl",
+     "start": 140.472,
+     "end": 140.704
+    },
+    {
+     "w": "is",
+     "start": 140.749,
+     "end": 140.803
+    },
+    {
+     "w": "at",
+     "start": 140.839,
+     "end": 140.901
+    },
+    {
+     "w": "the",
+     "start": 140.937,
+     "end": 140.991
+    },
+    {
+     "w": "old",
+     "start": 141.044,
+     "end": 141.169
+    },
+    {
+     "w": "arena.",
+     "start": 141.196,
+     "end": 141.473
+    },
+    {
+     "w": "Tonight.",
+     "start": 141.661,
+     "end": 141.991
+    }
+   ]
+  },
+  {
+   "at": 144.891,
+   "who": "vahl",
+   "label": "welcome",
+   "text": "Welcome, children. Your Echoes will make a beautiful finale.",
+   "raw": "audio/voice/echo-breakers-full/l37_b0c3c92965.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l37_b0c3c92965_67f0d1.wav",
+   "start": 144.891,
+   "end": 148.234,
+   "tail": 148.242,
+   "words": [
+    {
+     "w": "Welcome,",
+     "start": 144.891,
+     "end": 145.525
+    },
+    {
+     "w": "children.",
+     "start": 145.569,
+     "end": 145.999
+    },
+    {
+     "w": "Your",
+     "start": 146.383,
+     "end": 146.535
+    },
+    {
+     "w": "Echoes",
+     "start": 146.598,
+     "end": 146.901
+    },
+    {
+     "w": "will",
+     "start": 146.937,
+     "end": 147.053
+    },
+    {
+     "w": "make",
+     "start": 147.089,
+     "end": 147.214
+    },
+    {
+     "w": "a",
+     "start": 147.241,
+     "end": 147.267
+    },
+    {
+     "w": "beautiful",
+     "start": 147.321,
+     "end": 147.625
+    },
+    {
+     "w": "finale.",
+     "start": 147.669,
+     "end": 148.134
+    }
+   ]
+  },
+  {
+   "at": 148.534,
+   "who": "shuen",
+   "label": "final",
+   "text": "最後の楽章を始めよう。",
+   "en": "Let the final movement begin.",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l38_2f0569b8a6.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l38_2f0569b8a6_517286.wav",
+   "start": 148.534,
+   "end": 151.079,
+   "tail": 152.906,
+   "words": [
+    {
+     "w": "最後の楽章を始めよう。",
+     "start": 148.534,
+     "end": 150.979
+    }
+   ]
+  },
+  {
+   "at": 152.879,
+   "who": "narrator",
+   "label": "puppets",
+   "text": "His music grabbed Aurora, Grant, even Hale… and made them dance like puppets.",
+   "raw": "audio/voice/echo-breakers-full/l39_fa066cd07e.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l39_fa066cd07e_67f0d1.wav",
+   "start": 152.879,
+   "end": 156.953,
+   "tail": 156.961,
+   "words": [
+    {
+     "w": "His",
+     "start": 152.879,
+     "end": 153.031
+    },
+    {
+     "w": "music",
+     "start": 153.084,
+     "end": 153.334
+    },
+    {
+     "w": "grabbed",
+     "start": 153.371,
+     "end": 153.629
+    },
+    {
+     "w": "Aurora,",
+     "start": 153.656,
+     "end": 154.013
+    },
+    {
+     "w": "Grant,",
+     "start": 154.129,
+     "end": 154.46
+    },
+    {
+     "w": "even",
+     "start": 154.576,
+     "end": 154.754
+    },
+    {
+     "w": "Hale…",
+     "start": 154.799,
+     "end": 155.165
+    },
+    {
+     "w": "and",
+     "start": 155.514,
+     "end": 155.638
+    },
+    {
+     "w": "made",
+     "start": 155.684,
+     "end": 155.853
+    },
+    {
+     "w": "them",
+     "start": 155.88,
+     "end": 156.004
+    },
+    {
+     "w": "dance",
+     "start": 156.058,
+     "end": 156.281
+    },
+    {
+     "w": "like",
+     "start": 156.317,
+     "end": 156.461
+    },
+    {
+     "w": "puppets.",
+     "start": 156.496,
+     "end": 156.853
+    }
+   ]
+  },
+  {
+   "at": 160.253,
+   "who": "dante",
+   "label": "letgo",
+   "text": "Let them GO!",
+   "raw": "audio/voice/echo-breakers-full/l40_fdd0b0be1b.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l40_fdd0b0be1b_67f0d1.wav",
+   "start": 160.253,
+   "end": 160.96,
+   "tail": 160.968,
+   "words": [
+    {
+     "w": "Let",
+     "start": 160.253,
+     "end": 160.431
+    },
+    {
+     "w": "them",
+     "start": 160.468,
+     "end": 160.601
+    },
+    {
+     "w": "GO!",
+     "start": 160.655,
+     "end": 160.86
+    }
+   ]
+  },
+  {
+   "at": 161.16,
+   "who": "hibiki",
+   "label": "resound2",
+   "text": "響け！響け！響け！",
+   "en": "Resound! Resound! Resound!",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l41_11b9830a4d.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l41_11b9830a4d_3d2e59.wav",
+   "start": 161.16,
+   "end": 163.931,
+   "tail": 164.068,
+   "words": [
+    {
+     "w": "響け！響け！響け！",
+     "start": 161.16,
+     "end": 163.831
+    }
+   ]
+  },
+  {
+   "at": 164.131,
+   "who": "shuen",
+   "label": "muda",
+   "text": "無駄無駄無駄無駄！",
+   "en": "Useless!",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l42_784025e12f.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l42_784025e12f_517286.wav",
+   "start": 164.131,
+   "end": 165.964,
+   "tail": 167.791,
+   "words": [
+    {
+     "w": "無駄無駄無駄無駄！",
+     "start": 164.131,
+     "end": 165.864
+    }
+   ]
+  },
+  {
+   "at": 169.164,
+   "who": "think",
+   "label": "everywhere",
+   "text": "His music is everywhere… Aurora, Grant, Hale… they're all dancing to his beat.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l43_3c768dbfa6.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l43_3c768dbfa6_4993a6.wav",
+   "start": 169.164,
+   "end": 173.809,
+   "tail": 174.287,
+   "words": [
+    {
+     "w": "His",
+     "start": 169.164,
+     "end": 169.334
+    },
+    {
+     "w": "music",
+     "start": 169.387,
+     "end": 169.682
+    },
+    {
+     "w": "is",
+     "start": 169.736,
+     "end": 169.852
+    },
+    {
+     "w": "everywhere…",
+     "start": 169.906,
+     "end": 170.406
+    },
+    {
+     "w": "Aurora,",
+     "start": 170.646,
+     "end": 171.129
+    },
+    {
+     "w": "Grant,",
+     "start": 171.227,
+     "end": 171.62
+    },
+    {
+     "w": "Hale…",
+     "start": 171.834,
+     "end": 172.219
+    },
+    {
+     "w": "they're",
+     "start": 172.504,
+     "end": 172.682
+    },
+    {
+     "w": "all",
+     "start": 172.709,
+     "end": 172.835
+    },
+    {
+     "w": "dancing",
+     "start": 172.888,
+     "end": 173.192
+    },
+    {
+     "w": "to",
+     "start": 173.246,
+     "end": 173.308
+    },
+    {
+     "w": "his",
+     "start": 173.37,
+     "end": 173.442
+    },
+    {
+     "w": "beat.",
+     "start": 173.496,
+     "end": 173.709
+    }
+   ]
+  },
+  {
+   "at": 174.109,
+   "who": "think",
+   "label": "controls",
+   "text": "As long as there's music, he controls everything. Even me.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l44_ea206bc11e.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l44_ea206bc11e_4993a6.wav",
+   "start": 174.109,
+   "end": 177.21,
+   "tail": 177.687,
+   "words": [
+    {
+     "w": "As",
+     "start": 174.109,
+     "end": 174.216
+    },
+    {
+     "w": "long",
+     "start": 174.27,
+     "end": 174.448
+    },
+    {
+     "w": "as",
+     "start": 174.484,
+     "end": 174.537
+    },
+    {
+     "w": "there's",
+     "start": 174.574,
+     "end": 174.779
+    },
+    {
+     "w": "music,",
+     "start": 174.832,
+     "end": 175.198
+    },
+    {
+     "w": "he",
+     "start": 175.252,
+     "end": 175.333
+    },
+    {
+     "w": "controls",
+     "start": 175.386,
+     "end": 175.788
+    },
+    {
+     "w": "everything.",
+     "start": 175.833,
+     "end": 176.226
+    },
+    {
+     "w": "Even",
+     "start": 176.583,
+     "end": 176.815
+    },
+    {
+     "w": "me.",
+     "start": 176.868,
+     "end": 177.11
+    }
+   ]
+  },
+  {
+   "at": 178.71,
+   "who": "think",
+   "label": "weakness",
+   "text": "Hibiki gets stronger with sound… and weaker in silence. That's my weakness…",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l45_56a44104aa.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l45_56a44104aa_4993a6.wav",
+   "start": 178.71,
+   "end": 182.99,
+   "tail": 183.468,
+   "words": [
+    {
+     "w": "Hibiki",
+     "start": 178.71,
+     "end": 179.032
+    },
+    {
+     "w": "gets",
+     "start": 179.076,
+     "end": 179.237
+    },
+    {
+     "w": "stronger",
+     "start": 179.264,
+     "end": 179.621
+    },
+    {
+     "w": "with",
+     "start": 179.657,
+     "end": 179.773
+    },
+    {
+     "w": "sound…",
+     "start": 179.808,
+     "end": 180.219
+    },
+    {
+     "w": "and",
+     "start": 180.514,
+     "end": 180.639
+    },
+    {
+     "w": "weaker",
+     "start": 180.692,
+     "end": 180.952
+    },
+    {
+     "w": "in",
+     "start": 180.996,
+     "end": 181.05
+    },
+    {
+     "w": "silence.",
+     "start": 181.112,
+     "end": 181.612
+    },
+    {
+     "w": "That's",
+     "start": 181.997,
+     "end": 182.265
+    },
+    {
+     "w": "my",
+     "start": 182.318,
+     "end": 182.435
+    },
+    {
+     "w": "weakness…",
+     "start": 182.488,
+     "end": 182.89
+    }
+   ]
+  },
+  {
+   "at": 183.29,
+   "who": "think",
+   "label": "his",
+   "text": "…but silence is HIS weakness too.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l46_383cd43e29.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l46_383cd43e29_4993a6.wav",
+   "start": 183.29,
+   "end": 184.975,
+   "tail": 185.452,
+   "words": [
+    {
+     "w": "…but",
+     "start": 183.321,
+     "end": 183.437
+    },
+    {
+     "w": "silence",
+     "start": 183.482,
+     "end": 183.875
+    },
+    {
+     "w": "is",
+     "start": 183.919,
+     "end": 184.018
+    },
+    {
+     "w": "HIS",
+     "start": 184.071,
+     "end": 184.223
+    },
+    {
+     "w": "weakness",
+     "start": 184.276,
+     "end": 184.634
+    },
+    {
+     "w": "too.",
+     "start": 184.669,
+     "end": 184.875
+    }
+   ]
+  },
+  {
+   "at": 185.275,
+   "who": "think",
+   "label": "takeaway",
+   "text": "Then I'll take everything away. Every sound. And give it back all at once.",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l47_3c35cd3a2b.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l47_3c35cd3a2b_4993a6.wav",
+   "start": 185.275,
+   "end": 189.081,
+   "tail": 189.559,
+   "words": [
+    {
+     "w": "Then",
+     "start": 185.275,
+     "end": 185.427
+    },
+    {
+     "w": "I'll",
+     "start": 185.471,
+     "end": 185.597
+    },
+    {
+     "w": "take",
+     "start": 185.632,
+     "end": 185.802
+    },
+    {
+     "w": "everything",
+     "start": 185.837,
+     "end": 186.213
+    },
+    {
+     "w": "away.",
+     "start": 186.267,
+     "end": 186.561
+    },
+    {
+     "w": "Every",
+     "start": 186.793,
+     "end": 187.034
+    },
+    {
+     "w": "sound.",
+     "start": 187.088,
+     "end": 187.481
+    },
+    {
+     "w": "And",
+     "start": 187.793,
+     "end": 187.919
+    },
+    {
+     "w": "give",
+     "start": 187.954,
+     "end": 188.07
+    },
+    {
+     "w": "it",
+     "start": 188.088,
+     "end": 188.142
+    },
+    {
+     "w": "back",
+     "start": 188.177,
+     "end": 188.338
+    },
+    {
+     "w": "all",
+     "start": 188.383,
+     "end": 188.517
+    },
+    {
+     "w": "at",
+     "start": 188.553,
+     "end": 188.597
+    },
+    {
+     "w": "once.",
+     "start": 188.651,
+     "end": 188.981
+    }
+   ]
+  },
+  {
+   "at": 192.681,
+   "who": "vahlthink",
+   "label": "impossible",
+   "text": "Silence…? Impossible. Nobody escapes my finale…",
+   "gain": -3,
+   "raw": "audio/voice/echo-breakers-full/l48_42ee32807d.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l48_42ee32807d_4993a6.wav",
+   "start": 192.681,
+   "end": 195.496,
+   "tail": 195.973,
+   "words": [
+    {
+     "w": "Silence…?",
+     "start": 192.681,
+     "end": 193.136
+    },
+    {
+     "w": "Impossible.",
+     "start": 193.279,
+     "end": 193.931
+    },
+    {
+     "w": "Nobody",
+     "start": 194.119,
+     "end": 194.458
+    },
+    {
+     "w": "escapes",
+     "start": 194.512,
+     "end": 194.806
+    },
+    {
+     "w": "my",
+     "start": 194.843,
+     "end": 194.932
+    },
+    {
+     "w": "finale…",
+     "start": 194.985,
+     "end": 195.396
+    }
+   ]
+  },
+  {
+   "at": 196.396,
+   "who": "dante",
+   "label": "shout",
+   "text": "HIBIKIIIII!",
+   "raw": "audio/voice/echo-breakers-full/l49_29fc1a315c.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l49_29fc1a315c_67f0d1.wav",
+   "start": 196.396,
+   "end": 197.318,
+   "tail": 197.325,
+   "words": [
+    {
+     "w": "HIBIKIIIII!",
+     "start": 196.396,
+     "end": 197.218
+    }
+   ]
+  },
+  {
+   "at": 197.618,
+   "who": "hibiki",
+   "label": "lastpunch",
+   "text": "響けぇぇぇっ！",
+   "en": "RESOUND!",
+   "gain": 3,
+   "raw": "audio/voice/echo-breakers-full/l50_c7dc992ce2.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l50_c7dc992ce2_3d2e59.wav",
+   "start": 197.618,
+   "end": 199.595,
+   "tail": 199.732,
+   "words": [
+    {
+     "w": "響けぇぇぇっ！",
+     "start": 197.618,
+     "end": 199.495
+    }
+   ]
+  },
+  {
+   "at": 202.895,
+   "who": "narrator",
+   "label": "stopped",
+   "text": "And just like that… the music stopped.",
+   "raw": "audio/voice/echo-breakers-full/l51_14c687a211.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l51_14c687a211_67f0d1.wav",
+   "start": 202.895,
+   "end": 205.068,
+   "tail": 205.076,
+   "words": [
+    {
+     "w": "And",
+     "start": 202.895,
+     "end": 203.02
+    },
+    {
+     "w": "just",
+     "start": 203.073,
+     "end": 203.217
+    },
+    {
+     "w": "like",
+     "start": 203.261,
+     "end": 203.422
+    },
+    {
+     "w": "that…",
+     "start": 203.449,
+     "end": 203.708
+    },
+    {
+     "w": "the",
+     "start": 204.093,
+     "end": 204.173
+    },
+    {
+     "w": "music",
+     "start": 204.227,
+     "end": 204.494
+    },
+    {
+     "w": "stopped.",
+     "start": 204.548,
+     "end": 204.968
+    }
+   ]
+  },
+  {
+   "at": 207.068,
+   "who": "narrator",
+   "label": "sunrise",
+   "text": "By sunrise, the golden record was gone.",
+   "raw": "audio/voice/echo-breakers-full/l52_2ac1090e87.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l52_2ac1090e87_67f0d1.wav",
+   "start": 207.068,
+   "end": 209.026,
+   "tail": 209.033,
+   "words": [
+    {
+     "w": "By",
+     "start": 207.068,
+     "end": 207.211
+    },
+    {
+     "w": "sunrise,",
+     "start": 207.264,
+     "end": 207.746
+    },
+    {
+     "w": "the",
+     "start": 207.783,
+     "end": 207.836
+    },
+    {
+     "w": "golden",
+     "start": 207.881,
+     "end": 208.113
+    },
+    {
+     "w": "record",
+     "start": 208.166,
+     "end": 208.381
+    },
+    {
+     "w": "was",
+     "start": 208.426,
+     "end": 208.515
+    },
+    {
+     "w": "gone.",
+     "start": 208.56,
+     "end": 208.926
+    }
+   ]
+  },
+  {
+   "at": 209.326,
+   "who": "narrator",
+   "label": "another",
+   "text": "But somewhere in Port Halcyon… another one started to spin.",
+   "raw": "audio/voice/echo-breakers-full/l53_2fee831a2e.mp3",
+   "clip": "echo-breakers/build/echo-breakers-full/voice/l53_2fee831a2e_67f0d1.wav",
+   "start": 209.326,
+   "end": 212.204,
+   "tail": 212.211,
+   "words": [
+    {
+     "w": "But",
+     "start": 209.326,
+     "end": 209.469
+    },
+    {
+     "w": "somewhere",
+     "start": 209.496,
+     "end": 209.772
+    },
+    {
+     "w": "in",
+     "start": 209.799,
+     "end": 209.844
+    },
+    {
+     "w": "Port",
+     "start": 209.888,
+     "end": 210.049
+    },
+    {
+     "w": "Halcyon…",
+     "start": 210.085,
+     "end": 210.531
+    },
+    {
+     "w": "another",
+     "start": 210.916,
+     "end": 211.184
+    },
+    {
+     "w": "one",
+     "start": 211.229,
+     "end": 211.354
+    },
+    {
+     "w": "started",
+     "start": 211.39,
+     "end": 211.658
+    },
+    {
+     "w": "to",
+     "start": 211.693,
+     "end": 211.738
+    },
+    {
+     "w": "spin.",
+     "start": 211.791,
+     "end": 212.104
+    }
+   ]
+  }
+ ]
+}

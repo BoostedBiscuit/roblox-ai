@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!-- Arena (Episode 3) preview: used by tools/arena7-shots.js to check the place before the episode is built. -->
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}</style></head><body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script><script src="../mood.js"></script><script src="../characters.js"></script><script src="../animations.js"></script>
+<script src="../scenery.js"></script><script src="../arena7.js"></script>
+<script>
+(function () {
+  try {
+    const W = innerWidth, H = innerHeight;
+    const renderer = RT.mood.renderer(null, { preserve: true }); renderer.setSize(W, H); document.body.appendChild(renderer.domElement);
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 4000);
+    const env = RT.mood.create(scene, renderer, { mood: 'studio', shadowSize: 2048 });
+    const A7 = RT.arena7.build(); scene.add(A7);
+    window.view = (o) => {
+      env.set(RT.arena7.MOODS[o.mood || 'day']); A7.update(o.t || 3, o.u || {});
+      camera.fov = o.fov || 50; camera.position.set(...o.cam); camera.lookAt(...o.look); camera.updateProjectionMatrix();
+      env.follow(camera); env.shadowFocus(o.look[0], 0, o.look[2], o.shadow || 40);
+      renderer.render(scene, camera);
+    };
+    window.sceneReady = true;
+  } catch (e) { window.sceneError = String(e.stack || e); console.error(e); }
+})();
+</script></body></html>

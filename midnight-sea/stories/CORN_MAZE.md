@@ -42,7 +42,7 @@ Fair clues: (1) Juno has always called her "Vale"; the voice says "Nara". (2) Th
 ## Character look (APPROVED, look test: out/midnight-sea/maze-look.jpg)
 Classic blocky build for the humans; beautiful face for Nara; Juno is a boy with a handsome face; the scarecrow keeps long thin limbs.
 
-## Stage 3 · Character and world bible (FOR APPROVAL)
+## Stage 3 · Character and world bible (APPROVED; narrator reads every line)
 
 ### Characters (locked: same model, outfit, hair and proportions in every shot)
 
@@ -85,7 +85,7 @@ Classic blocky build for the humans; beautiful face for Nara; Juno is a boy with
 ### Locations (locked)
 
 **Harrow Farm corn maze** (on the hill above Hollow Bay)
-- Layout: a square maze about 34 m across (10 × 10 cells, 3.4 m between walls), with dry corn walls about 1.3 × Nara's height. Entrance on the south side, exit on the north side to the road, and a 2 × 2-cell clearing in the middle with the scarecrow's tall wooden cross-pole.
+- Layout: a square maze about 34 m across (10 × 10 cells, 3.4 m between walls), with dry corn walls about 1.3 × Nara's height. Entrance on the south side (facing the town and the road), and a 2 × 2-cell clearing in the middle with the scarecrow's tall wooden cross-pole. The scarecrow faces south, toward the town.
 - Landmarks:
   - At the entrance: a wooden sign reading "HARROW FARM · CORN MAZE", hay bales, pumpkins, and faded missing-kid flyers on the sign posts.
   - In the centre: the cross-pole.
@@ -94,8 +94,8 @@ Classic blocky build for the humans; beautiful face for Nara; Juno is a boy with
 - Lighting: a foggy autumn afternoon with soft overcast light and soft shadows. Pale grey-blue fog swallows everything beyond about 10 m, and low mist drifts between the walls. Natural colours, no colour filter.
 - Fixed: the time of day never changes; the fog stays the same density throughout.
 
-**The road** (north edge)
-- Layout: a gravel road with a wooden rail fence, where the maze exit opens onto it. This is where the real Juno stands at the end.
+**The road** (south edge, past the entrance; Stage 4 geography fix)
+- Layout: the gravel farm road from town, with a wooden rail fence, running past the entrance sign. This is where the real Juno stands at the end, behind Nara as she faces the scarecrow.
 - Lighting: the same fog.
 
 ### Visual identity (the whole video)
@@ -106,3 +106,51 @@ Classic blocky build for the humans; beautiful face for Nara; Juno is a boy with
 - Audio:
   - The narrator voice and the dreamcore music at 50% are the same as in your other Nara videos.
   - Option: Juno's calls ("Nara!", "VALE! Where are you?") in a separate boy's voice. The scarecrow's copies would use the same voice, so the twist plays fair.
+
+## Stage 4 · Scene plan (FOR APPROVAL)
+39 scenes of about 1.5–2.5 s each (the reference's pace), then the title card. Times are estimates and lock to the voice file. Screen direction: Nara enters heading north (away from camera at the entrance); the voice and the clearing are always to the LEFT of frame until she faces the scarecrow; the road is behind her (south).
+
+| # | Narration covered | Visual action | Characters | Location | Camera / framing | Beat | ≈ s |
+|---|---|---|---|---|---|---|---|
+| 1 | "In this town," | HOOK: we drop through the fog toward the maze; the scarecrow's pole pokes out of the mist in the middle, facing the town | Scarecrow (tiny) | Maze, from above | High aerial, fast push down | Curiosity | 1.8 |
+| 2 | "if you hear your name inside the corn maze…" | Inside a corridor the corn walls shiver, as if something whispered | — | Maze corridor | Low angle up the wall, slow push | Unease | 2.0 |
+| 3 | "you walk the other way." | Footprints in the dirt reach a junction, stop… and turn back | — | Junction | Top-down on the dirt | Rule shown | 1.6 |
+| 4 | "Every autumn it grows back overnight." | Time-lapse: bare dirt, then stalks shoot up into walls behind the HARROW FARM sign | — | Entrance | Wide, locked, fast clouds | Wonder / dread | 2.2 |
+| 5 | "And every few years, a kid walks in…" | Faded missing-kid flyers flutter on the sign post | — | Entrance sign | Insert, push in | Dread | 1.8 |
+| 6 | "…and never walks out." | The empty entrance path vanishing into fog; one small sneaker lies in the dirt | — | Entrance path | Low, slow push into the fog | Loss | 1.8 |
+| 7 | "Everyone says the maze is alive." | Corn leaves curl slowly, like fingers | — | Corridor | Macro close-up | Creepy | 1.6 |
+| 8 | "That it moves." | A wall of corn slides and knits shut across a path | — | Maze | Top-down | Threat | 1.4 |
+| 9 | "My best friend Juno" | Juno and Nara at the entrance; he grins, she has her arms crossed | Nara, Juno | Entrance | Medium two-shot | Warm | 1.4 |
+| 10 | "has called me Vale since we were five." | Juno says "Vale", half-smile (clue 1) | Juno | Entrance | Close-up | Friendship | 2.0 |
+| 11 | "Today he went in on a dare." | Juno walks backwards into the maze with a two-finger salute; Nara worried by the sign | Juno, Nara | Entrance | Over Nara's shoulder | Reckless | 2.0 |
+| 12 | "He didn't come out." | Nara alone at the entrance, the fog drifting past; she waits | Nara | Entrance | Slow push-in on her face | Worry | 1.6 |
+| 13 | "So I went in after him." | Nara steps into the maze | Nara | Entrance → corridor | Behind her, following | Resolve | 1.6 |
+| 14 | "Behind me, the corn closed." | The entrance gap knits shut behind her; she turns her head | Nara | Corridor | Reverse angle, the closing in the foreground | Trapped | 1.8 |
+| 15 | "The way out was gone." | She faces a solid wall where the entrance was | Nara | Corridor | Close-up, shocked | Panic | 1.6 |
+| 16 | "Then, from the fog: 'Nara!'" | Her head snaps to the left toward the voice | Nara | Corridor | Close-up, quick turn | Hope | 1.4 |
+| 17 | "Juno's voice." | Down the foggy corridor to the left: nothing but mist | — | Corridor | Her POV, slow push | Uncertain | 1.2 |
+| 18 | "I ran toward it." | Nara runs toward the camera | Nara | Corridor | Tracking backward, low | Urgency | 1.4 |
+| 19 | "The corn slammed shut in front of me." | The wall ahead knits shut; she skids to a stop | Nara | Corridor | Behind her | Blocked | 1.8 |
+| 20 | "Again." | She cuts right; another gap slams shut | Nara | Junction | Wide, quick | Escalation | 0.9 |
+| 21 | "And again." | A third slams, closer, inches from her face | Nara | Junction | Low angle, punch-in | Escalation | 1.0 |
+| 22 | "But when I turned away…" | She turns her back to the voice, panting | Nara | Corridor | Medium, side on | Confusion | 1.4 |
+| 23 | "…a path opened." | The corn in front of her parts slowly; mist flows through (clue 2) | Nara | Corridor | Over her shoulder | Strange calm | 1.6 |
+| 24 | "The maze was keeping me from him." | Nara glares at the closed wall, determined | Nara | Corridor | Close-up | Defiance | 1.8 |
+| 25 | "So I crawled under the stalks." | Flat on her belly, she squeezes under the corn as the stalks shiver above her | Nara | Under a wall | Ground level, side on | Risk | 1.8 |
+| 26 | "'Nara… over here.'" | She crawls out into the clearing and looks up | Nara | Clearing (south side) | Behind her, low | Suspense | 1.8 |
+| 27 | "In the middle of the maze stood the old scarecrow." | Reveal: the scarecrow on its pole, looming in the fog, facing her | Scarecrow, Nara | Clearing | Low angle, slow push-in | Dread | 2.4 |
+| 28 | "Juno's voice was coming out of it." | Its stitched mouth moves | Scarecrow | Clearing | Extreme close-up | Horror | 2.0 |
+| 29 | "Then, far behind me," | Nara's head whips around | Nara | Clearing | Close-up, whip | Shock | 1.2 |
+| 30 | "from the road: 'VALE! Where are you?'" | On the road beyond the fog, Juno in his yellow raincoat cups his hands and shouts, corn leaves in his hair (clue 4) | Juno | Road (south) | Wide, through the fog | Twist | 2.2 |
+| 31 | "Juno never calls me Nara." | Realisation; she turns slowly back to the scarecrow | Nara | Clearing | Push-in on her eyes | Twist lands | 1.8 |
+| 32 | "The scarecrow's head turned." | Its head turns to her; pale pupils appear in the eye holes | Scarecrow | Clearing | Close-up | Terror | 1.6 |
+| 33 | "Its arms came off the pole." | Ropes snap, straw falls; it drops and unfolds to its full height | Scarecrow | Clearing | Low angle, wide | Terror peaks | 2.0 |
+| 34 | "Then the corn grabbed me." | Stalks wrap around her arms and waist; eyes squeezed shut | Nara | Clearing edge | Medium, shake | Chaos | 1.6 |
+| 35 | "It dragged me back through wall after wall…" | She's yanked backwards through wall after wall; the scarecrow's long hand reaches after her and misses | Nara, Scarecrow | Through the maze | Fast tracking, whip pans | Escape | 2.6 |
+| 36 | "…and dropped me at Juno's feet." | The corn drops her onto the gravel at Juno's sneakers; he looks down, shocked, then relieved | Nara, Juno | Road | Low angle, feet in the foreground | Relief | 2.0 |
+| 37 | "The maze was never hungry." | They look back at the maze; the wall at the edge knits shut | Nara, Juno | Road | Behind them, medium | Understanding | 1.8 |
+| 38 | "It's a fence." | Pull back and up: the whole maze is a perfect square of corn in the fog | — | Maze, from above | Aerial pull-back | Reveal | 1.6 |
+| 39 | "And now I know what it's keeping in." | Through the fog to the clearing: the scarecrow stands inside, head tilted toward us, its stitched mouth curling | Scarecrow | Clearing | Slow push-in, then hold | Chill | 2.6 |
+| — | (end card) | Title "THE CORN MAZE" over the foggy maze | — | Maze | Locked | — | 2.5 |
+
+Clues on screen: 1 = scene 10 (Juno says "Vale"), 2 = scenes 19–23 (blocked toward the voice, opened away from it), 3 = scene 1 (faces the town) → scenes 27/32 (faces Nara), 4 = scene 30 (corn leaves in Juno's hair).

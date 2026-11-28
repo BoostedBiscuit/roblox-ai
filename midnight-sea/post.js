@@ -17,6 +17,7 @@
 //   glitch    0..1   digital glitch: sliced rows, RGB split, noise blocks (phone footage)
 //   vignette  0..1   (default 0.55)        grain 0..1 (default 0.12)        t: time (grain/glitch seed)
 //   lift      -1..1  brightness offset after the grade (fade to black = -1)
+//   gamma     tone curve of the red grade before the colour ramp (default 1.55: deep, dark; lower = brighter mid-tones)
 //
 // How it works: the scene renders to the screen with MSAA (smooth edges), is copied into a texture, a cheap
 // half-size depth pass gives distances, then 3 small passes (bright-pass + blur for the glow) and one full-size
@@ -79,7 +80,7 @@
   const FINAL_FS = `
   uniform sampler2D tColor; uniform sampler2D tBloom1; uniform sampler2D tBloom2; uniform vec2 res;
   uniform float bloom; uniform float grade; uniform float ca; uniform float zoom; uniform vec2 zoomC; uniform float whip;
-  uniform float glitch; uniform float vignette; uniform float grain; uniform float t; uniform float lift; uniform float mono;
+  uniform float glitch; uniform float vignette; uniform float grain; uniform float t; uniform float lift; uniform float mono; uniform float gamma; uniform float redLum;
   varying vec2 vUv;
   float h1(float n){ return fract(sin(n) * 43758.5453); }
   float h2(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -91,9 +92,9 @@
   vec3 gradeRB(vec3 c){
     // darker, easier on the eyes: deep blacks, a muted crimson for the mid-tones, highlights that stay red
     // (only the brightest specks, like the eye's glint, reach a soft pink); a touch of the original colour keeps faces readable
-    float l = dot(c, vec3(0.299, 0.587, 0.114));
+    float l = max(dot(c, vec3(0.299, 0.587, 0.114)), c.r * redLum);   // redLum > 0: saturated reds (the sea) keep their brightness
     float redness = clamp((c.r - max(c.g, c.b)) * 1.6, 0.0, 1.0);
-    l = pow(clamp(l, 0.0, 1.4), 1.55);
+    l = pow(clamp(l, 0.0, 1.4), gamma);
     vec3 g = mix(vec3(0.0), vec3(0.24, 0.018, 0.022), smoothstep(0.0, 0.32, l));
     g = mix(g, vec3(0.62, 0.075, 0.06), smoothstep(0.22, 0.7, l));
     g = mix(g, vec3(0.86, 0.30, 0.24), smoothstep(0.85, 1.35, l));
@@ -156,7 +157,7 @@
     const gaussM = mat(GAUSS_FS, { tColor: { value: null }, dir: { value: new THREE.Vector2() } });
     const finalM = mat(FINAL_FS, { tColor: { value: null }, tBloom1: { value: null }, tBloom2: { value: null }, res: { value: new THREE.Vector2() },
       bloom: { value: 0 }, grade: { value: 1 }, ca: { value: 0 }, zoom: { value: 0 }, zoomC: { value: new THREE.Vector2(0.5, 0.5) }, whip: { value: 0 },
-      glitch: { value: 0 }, vignette: { value: 0.55 }, grain: { value: 0.12 }, t: { value: 0 }, lift: { value: 0 }, mono: { value: 0 } });
+      glitch: { value: 0 }, vignette: { value: 0.55 }, grain: { value: 0.12 }, t: { value: 0 }, lift: { value: 0 }, mono: { value: 0 }, gamma: { value: 1.55 }, redLum: { value: 0 } });
     const depthOverride = new THREE.MeshBasicMaterial({ colorWrite: false });
 
     let W = 0, H = 0, colorTex, depthRT, blurRT, b1a, b1b, b2a, b2b;
@@ -231,7 +232,7 @@
         f.tColor.value = base; f.tBloom1.value = b1a.texture; f.tBloom2.value = b2a.texture; f.res.value.set(W, H);
         f.bloom.value = bloom; f.grade.value = fx.grade ?? 1; f.ca.value = fx.ca || 0; f.zoom.value = fx.zoom || 0;
         f.zoomC.value.set(...(fx.zoomCenter || [0.5, 0.5])); f.whip.value = fx.whip || 0; f.glitch.value = fx.glitch || 0;
-        f.vignette.value = fx.vignette ?? 0.55; f.grain.value = fx.grain ?? 0.12; f.t.value = fx.t || 0; f.lift.value = fx.lift || 0; f.mono.value = fx.mono || 0;
+        f.vignette.value = fx.vignette ?? 0.55; f.grain.value = fx.grain ?? 0.12; f.t.value = fx.t || 0; f.lift.value = fx.lift || 0; f.mono.value = fx.mono || 0; f.gamma.value = fx.gamma || 1.55; f.redLum.value = fx.redLum || 0;
         pass(finalM, null);
         renderer.autoClear = auto;
       },

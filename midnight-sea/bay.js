@@ -280,58 +280,9 @@
       G.add(g); return g;
     }
 
-    // ---------- THE EYE in the sky (where a moon would be): opens at midnight, closes at dawn, always watches Nara ----------
-    // eye.place(camera) every frame (it hangs "at infinity" in the sky direction), eye.set(open 0..1, lookAt Vector3, t)
-    const EYE_R = 105, EYE_D = 900;
-    const eyeTex = RT.canvasTexture(1024, 512, (g) => {
-      g.fillStyle = '#cdb0a8'; g.fillRect(0, 0, 1024, 512);
-      const cx = 256, cy = 256;   // +z of the sphere (u = 0.25, v = 0.5): the iris
-      // veins: thin branching red lines from the iris edge outward
-      const vr = RT.rng(77);
-      for (let k = 0; k < 70; k++) {
-        let a = vr() * 6.28, d = 70 + vr() * 6, x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d, w = 2.6 + vr() * 2;
-        g.strokeStyle = `rgba(${150 + vr() * 60 | 0},${10 + vr() * 20 | 0},${15 + vr() * 15 | 0},${0.55 + vr() * 0.4})`;
-        for (let s = 0; s < 14; s++) { const nx = x + Math.cos(a) * (10 + vr() * 14), ny = y + Math.sin(a) * (10 + vr() * 14); g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(nx, ny); g.stroke(); x = nx; y = ny; a += (vr() - 0.5) * 0.9; w *= 0.86; }
-      }
-      const gr = g.createRadialGradient(cx, cy, 60, cx, cy, 150); gr.addColorStop(0, 'rgba(120,20,20,0.35)'); gr.addColorStop(1, 'rgba(120,20,20,0)'); g.fillStyle = gr; g.fillRect(0, 0, 512, 512);
-      // iris: deep red with radial streaks, a dark ring at the edge
-      const ir = g.createRadialGradient(cx, cy, 18, cx, cy, 64); ir.addColorStop(0, '#ff5a2a'); ir.addColorStop(0.45, '#c3170f'); ir.addColorStop(1, '#4a0506');
-      g.fillStyle = ir; g.beginPath(); g.arc(cx, cy, 64, 0, 6.3); g.fill();
-      for (let k = 0; k < 90; k++) { const a = k / 90 * 6.28 + vr() * 0.05; g.strokeStyle = `rgba(${vr() < 0.5 ? '255,140,90' : '40,0,0'},0.45)`; g.lineWidth = 1.5 + vr() * 1.5; g.beginPath(); g.moveTo(cx + Math.cos(a) * 24, cy + Math.sin(a) * 24); g.lineTo(cx + Math.cos(a) * (50 + vr() * 12), cy + Math.sin(a) * (50 + vr() * 12)); g.stroke(); }
-      g.strokeStyle = '#1a0202'; g.lineWidth = 7; g.beginPath(); g.arc(cx, cy, 63, 0, 6.3); g.stroke();
-      g.fillStyle = '#050101'; g.beginPath(); g.arc(cx, cy, 25, 0, 6.3); g.fill();           // pupil
-      g.fillStyle = 'rgba(255,255,255,0.85)'; g.beginPath(); g.ellipse(cx + 20, cy - 22, 11, 8, -0.5, 0, 6.3); g.fill();   // wet highlight
-    });
-    const eye = new THREE.Group(); eye.name = 'SkyEye'; G.add(eye);
-    const eyeball = new THREE.Mesh(new THREE.SphereGeometry(EYE_R, 48, 32), new THREE.MeshBasicMaterial({ map: eyeTex, fog: false, toneMapped: false })); eye.add(eyeball);
-    const socket = new THREE.Group(); eye.add(socket);
-    const lidM = new THREE.MeshBasicMaterial({ color: '#2a0807', fog: false, toneMapped: false, side: THREE.DoubleSide });
-    const lidU = new THREE.Mesh(new THREE.SphereGeometry(EYE_R * 1.035, 48, 20, 0, Math.PI * 2, 0, Math.PI / 2), lidM);
-    const lidL = new THREE.Mesh(new THREE.SphereGeometry(EYE_R * 1.03, 48, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), lidM);
-    const rimM = new THREE.MeshBasicMaterial({ color: '#ff3a24', fog: false, toneMapped: false });
-    const rimU = new THREE.Mesh(new THREE.TorusGeometry(EYE_R * 1.035, EYE_R * 0.025, 6, 64, Math.PI), rimM), rimL = rimU.clone();
-    lidU.add(rimU); lidL.add(rimL); rimU.rotation.set(0, 0, 0); rimL.rotation.set(0, 0, Math.PI);
-    socket.add(lidU, lidL);
-    const eyeGlowTex = RT.canvasTexture(128, 128, (g) => { const gr = g.createRadialGradient(64, 64, 20, 64, 64, 64); gr.addColorStop(0, 'rgba(255,60,40,0.9)'); gr.addColorStop(0.5, 'rgba(255,40,20,0.25)'); gr.addColorStop(1, 'rgba(255,20,10,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
-    const eyeGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: eyeGlowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, fog: false, toneMapped: false }));
-    eyeGlow.scale.setScalar(EYE_R * 5.2); eye.add(eyeGlow); eyeGlow.renderOrder = -5;
-    const eyeDir = new THREE.Vector3(-0.16, 0.2, 1).normalize(), lookTmp = new THREE.Vector3();
-    let eyeOpen = 0;
-    const skyEye = {
-      group: eye, dir: eyeDir, radius: EYE_R,
-      place(camera) {
-        eye.position.copy(camera.position).addScaledVector(eyeDir, EYE_D);
-        socket.lookAt(camera.position);                       // the lids stay level for the viewer
-        if (env) { env.skyDir.copy(eyeDir); env.sunDisc.visible = false; env.glow.visible = false; }
-      },
-      set(open, look, t = 0) {
-        eyeOpen = clamp(open, 0, 1);
-        const o = RT.easeOut(eyeOpen) * (0.94 + 0.06 * Math.sin(t * 0.8));     // the lids breathe a little
-        lidU.rotation.x = -o * 0.62; lidL.rotation.x = o * 0.48;      // never fully round: an almond-shaped opening
-        eyeball.visible = eyeOpen > 0.01; eyeGlow.material.opacity = 0.25 + 0.75 * eyeOpen;
-        if (look) { lookTmp.copy(look); eyeball.lookAt(lookTmp); eyeball.rotateZ(Math.sin(t * 0.37) * 0.05); }
-      },
-    };
+    // ---------- THE EYE in the sky (skyeye.js): opens at midnight, closes at dawn, always watches Nara ----------
+    const skyEye = RT.skyEye ? RT.skyEye.create(G, env) : null;
+
     const spots = { STAIRS: new THREE.Vector3(0, ground(0, -26), -26), PIER_X, DECK_Y, STILT3: new THREE.Vector3(PIER_X - 1.9, ground(PIER_X - 1.9, -12), -12), STILTS,
       NARA_HOUSE, NARA_WINDOW, BOATS, LAMPS, ground };
 

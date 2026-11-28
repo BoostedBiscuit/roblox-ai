@@ -372,7 +372,7 @@ time    sound                     volume  options
     thumbnail(n) {
       render(n === '2' ? 43.0 : 41.4);
       const d = document.createElement('div');
-      d.style.cssText = 'position:absolute;left:4%;right:4%;top:' + (n === '2' ? '60%' : '8%') + ';text-align:center;font:900 calc(var(--u)*12.5) Montserrat,Arial Black,sans-serif;line-height:1.02;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.9) 0 #000';
+      d.style.cssText = 'position:absolute;left:4%;right:4%;top:' + (n === '2' ? '60%' : '58%') + ';text-align:center;font:900 calc(var(--u)*12.5) Montserrat,Arial Black,sans-serif;line-height:1.02;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.9) 0 #000';
       d.innerHTML = n === '2' ? 'HE NEVER<br>CALLS ME <span style="color:#ffe45c">NARA</span>' : 'IF YOU HEAR<br>YOUR NAME…<br><span style="color:#ffe45c">WALK AWAY</span>';
       document.getElementById('stage').appendChild(d);
     },

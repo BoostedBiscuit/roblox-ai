@@ -1,0 +1,1264 @@
+{
+ "video": "ep1",
+ "voice": "Adam (sped up 1.3x)",
+ "tempo": 1.3,
+ "lines": [
+  {
+   "at": 0.6,
+   "who": "narrator",
+   "text": "In this town, every night at midnight, the sea turns red… and everyone walks into it in their sleep.",
+   "raw": "audio/voice/ep1/l01_56df53d061.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l01_56df53d061_r1.3_p0.5.wav",
+   "start": 0.6,
+   "end": 6.057,
+   "words": [
+    {
+     "w": "In",
+     "start": 0.6,
+     "end": 0.707
+    },
+    {
+     "w": "this",
+     "start": 0.752,
+     "end": 0.868
+    },
+    {
+     "w": "town,",
+     "start": 0.912,
+     "end": 1.198
+    },
+    {
+     "w": "every",
+     "start": 1.484,
+     "end": 1.716
+    },
+    {
+     "w": "night",
+     "start": 1.779,
+     "end": 1.985
+    },
+    {
+     "w": "at",
+     "start": 2.029,
+     "end": 2.118
+    },
+    {
+     "w": "midnight,",
+     "start": 2.181,
+     "end": 2.592
+    },
+    {
+     "w": "the",
+     "start": 2.779,
+     "end": 2.859
+    },
+    {
+     "w": "sea",
+     "start": 2.913,
+     "end": 3.128
+    },
+    {
+     "w": "turns",
+     "start": 3.181,
+     "end": 3.512
+    },
+    {
+     "w": "red…",
+     "start": 3.574,
+     "end": 3.86
+    },
+    {
+     "w": "and",
+     "start": 4.217,
+     "end": 4.351
+    },
+    {
+     "w": "everyone",
+     "start": 4.405,
+     "end": 4.717
+    },
+    {
+     "w": "walks",
+     "start": 4.762,
+     "end": 5.003
+    },
+    {
+     "w": "into",
+     "start": 5.048,
+     "end": 5.262
+    },
+    {
+     "w": "it",
+     "start": 5.342,
+     "end": 5.396
+    },
+    {
+     "w": "in",
+     "start": 5.432,
+     "end": 5.485
+    },
+    {
+     "w": "their",
+     "start": 5.53,
+     "end": 5.655
+    },
+    {
+     "w": "sleep.",
+     "start": 5.699,
+     "end": 5.949
+    }
+   ]
+  },
+  {
+   "at": 6.507,
+   "who": "narrator",
+   "text": "At sunrise, they walk back out. Dry. Remembering nothing.",
+   "raw": "audio/voice/ep1/l02_e43a323d61.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l02_e43a323d61_r1.3_p0.5.wav",
+   "start": 6.507,
+   "end": 10.125,
+   "words": [
+    {
+     "w": "At",
+     "start": 6.507,
+     "end": 6.623
+    },
+    {
+     "w": "sunrise,",
+     "start": 6.677,
+     "end": 7.212
+    },
+    {
+     "w": "they",
+     "start": 7.266,
+     "end": 7.382
+    },
+    {
+     "w": "walk",
+     "start": 7.418,
+     "end": 7.588
+    },
+    {
+     "w": "back",
+     "start": 7.641,
+     "end": 7.82
+    },
+    {
+     "w": "out.",
+     "start": 7.882,
+     "end": 8.088
+    },
+    {
+     "w": "Dry.",
+     "start": 8.472,
+     "end": 8.829
+    },
+    {
+     "w": "Remembering",
+     "start": 9.214,
+     "end": 9.643
+    },
+    {
+     "w": "nothing.",
+     "start": 9.696,
+     "end": 10.018
+    }
+   ]
+  },
+  {
+   "at": 10.675,
+   "who": "narrator",
+   "text": "Everyone except me. I've never slept through a single midnight.",
+   "raw": "audio/voice/ep1/l03_593b516c43.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l03_593b516c43_r1.3_p0.5.wav",
+   "start": 10.675,
+   "end": 13.578,
+   "words": [
+    {
+     "w": "Everyone",
+     "start": 10.675,
+     "end": 11.014
+    },
+    {
+     "w": "except",
+     "start": 11.041,
+     "end": 11.273
+    },
+    {
+     "w": "me.",
+     "start": 11.318,
+     "end": 11.506
+    },
+    {
+     "w": "I've",
+     "start": 11.756,
+     "end": 11.899
+    },
+    {
+     "w": "never",
+     "start": 11.925,
+     "end": 12.06
+    },
+    {
+     "w": "slept",
+     "start": 12.095,
+     "end": 12.291
+    },
+    {
+     "w": "through",
+     "start": 12.31,
+     "end": 12.479
+    },
+    {
+     "w": "a",
+     "start": 12.506,
+     "end": 12.523
+    },
+    {
+     "w": "single",
+     "start": 12.587,
+     "end": 12.953
+    },
+    {
+     "w": "midnight.",
+     "start": 13.006,
+     "end": 13.47
+    }
+   ]
+  },
+  {
+   "at": 14.278,
+   "who": "narrator",
+   "text": "But every week, one person doesn't reach the water in time.",
+   "raw": "audio/voice/ep1/l04_a9e823426c.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l04_a9e823426c_r1.3_p0.5.wav",
+   "start": 14.278,
+   "end": 16.699,
+   "words": [
+    {
+     "w": "But",
+     "start": 14.278,
+     "end": 14.412
+    },
+    {
+     "w": "every",
+     "start": 14.448,
+     "end": 14.59
+    },
+    {
+     "w": "week,",
+     "start": 14.635,
+     "end": 14.814
+    },
+    {
+     "w": "one",
+     "start": 14.867,
+     "end": 15.01
+    },
+    {
+     "w": "person",
+     "start": 15.046,
+     "end": 15.296
+    },
+    {
+     "w": "doesn't",
+     "start": 15.341,
+     "end": 15.546
+    },
+    {
+     "w": "reach",
+     "start": 15.582,
+     "end": 15.743
+    },
+    {
+     "w": "the",
+     "start": 15.778,
+     "end": 15.841
+    },
+    {
+     "w": "water",
+     "start": 15.876,
+     "end": 16.109
+    },
+    {
+     "w": "in",
+     "start": 16.153,
+     "end": 16.216
+    },
+    {
+     "w": "time.",
+     "start": 16.27,
+     "end": 16.591
+    }
+   ]
+  },
+  {
+   "at": 17.149,
+   "who": "narrator",
+   "text": "By morning, they're gone. All that's left is a trail of burned, black footprints.",
+   "raw": "audio/voice/ep1/l05_1f5d9d160c.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l05_1f5d9d160c_r1.3_p0.5.wav",
+   "start": 17.149,
+   "end": 21.267,
+   "words": [
+    {
+     "w": "By",
+     "start": 17.149,
+     "end": 17.292
+    },
+    {
+     "w": "morning,",
+     "start": 17.345,
+     "end": 17.577
+    },
+    {
+     "w": "they're",
+     "start": 17.614,
+     "end": 17.783
+    },
+    {
+     "w": "gone.",
+     "start": 17.81,
+     "end": 18.167
+    },
+    {
+     "w": "All",
+     "start": 18.381,
+     "end": 18.551
+    },
+    {
+     "w": "that's",
+     "start": 18.596,
+     "end": 18.765
+    },
+    {
+     "w": "left",
+     "start": 18.819,
+     "end": 19.024
+    },
+    {
+     "w": "is",
+     "start": 19.069,
+     "end": 19.141
+    },
+    {
+     "w": "a",
+     "start": 19.185,
+     "end": 19.203
+    },
+    {
+     "w": "trail",
+     "start": 19.257,
+     "end": 19.587
+    },
+    {
+     "w": "of",
+     "start": 19.65,
+     "end": 19.712
+    },
+    {
+     "w": "burned,",
+     "start": 19.793,
+     "end": 20.204
+    },
+    {
+     "w": "black",
+     "start": 20.32,
+     "end": 20.57
+    },
+    {
+     "w": "footprints.",
+     "start": 20.623,
+     "end": 21.159
+    }
+   ]
+  },
+  {
+   "at": 21.867,
+   "who": "narrator",
+   "text": "And every time, I wake up on the beach… with black ash on my hands.",
+   "raw": "audio/voice/ep1/l06_1aba213ac1.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l06_1aba213ac1_r1.3_p0.5.wav",
+   "start": 21.867,
+   "end": 25.324,
+   "words": [
+    {
+     "w": "And",
+     "start": 21.867,
+     "end": 21.974
+    },
+    {
+     "w": "every",
+     "start": 22.019,
+     "end": 22.162
+    },
+    {
+     "w": "time,",
+     "start": 22.198,
+     "end": 22.421
+    },
+    {
+     "w": "I",
+     "start": 22.456,
+     "end": 22.483
+    },
+    {
+     "w": "wake",
+     "start": 22.564,
+     "end": 22.725
+    },
+    {
+     "w": "up",
+     "start": 22.751,
+     "end": 22.832
+    },
+    {
+     "w": "on",
+     "start": 22.885,
+     "end": 22.956
+    },
+    {
+     "w": "the",
+     "start": 22.992,
+     "end": 23.046
+    },
+    {
+     "w": "beach…",
+     "start": 23.091,
+     "end": 23.349
+    },
+    {
+     "w": "with",
+     "start": 23.734,
+     "end": 23.868
+    },
+    {
+     "w": "black",
+     "start": 23.921,
+     "end": 24.153
+    },
+    {
+     "w": "ash",
+     "start": 24.216,
+     "end": 24.492
+    },
+    {
+     "w": "on",
+     "start": 24.546,
+     "end": 24.635
+    },
+    {
+     "w": "my",
+     "start": 24.689,
+     "end": 24.788
+    },
+    {
+     "w": "hands.",
+     "start": 24.841,
+     "end": 25.216
+    }
+   ]
+  },
+  {
+   "at": 26.224,
+   "who": "narrator",
+   "text": "My little brother Milo is the slowest sleepwalker in town.",
+   "raw": "audio/voice/ep1/l07_86f2ae51aa.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l07_86f2ae51aa_r1.3_p0.5.wav",
+   "start": 26.224,
+   "end": 28.832,
+   "words": [
+    {
+     "w": "My",
+     "start": 26.224,
+     "end": 26.349
+    },
+    {
+     "w": "little",
+     "start": 26.394,
+     "end": 26.546
+    },
+    {
+     "w": "brother",
+     "start": 26.563,
+     "end": 26.742
+    },
+    {
+     "w": "Milo",
+     "start": 26.796,
+     "end": 27.09
+    },
+    {
+     "w": "is",
+     "start": 27.144,
+     "end": 27.216
+    },
+    {
+     "w": "the",
+     "start": 27.26,
+     "end": 27.322
+    },
+    {
+     "w": "slowest",
+     "start": 27.367,
+     "end": 27.689
+    },
+    {
+     "w": "sleepwalker",
+     "start": 27.742,
+     "end": 28.233
+    },
+    {
+     "w": "in",
+     "start": 28.269,
+     "end": 28.341
+    },
+    {
+     "w": "town.",
+     "start": 28.394,
+     "end": 28.725
+    }
+   ]
+  },
+  {
+   "at": 29.332,
+   "who": "narrator",
+   "text": "So tonight, I hid under the pier, with my phone recording, to catch whatever takes them.",
+   "raw": "audio/voice/ep1/l08_bf21619a8b.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l08_bf21619a8b_r1.3_p0.5.wav",
+   "start": 29.332,
+   "end": 32.931,
+   "words": [
+    {
+     "w": "So",
+     "start": 29.332,
+     "end": 29.457
+    },
+    {
+     "w": "tonight,",
+     "start": 29.51,
+     "end": 29.787
+    },
+    {
+     "w": "I",
+     "start": 29.841,
+     "end": 29.894
+    },
+    {
+     "w": "hid",
+     "start": 29.975,
+     "end": 30.145
+    },
+    {
+     "w": "under",
+     "start": 30.19,
+     "end": 30.314
+    },
+    {
+     "w": "the",
+     "start": 30.35,
+     "end": 30.404
+    },
+    {
+     "w": "pier,",
+     "start": 30.44,
+     "end": 30.69
+    },
+    {
+     "w": "with",
+     "start": 30.743,
+     "end": 30.868
+    },
+    {
+     "w": "my",
+     "start": 30.913,
+     "end": 31.011
+    },
+    {
+     "w": "phone",
+     "start": 31.056,
+     "end": 31.261
+    },
+    {
+     "w": "recording,",
+     "start": 31.288,
+     "end": 31.663
+    },
+    {
+     "w": "to",
+     "start": 31.841,
+     "end": 31.922
+    },
+    {
+     "w": "catch",
+     "start": 31.967,
+     "end": 32.127
+    },
+    {
+     "w": "whatever",
+     "start": 32.154,
+     "end": 32.377
+    },
+    {
+     "w": "takes",
+     "start": 32.413,
+     "end": 32.6
+    },
+    {
+     "w": "them.",
+     "start": 32.645,
+     "end": 32.824
+    }
+   ]
+  },
+  {
+   "at": 33.831,
+   "who": "narrator",
+   "text": "Midnight. The water turned red. The whole town walked in.",
+   "raw": "audio/voice/ep1/l09_28b30cca75.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l09_28b30cca75_r1.3_p0.5.wav",
+   "start": 33.831,
+   "end": 36.895,
+   "words": [
+    {
+     "w": "Midnight.",
+     "start": 33.831,
+     "end": 34.251
+    },
+    {
+     "w": "The",
+     "start": 34.483,
+     "end": 34.573
+    },
+    {
+     "w": "water",
+     "start": 34.617,
+     "end": 34.823
+    },
+    {
+     "w": "turned",
+     "start": 34.858,
+     "end": 35.099
+    },
+    {
+     "w": "red.",
+     "start": 35.153,
+     "end": 35.439
+    },
+    {
+     "w": "The",
+     "start": 35.689,
+     "end": 35.778
+    },
+    {
+     "w": "whole",
+     "start": 35.813,
+     "end": 35.993
+    },
+    {
+     "w": "town",
+     "start": 36.019,
+     "end": 36.26
+    },
+    {
+     "w": "walked",
+     "start": 36.314,
+     "end": 36.555
+    },
+    {
+     "w": "in.",
+     "start": 36.609,
+     "end": 36.787
+    }
+   ]
+  },
+  {
+   "at": 37.395,
+   "who": "narrator",
+   "text": "Except Milo. He was still ten steps from the water.",
+   "raw": "audio/voice/ep1/l10_9c1a318fef.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l10_9c1a318fef_r1.3_p0.5.wav",
+   "start": 37.395,
+   "end": 40.076,
+   "words": [
+    {
+     "w": "Except",
+     "start": 37.395,
+     "end": 37.672
+    },
+    {
+     "w": "Milo.",
+     "start": 37.707,
+     "end": 38.065
+    },
+    {
+     "w": "He",
+     "start": 38.45,
+     "end": 38.539
+    },
+    {
+     "w": "was",
+     "start": 38.583,
+     "end": 38.655
+    },
+    {
+     "w": "still",
+     "start": 38.682,
+     "end": 38.852
+    },
+    {
+     "w": "ten",
+     "start": 38.905,
+     "end": 39.075
+    },
+    {
+     "w": "steps",
+     "start": 39.137,
+     "end": 39.387
+    },
+    {
+     "w": "from",
+     "start": 39.432,
+     "end": 39.566
+    },
+    {
+     "w": "the",
+     "start": 39.602,
+     "end": 39.656
+    },
+    {
+     "w": "water.",
+     "start": 39.691,
+     "end": 39.968
+    }
+   ]
+  },
+  {
+   "at": 40.676,
+   "who": "narrator",
+   "text": "Then every dog in town started howling… right at the pier. Like something was standing right behind me.",
+   "raw": "audio/voice/ep1/l11_210fea852a.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l11_210fea852a_r1.3_p0.5.wav",
+   "start": 40.676,
+   "end": 45.394,
+   "words": [
+    {
+     "w": "Then",
+     "start": 40.676,
+     "end": 40.837
+    },
+    {
+     "w": "every",
+     "start": 40.891,
+     "end": 41.06
+    },
+    {
+     "w": "dog",
+     "start": 41.096,
+     "end": 41.301
+    },
+    {
+     "w": "in",
+     "start": 41.346,
+     "end": 41.408
+    },
+    {
+     "w": "town",
+     "start": 41.462,
+     "end": 41.658
+    },
+    {
+     "w": "started",
+     "start": 41.703,
+     "end": 41.971
+    },
+    {
+     "w": "howling…",
+     "start": 42.015,
+     "end": 42.355
+    },
+    {
+     "w": "right",
+     "start": 42.74,
+     "end": 42.91
+    },
+    {
+     "w": "at",
+     "start": 42.937,
+     "end": 42.99
+    },
+    {
+     "w": "the",
+     "start": 43.017,
+     "end": 43.071
+    },
+    {
+     "w": "pier.",
+     "start": 43.106,
+     "end": 43.348
+    },
+    {
+     "w": "Like",
+     "start": 43.732,
+     "end": 43.866
+    },
+    {
+     "w": "something",
+     "start": 43.893,
+     "end": 44.125
+    },
+    {
+     "w": "was",
+     "start": 44.161,
+     "end": 44.232
+    },
+    {
+     "w": "standing",
+     "start": 44.268,
+     "end": 44.589
+    },
+    {
+     "w": "right",
+     "start": 44.625,
+     "end": 44.777
+    },
+    {
+     "w": "behind",
+     "start": 44.804,
+     "end": 45.081
+    },
+    {
+     "w": "me.",
+     "start": 45.125,
+     "end": 45.286
+    }
+   ]
+  },
+  {
+   "at": 45.994,
+   "who": "narrator",
+   "text": "I ran to push Milo into the sea. But the water pulled away from my feet. It always does.",
+   "raw": "audio/voice/ep1/l12_94653fbb46.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l12_94653fbb46_r1.3_p0.5.wav",
+   "start": 45.994,
+   "end": 49.995,
+   "words": [
+    {
+     "w": "I",
+     "start": 45.994,
+     "end": 46.056
+    },
+    {
+     "w": "ran",
+     "start": 46.119,
+     "end": 46.244
+    },
+    {
+     "w": "to",
+     "start": 46.271,
+     "end": 46.316
+    },
+    {
+     "w": "push",
+     "start": 46.351,
+     "end": 46.512
+    },
+    {
+     "w": "Milo",
+     "start": 46.556,
+     "end": 46.825
+    },
+    {
+     "w": "into",
+     "start": 46.878,
+     "end": 47.021
+    },
+    {
+     "w": "the",
+     "start": 47.075,
+     "end": 47.128
+    },
+    {
+     "w": "sea.",
+     "start": 47.182,
+     "end": 47.468
+    },
+    {
+     "w": "But",
+     "start": 47.673,
+     "end": 47.789
+    },
+    {
+     "w": "the",
+     "start": 47.807,
+     "end": 47.86
+    },
+    {
+     "w": "water",
+     "start": 47.906,
+     "end": 48.102
+    },
+    {
+     "w": "pulled",
+     "start": 48.146,
+     "end": 48.342
+    },
+    {
+     "w": "away",
+     "start": 48.369,
+     "end": 48.539
+    },
+    {
+     "w": "from",
+     "start": 48.584,
+     "end": 48.709
+    },
+    {
+     "w": "my",
+     "start": 48.762,
+     "end": 48.861
+    },
+    {
+     "w": "feet.",
+     "start": 48.914,
+     "end": 49.129
+    },
+    {
+     "w": "It",
+     "start": 49.191,
+     "end": 49.299
+    },
+    {
+     "w": "always",
+     "start": 49.343,
+     "end": 49.602
+    },
+    {
+     "w": "does.",
+     "start": 49.646,
+     "end": 49.932
+    }
+   ]
+  },
+  {
+   "at": 50.595,
+   "who": "narrator",
+   "text": "Milo woke up. He looked at me… screamed… and ran into the red water.",
+   "raw": "audio/voice/ep1/l13_52c0c18cad.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l13_52c0c18cad_r1.3_p0.5.wav",
+   "start": 50.595,
+   "end": 54.883,
+   "words": [
+    {
+     "w": "Milo",
+     "start": 50.595,
+     "end": 50.926
+    },
+    {
+     "w": "woke",
+     "start": 50.979,
+     "end": 51.184
+    },
+    {
+     "w": "up.",
+     "start": 51.22,
+     "end": 51.345
+    },
+    {
+     "w": "He",
+     "start": 51.73,
+     "end": 51.819
+    },
+    {
+     "w": "looked",
+     "start": 51.873,
+     "end": 52.069
+    },
+    {
+     "w": "at",
+     "start": 52.113,
+     "end": 52.185
+    },
+    {
+     "w": "me…",
+     "start": 52.239,
+     "end": 52.4
+    },
+    {
+     "w": "screamed…",
+     "start": 52.784,
+     "end": 53.311
+    },
+    {
+     "w": "and",
+     "start": 53.57,
+     "end": 53.695
+    },
+    {
+     "w": "ran",
+     "start": 53.748,
+     "end": 53.945
+    },
+    {
+     "w": "into",
+     "start": 53.99,
+     "end": 54.133
+    },
+    {
+     "w": "the",
+     "start": 54.186,
+     "end": 54.24
+    },
+    {
+     "w": "red",
+     "start": 54.293,
+     "end": 54.427
+    },
+    {
+     "w": "water.",
+     "start": 54.48,
+     "end": 54.776
+    }
+   ]
+  },
+  {
+   "at": 55.883,
+   "who": "narrator",
+   "text": "At sunrise, I watched the video.",
+   "raw": "audio/voice/ep1/l14_9ac5f07c2d.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l14_9ac5f07c2d_r1.3_p0.5.wav",
+   "start": 55.883,
+   "end": 57.428,
+   "words": [
+    {
+     "w": "At",
+     "start": 55.883,
+     "end": 55.99
+    },
+    {
+     "w": "sunrise,",
+     "start": 56.035,
+     "end": 56.508
+    },
+    {
+     "w": "I",
+     "start": 56.553,
+     "end": 56.571
+    },
+    {
+     "w": "watched",
+     "start": 56.651,
+     "end": 56.883
+    },
+    {
+     "w": "the",
+     "start": 56.91,
+     "end": 56.964
+    },
+    {
+     "w": "video.",
+     "start": 56.999,
+     "end": 57.321
+    }
+   ]
+  },
+  {
+   "at": 58.028,
+   "who": "narrator",
+   "text": "There was no monster on that beach. Just me. Black eyes. Burning footprints. Chasing my brother.",
+   "raw": "audio/voice/ep1/l15_648078dd25.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l15_648078dd25_r1.3_p0.5.wav",
+   "start": 58.028,
+   "end": 62.789,
+   "words": [
+    {
+     "w": "There",
+     "start": 58.028,
+     "end": 58.189
+    },
+    {
+     "w": "was",
+     "start": 58.216,
+     "end": 58.278
+    },
+    {
+     "w": "no",
+     "start": 58.314,
+     "end": 58.385
+    },
+    {
+     "w": "monster",
+     "start": 58.448,
+     "end": 58.787
+    },
+    {
+     "w": "on",
+     "start": 58.841,
+     "end": 58.939
+    },
+    {
+     "w": "that",
+     "start": 58.975,
+     "end": 59.1
+    },
+    {
+     "w": "beach.",
+     "start": 59.153,
+     "end": 59.413
+    },
+    {
+     "w": "Just",
+     "start": 59.653,
+     "end": 59.814
+    },
+    {
+     "w": "me.",
+     "start": 59.868,
+     "end": 60.153
+    },
+    {
+     "w": "Black",
+     "start": 60.368,
+     "end": 60.618
+    },
+    {
+     "w": "eyes.",
+     "start": 60.672,
+     "end": 60.975
+    },
+    {
+     "w": "Burning",
+     "start": 61.136,
+     "end": 61.422
+    },
+    {
+     "w": "footprints.",
+     "start": 61.475,
+     "end": 61.904
+    },
+    {
+     "w": "Chasing",
+     "start": 61.949,
+     "end": 62.226
+    },
+    {
+     "w": "my",
+     "start": 62.279,
+     "end": 62.36
+    },
+    {
+     "w": "brother.",
+     "start": 62.413,
+     "end": 62.681
+    }
+   ]
+  },
+  {
+   "at": 63.589,
+   "who": "narrator",
+   "text": "The sea isn't taking them. It's hiding them… from me.",
+   "raw": "audio/voice/ep1/l16_55cada478a.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l16_55cada478a_r1.3_p0.5.wav",
+   "start": 63.589,
+   "end": 66.162,
+   "words": [
+    {
+     "w": "The",
+     "start": 63.589,
+     "end": 63.696
+    },
+    {
+     "w": "sea",
+     "start": 63.732,
+     "end": 63.848
+    },
+    {
+     "w": "isn't",
+     "start": 63.893,
+     "end": 64.054
+    },
+    {
+     "w": "taking",
+     "start": 64.089,
+     "end": 64.348
+    },
+    {
+     "w": "them.",
+     "start": 64.393,
+     "end": 64.517
+    },
+    {
+     "w": "It's",
+     "start": 64.554,
+     "end": 64.661
+    },
+    {
+     "w": "hiding",
+     "start": 64.687,
+     "end": 64.974
+    },
+    {
+     "w": "them…",
+     "start": 65.027,
+     "end": 65.179
+    },
+    {
+     "w": "from",
+     "start": 65.564,
+     "end": 65.706
+    },
+    {
+     "w": "me.",
+     "start": 65.769,
+     "end": 66.054
+    }
+   ]
+  },
+  {
+   "at": 67.262,
+   "who": "narrator",
+   "text": "And this morning… nobody walked back out.",
+   "raw": "audio/voice/ep1/l17_1c3b9ce97a.mp3",
+   "clip": "midnight-sea/build/ep1/voice/l17_1c3b9ce97a_r1.3_p0.5.wav",
+   "start": 67.262,
+   "end": 69.264,
+   "words": [
+    {
+     "w": "And",
+     "start": 67.262,
+     "end": 67.387
+    },
+    {
+     "w": "this",
+     "start": 67.423,
+     "end": 67.539
+    },
+    {
+     "w": "morning…",
+     "start": 67.593,
+     "end": 67.905
+    },
+    {
+     "w": "nobody",
+     "start": 68.29,
+     "end": 68.557
+    },
+    {
+     "w": "walked",
+     "start": 68.594,
+     "end": 68.772
+    },
+    {
+     "w": "back",
+     "start": 68.807,
+     "end": 68.95
+    },
+    {
+     "w": "out.",
+     "start": 69.004,
+     "end": 69.156
+    }
+   ]
+  }
+ ]
+}

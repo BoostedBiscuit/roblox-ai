@@ -79,7 +79,7 @@
   const FINAL_FS = `
   uniform sampler2D tColor; uniform sampler2D tBloom1; uniform sampler2D tBloom2; uniform vec2 res;
   uniform float bloom; uniform float grade; uniform float ca; uniform float zoom; uniform vec2 zoomC; uniform float whip;
-  uniform float glitch; uniform float vignette; uniform float grain; uniform float t; uniform float lift;
+  uniform float glitch; uniform float vignette; uniform float grain; uniform float t; uniform float lift; uniform float mono;
   varying vec2 vUv;
   float h1(float n){ return fract(sin(n) * 43758.5453); }
   float h2(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -124,7 +124,13 @@
       vec2 d = (uv - 0.5) * caT * 0.018 + vec2(glitch * 0.006, 0.0);
       c.r = mix(c.r, src(uv + d).r, 0.9); c.b = mix(c.b, src(uv - d).b, 0.9);
     }
-    c = gradeRB(c);
+    vec3 cr = gradeRB(c);
+    if (mono > 0.0) {   // the epilogue: cold black and grey, no red at all
+      float lm = pow(clamp(dot(c, vec3(0.299, 0.587, 0.114)), 0.0, 1.4), 1.3);
+      vec3 gm = mix(vec3(0.0), vec3(0.26, 0.28, 0.31), smoothstep(0.0, 0.55, lm)); gm = mix(gm, vec3(0.72, 0.74, 0.78), smoothstep(0.55, 1.25, lm));
+      cr = mix(cr, gm, mono);
+    }
+    c = cr;
     if (glitch > 0.0) {
       float tick = floor(t * 24.0);
       vec2 bl = floor(vUv * vec2(18.0, 32.0));
@@ -150,7 +156,7 @@
     const gaussM = mat(GAUSS_FS, { tColor: { value: null }, dir: { value: new THREE.Vector2() } });
     const finalM = mat(FINAL_FS, { tColor: { value: null }, tBloom1: { value: null }, tBloom2: { value: null }, res: { value: new THREE.Vector2() },
       bloom: { value: 0 }, grade: { value: 1 }, ca: { value: 0 }, zoom: { value: 0 }, zoomC: { value: new THREE.Vector2(0.5, 0.5) }, whip: { value: 0 },
-      glitch: { value: 0 }, vignette: { value: 0.55 }, grain: { value: 0.12 }, t: { value: 0 }, lift: { value: 0 } });
+      glitch: { value: 0 }, vignette: { value: 0.55 }, grain: { value: 0.12 }, t: { value: 0 }, lift: { value: 0 }, mono: { value: 0 } });
     const depthOverride = new THREE.MeshBasicMaterial({ colorWrite: false });
 
     let W = 0, H = 0, colorTex, depthRT, blurRT, b1a, b1b, b2a, b2b;
@@ -225,7 +231,7 @@
         f.tColor.value = base; f.tBloom1.value = b1a.texture; f.tBloom2.value = b2a.texture; f.res.value.set(W, H);
         f.bloom.value = bloom; f.grade.value = fx.grade ?? 1; f.ca.value = fx.ca || 0; f.zoom.value = fx.zoom || 0;
         f.zoomC.value.set(...(fx.zoomCenter || [0.5, 0.5])); f.whip.value = fx.whip || 0; f.glitch.value = fx.glitch || 0;
-        f.vignette.value = fx.vignette ?? 0.55; f.grain.value = fx.grain ?? 0.12; f.t.value = fx.t || 0; f.lift.value = fx.lift || 0;
+        f.vignette.value = fx.vignette ?? 0.55; f.grain.value = fx.grain ?? 0.12; f.t.value = fx.t || 0; f.lift.value = fx.lift || 0; f.mono.value = fx.mono || 0;
         pass(finalM, null);
         renderer.autoClear = auto;
       },

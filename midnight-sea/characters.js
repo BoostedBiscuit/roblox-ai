@@ -51,6 +51,7 @@
     smirk:      { eye: 0.95, lid: 0.36, lidTilt: 0.08, low: 0.08, brow: 4, browTilt: 0.12, browAsym: -18, mouth: 'smirk', curve: 14, mw: 52, look: [-5, 0] },
     shocked:    { eye: 1.3, pupil: 0.5, lid: 0, brow: -28, browTilt: -0.1, mouth: 'o', mw: 36 },
     blank:      { eye: 1.06, lid: 0, brow: -2, browTilt: 0, mouth: 'line', curve: 0, mw: 36 },
+    taken:      { eye: 1.18, pupil: 0.26, lid: 0, brow: 2, browTilt: 0, mouth: 'line', curve: 0, mw: 30, glint: 1 },
     sideEye:    { eye: 1.12, pupil: 0.62, lid: 0, brow: -16, browTilt: -0.3, mouth: 'wavy', mw: 40, look: [-17, 2] },
     scream:     { eye: 1.32, pupil: 0.45, lid: 0, brow: -30, browTilt: -0.2, mouth: 'o', mw: 58 },
     crying:     { eye: 0.95, pupil: 0.9, lid: 0.32, lidTilt: -0.3, brow: -8, browTilt: -0.44, mouth: 'cry', curve: -14, mw: 52, tears: 1, look: [0, 4] },
@@ -136,7 +137,8 @@
     g.fillStyle = ink; g.beginPath(); g.arc(ix, iy, ir * 0.5 * (E.pupil || 1), 0, Math.PI * 2); g.fill();
     if (!st.noShine) { g.fillStyle = '#ffffff'; g.beginPath(); g.arc(ix + ir * 0.36, iy - ir * 0.38, ir * 0.3, 0, Math.PI * 2); g.fill();
     g.globalAlpha = 0.85; g.beginPath(); g.arc(ix - ir * 0.34, iy + ir * 0.36, ir * 0.13, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1; }
-    if (st.ring) { g.strokeStyle = st.ring; g.lineWidth = 7; g.beginPath(); g.ellipse(x, y, rx * 0.78, ry * 0.8, 0, 0, Math.PI * 2); g.stroke(); }   // shadow form: thin red glow ring
+    if (E.glint) { g.strokeStyle = '#ff2a1a'; g.lineWidth = 6; g.beginPath(); g.arc(ix, iy, ir * 0.55, 0, Math.PI * 2); g.stroke(); }   // 'taken': a red glint around the tiny pupil
+        if (st.ring) { g.strokeStyle = st.ring; g.lineWidth = 7; g.beginPath(); g.ellipse(x, y, rx * 0.78, ry * 0.8, 0, 0, Math.PI * 2); g.stroke(); }   // shadow form: thin red glow ring
     g.strokeStyle = ink; g.lineWidth = 10; g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); g.stroke();
     let yo = y - ry;
     if (!st.noLids && lid > 0.02) {

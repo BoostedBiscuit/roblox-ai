@@ -138,8 +138,11 @@
     for (const s of [-1, 1]) B.add(stoneD, new THREE.BoxGeometry(0.3, 0.9, 6.4), M(s * 1.95, 2.4, -26.8, -0.29, 0, 0));
     // railing along the seawall
     const rail = RT.metal('#2a2a2c', { roughness: 0.6 });
-    for (let x = -120; x <= 120; x += 4) { if (Math.abs(x) < 3) continue; B.add(rail, new THREE.CylinderGeometry(0.05, 0.05, 1.1, 6), M(x, 3.95, -30.6)); }
-    for (const x0 of [-120, 3]) B.add(rail, new THREE.BoxGeometry(117, 0.07, 0.07), M(x0 + 58.5, 4.45, -30.6));
+    const V2 = o.naraHouse === 'v2';
+    for (let x = -120; x <= 120; x += 4) { if (Math.abs(x) < 3 || (V2 && Math.abs(x - 30) < 3)) continue; B.add(rail, new THREE.CylinderGeometry(0.05, 0.05, 1.1, 6), M(x, 3.95, -30.6)); }
+    for (const [a, b] of (V2 ? [[-120, -3], [3, 27.9], [32.1, 120]] : [[-120, -3], [3, 120]])) B.add(rail, new THREE.BoxGeometry(b - a, 0.07, 0.07), M((a + b) / 2, 4.45, -30.6));
+    if (V2) { for (let k = 0; k < 10; k++) B.add(stone, new THREE.BoxGeometry(2.6, 0.2, 0.62), M(30, 3.3 - k * 0.19, -29.6 + k * 0.6));
+      for (const s of [-1, 1]) B.add(stoneD, new THREE.BoxGeometry(0.3, 0.9, 6.4), M(30 + s * 1.45, 2.4, -26.8, -0.29, 0, 0)); }
 
     // ---------- the pier (left), deck y = 3 ----------
     const PIER_X = 24, DECK_Y = 3, Z0 = -24, Z1 = 62;
@@ -230,7 +233,61 @@
     for (const [rz, xs] of [[-46, [-62, -52, -42, -33, -24, -15, -6, 7, 16, 25]], [-62, [-66, -56, -47, -38, -29, -20, -11, -2, 8, 17, 26, 35]], [-78, [-60, -50, -41, -32, -23, -14, -5, 5, 14, 23, 32, 41]]])
       for (const x of xs) { const w = 4.2 + r() * 1.4; house(x + (r() - 0.5) * 1.5, rz + (r() - 0.5) * 2, w, 5.5 + r(), 5.6 + r() * 1.0, k++); }
     // Nara's house: the last one, nearest the beach (pier side)
-    const NH = { x: 35, z: -46, w: 5.2, d: 6, h: 6.2 }; house(NH.x, NH.z, NH.w, NH.d, NH.h, 4, 0, { hole: true });
+    const NH = { x: 35, z: -46, w: 5.2, d: 6, h: 6.2 }; if (!V2) house(NH.x, NH.z, NH.w, NH.d, NH.h, 4, 0, { hole: true });
+    // ---- THE MIDNIGHT EYE: Nara's house v2 (bigger, with a real ground-floor living room, shutters, door, porch, porch window) ----
+    let H2 = null;
+    if (V2) {
+      const X = 33, Z = -46, W = 7.2, D = 7, Hh = 6.9, y0 = ground(X, Z) - 0.05, F = y0 + 0.25, t = 0.22, fz = Z + D / 2, top = y0 + Hh;
+      const wm = wallMs[4], wallP = (w, h, d, x, y, z) => B.add(wm, wallBox(w, h, d, 3.2, 2.4), M(x, y, z));
+      B.add(stoneD, new THREE.BoxGeometry(W + 0.2, 0.5, D + 0.2), M(X, y0, Z));
+      B.add(RT.plastic('#2a211c', { roughness: 0.95 }), new THREE.BoxGeometry(W - 0.4, 0.06, D - 0.4), M(X, F, Z));
+      B.add(RT.plastic('#3a1f1c', { roughness: 1 }), new THREE.BoxGeometry(2.6, 0.02, 1.8), M(X - 1.2, F + 0.04, Z - 0.6));        // rug
+      wallP(W, Hh, t, X, y0 + Hh / 2, Z - D / 2 + t / 2);
+      for (const sx of [-1, 1]) wallP(t, Hh, D, X + sx * (W / 2 - t / 2), y0 + Hh / 2, Z);
+      // front wall in strips around three openings: living window (left), door (middle), porch window (right of the door)
+      const holes = [[X - 2.9, X - 1.5, F + 0.9, F + 2.3], [X - 0.6, X + 0.6, F, F + 2.3], [X + 0.9, X + 1.4, F + 0.7, F + 2.2]];
+      let xa = X - W / 2;
+      for (const [h0, h1, b0, b1] of holes) {
+        if (h0 > xa) wallP(h0 - xa, Hh, t, (xa + h0) / 2, y0 + Hh / 2, fz - t / 2);
+        if (b0 > y0) wallP(h1 - h0, b0 - y0, t, (h0 + h1) / 2, (y0 + b0) / 2, fz - t / 2);
+        wallP(h1 - h0, top - b1, t, (h0 + h1) / 2, (b1 + top) / 2, fz - t / 2);
+        xa = h1;
+      }
+      wallP(X + W / 2 - xa, Hh, t, (xa + X + W / 2) / 2, y0 + Hh / 2, fz - t / 2);
+      B.add(RT.plastic('#241c1a', { roughness: 1 }), new THREE.BoxGeometry(W - 0.4, 0.12, D - 0.4), M(X, F + 3.2, Z));   // upstairs floor = ceiling
+      const roof = new THREE.Shape(); roof.moveTo(-W / 2 - 0.4, 0); roof.lineTo(W / 2 + 0.4, 0); roof.lineTo(0, W * 0.5); roof.closePath();
+      const rg = new THREE.ExtrudeGeometry(roof, { depth: D + 0.7, bevelEnabled: false }); rg.translate(0, 0, -(D + 0.7) / 2); B.add(roofM, rg, M(X, top, Z));
+      const gable = new THREE.Shape(); gable.moveTo(-W / 2, 0); gable.lineTo(W / 2, 0); gable.lineTo(0, W * 0.45); gable.closePath();
+      B.add(wm, new THREE.ShapeGeometry(gable), M(X, top, fz + 0.01)); B.add(wm, new THREE.ShapeGeometry(gable), M(X, top, Z - D / 2 - 0.01, 0, Math.PI, 0));
+      for (const [h0, h1, b0, b1] of holes) {   // trims
+        B.add(trimM, new THREE.BoxGeometry(h1 - h0 + 0.16, 0.1, 0.16), M((h0 + h1) / 2, b1 + 0.05, fz + 0.02));
+        if (b0 > F + 0.01) B.add(trimM, new THREE.BoxGeometry(h1 - h0 + 0.2, 0.1, 0.24), M((h0 + h1) / 2, b0 - 0.05, fz + 0.04));
+        for (const xe of [h0, h1]) B.add(trimM, new THREE.BoxGeometry(0.08, b1 - b0, 0.16), M(xe, (b0 + b1) / 2, fz + 0.02));
+      }
+      // upstairs window (exterior only, dark glass) + a sofa, a low table, a floor lamp; the covered mirror on the right wall
+      B.add(trimM, new THREE.BoxGeometry(1.25, 1.45, 0.12), M(X + 1.9, F + 4.6, fz + 0.03));
+      const sofaM = RT.plastic('#3b2a28', { roughness: 0.95 }), sofaD = RT.plastic('#2c1e1c', { roughness: 0.95 });
+      B.add(sofaM, RT.roundedBoxGeometry(2.6, 0.5, 1.0, 0.08, 2), M(X - 1.2, F + 0.4, Z - 2.1)); B.add(sofaD, RT.roundedBoxGeometry(2.6, 0.9, 0.3, 0.08, 2), M(X - 1.2, F + 0.85, Z - 2.55));
+      for (const sx of [-1, 1]) B.add(sofaD, RT.roundedBoxGeometry(0.3, 0.75, 1.0, 0.08, 2), M(X - 1.2 + sx * 1.35, F + 0.55, Z - 2.1));
+      B.add(RT.plastic('#2e2420', { roughness: 0.8 }), new THREE.BoxGeometry(1.4, 0.08, 0.7), M(X - 1.2, F + 0.45, Z - 0.6));
+      for (const [dx, dz] of [[-0.6, -0.28], [0.6, -0.28], [-0.6, 0.28], [0.6, 0.28]]) B.add(trimM, new THREE.BoxGeometry(0.06, 0.42, 0.06), M(X - 1.2 + dx, F + 0.21, Z - 0.6 + dz));
+      B.add(rail, new THREE.CylinderGeometry(0.03, 0.04, 1.7, 6), M(X - 3.0, F + 0.85, Z - 2.6)); B.add(RT.plastic('#4a3a30'), new THREE.CylinderGeometry(0.18, 0.28, 0.34, 10), M(X - 3.0, F + 1.75, Z - 2.6));
+      B.add(trimM, new THREE.BoxGeometry(0.08, 1.5, 1.0), M(X + W / 2 - t - 0.04, F + 1.6, Z - 1.0));                                         // mirror frame
+      const sheet = new THREE.PlaneGeometry(1.15, 1.75, 6, 6); { const p = sheet.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getY(i) * 7 + p.getX(i) * 4) * 0.02); } sheet.computeVertexNormals();
+      B.add(RT.plastic('#e8e4dc', { roughness: 0.9, side: THREE.DoubleSide }), sheet, M(X + W / 2 - t - 0.1, F + 1.5, Z - 1.0, 0, -Math.PI / 2, 0));
+      // porch: deck, posts, roof, railing, steps down to the street
+      const porchM = new THREE.MeshStandardMaterial({ map: woodTex, color: '#8a7462', roughness: 0.9 });
+      B.add(porchM, wallBox(W, 0.18, 2.2, 2, 0.5), M(X, F - 0.09, fz + 1.1));
+      for (const sx of [-1, 1]) B.add(pileM, new THREE.BoxGeometry(0.16, 2.8, 0.16), M(X + sx * (W / 2 - 0.15), F + 1.4, fz + 2.1));
+      B.add(roofM, new THREE.BoxGeometry(W + 0.3, 0.12, 2.5), M(X, F + 2.85, fz + 1.2, -0.12, 0, 0));
+      for (const sx of [-1, 1]) { B.add(pileM, new THREE.BoxGeometry(W / 2 - 1.0, 0.08, 0.08), M(X + sx * (W / 4 + 0.5), F + 0.9, fz + 2.15)); for (let k = 0; k < 5; k++) B.add(pileM, new THREE.BoxGeometry(0.06, 0.8, 0.06), M(X + sx * (1.0 + k * 0.6), F + 0.45, fz + 2.15)); }
+      const st = (F - 3.4) / 4; for (let k = 0; k < 4; k++) B.add(porchM, wallBox(1.6, st, 0.36, 2, 0.5), M(X, F - st * (k + 0.5), fz + 2.4 + k * 0.36));
+      H2 = { X, Z, W, D, F, fz, y0,
+        LIVING_WIN: new THREE.Vector3(X - 2.2, F + 1.6, fz), DOOR: new THREE.Vector3(X, F + 1.15, fz), PORCH_WIN: new THREE.Vector3(X + 1.15, F + 1.45, fz),
+        UP_WIN: new THREE.Vector3(X + 1.9, F + 4.6, fz + 0.1), SOFA: new THREE.Vector3(X - 1.2, F + 0.65, Z - 2.0), TABLE: new THREE.Vector3(X - 1.2, F + 0.5, Z - 0.6),
+        MIRROR: new THREE.Vector3(X + W / 2 - t - 0.1, F + 1.5, Z - 1.0), PORCH: new THREE.Vector3(X, F, fz + 1.1), STEPS_BOTTOM: new THREE.Vector3(X, 3.4, fz + 4.0),
+        STAIR_TOP: new THREE.Vector3(30, 3.4, -31.2), STAIR_BOTTOM: new THREE.Vector3(30, ground(30, -23.6), -23.6), PUDDLE: new THREE.Vector3(31.6, 3.43, -36.4) };
+    }
     const NARA_HOUSE = new THREE.Vector3(NH.x, ground(NH.x, NH.z), NH.z);
     const NARA_WINDOW = new THREE.Vector3(NH.x + NH.w * 0.26, NARA_HOUSE.y - 0.05 + NH.h * 0.72, NH.z + NH.d / 2 + 0.06);
     const NARA_FLOOR = NARA_HOUSE.y - 0.05 + NH.h * 0.38 + 0.06;
@@ -300,7 +357,7 @@
     const skyEye = RT.skyEye ? RT.skyEye.create(G, env) : null;
 
     const spots = { STAIRS: new THREE.Vector3(0, ground(0, -26), -26), PIER_X, DECK_Y, STILT3: new THREE.Vector3(PIER_X - 1.9, ground(PIER_X - 1.9, -12), -12), STILTS,
-      NARA_HOUSE, NARA_WINDOW, NARA_FLOOR, BOATS, LAMPS, ground };
+      NARA_HOUSE, NARA_WINDOW, NARA_FLOOR, BOATS, LAMPS, ground, H2 };
 
     const bay = {
       group: G, sea, seaM, spots, ground, mists, ash, footprints, printM, lampLights, lifeRing, eye: skyEye,

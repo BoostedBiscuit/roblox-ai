@@ -165,19 +165,57 @@
 
     const tmp = new THREE.Vector3(), up = new THREE.Vector3(), right = new THREE.Vector3(), toCam = new THREE.Vector3();
     let cam = null;
+    // reflections: the eye (layer 3 only) is rendered into a small texture that glass, puddles, wet sand and phone screens show
+    root.traverse((ob) => ob.layers.enable(3));
+    const eyeCam = new THREE.PerspectiveCamera(17, 1, 1, 4000); eyeCam.layers.set(3);
+    let rt = null; const reflMats = [];
+    const REFL_VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+    const REFL_FS = `uniform sampler2D tEye; uniform float uTime; uniform vec2 uOffset; uniform float uScale; uniform float uRipple; uniform float uOpacity; uniform vec3 uBase; uniform float uRound;
+      varying vec2 vUv;
+      void main(){
+        vec2 p = vUv - 0.5;
+        vec2 uv = p / uScale + 0.5 - uOffset;
+        uv.x = 1.0 - uv.x;                                                         // a mirror image
+        uv += vec2(sin(vUv.y * 40.0 + uTime * 3.0), cos(vUv.x * 33.0 - uTime * 2.4)) * uRipple * 0.01;
+        vec3 e = texture2D(tEye, clamp(uv, 0.0, 1.0)).rgb * step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+        float edge = uRound > 0.5 ? smoothstep(0.5, 0.42, length(p)) : smoothstep(0.5, 0.44, max(abs(p.x), abs(p.y)));
+        vec3 c = uBase + e * 0.85;
+        gl_FragColor = vec4(c, uOpacity * edge);
+      }`;
     const eye = {
-      group: root, dir, radius: R,
+      group: root, dir, radius: R, sink: 0, under: false,
+      // render the eye into its reflection texture (call once per frame before the main render)
+      renderRT(renderer) {
+        if (!rt) rt = new THREE.WebGLRenderTarget(512, 512, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
+        for (const m of reflMats) m.uniforms.tEye.value = rt.texture;
+        if (!root.visible) { renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 1); renderer.clear(); renderer.setRenderTarget(null); return; }
+        eyeCam.position.copy(root.position).addScaledVector(dir, -R * 7.5); eyeCam.lookAt(root.position); eyeCam.updateMatrixWorld();
+        const cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
+        renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 1); renderer.clear(); renderer.render(root.parent.parent || root.parent, eyeCam);
+        renderer.setRenderTarget(null); renderer.setClearColor(cc, ca);
+      },
+      // a material that shows the eye's reflection: o = { base: '#0a0606', opacity, ripple, scale, round }
+      reflectMat(o = {}) {
+        const m = new THREE.ShaderMaterial({ vertexShader: REFL_VS, fragmentShader: REFL_FS, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+          uniforms: { tEye: { value: rt ? rt.texture : null }, uTime: { value: 0 }, uOffset: { value: new THREE.Vector2() }, uScale: { value: o.scale || 1 }, uRipple: { value: o.ripple || 0 },
+            uOpacity: { value: o.opacity ?? 1 }, uBase: { value: new THREE.Color(o.base || '#0a0606') }, uRound: { value: o.round ? 1 : 0 } } });
+        reflMats.push(m); return m;
+      },
+      tick(t) { for (const m of reflMats) m.uniforms.uTime.value = t; },
       place(camera) {
         cam = camera;
-        root.position.copy(camera.position).addScaledVector(dir, DIST);
+        // sinking: the eye drops below the horizon and comes close enough for the sea to swallow it
+        const k = clamp(eye.sink, 0, 1), d2 = tmp.copy(dir); d2.y = RT.lerp(dir.y, -0.16, RT.ease(k)); d2.normalize();
+        root.position.copy(camera.position).addScaledVector(d2, RT.lerp(DIST, 380, Math.min(1, k * 2.5)));
         socket.lookAt(camera.position);
         if (env) { env.skyDir.copy(dir); env.sunDisc.visible = false; env.glow.visible = false; }
       },
-      set(open, look, t = 0) {
+      set(open, look, t = 0, fx = {}) {
         open = clamp(open, 0, 1);
-        // a slow blink now and then (pure function of t), the lids breathe a little
-        const bk = Math.max(0, 1 - Math.abs(((t + 1.3) % 7.3) - 0.12) / 0.12);
-        const o = RT.easeOut(open) * (0.95 + 0.05 * Math.sin(t * 0.8)) * (1 - bk * 0.95);
+        // a slow blink now and then (pure function of t), the lids breathe a little; fx.clench (0..1): lids squeeze, the eye shudders
+        const bk = fx.noBlink ? 0 : Math.max(0, 1 - Math.abs(((t + 1.3) % 7.3) - 0.12) / 0.12), cl = clamp(fx.clench || 0, 0, 1);
+        const o = RT.easeOut(open) * (0.95 + 0.05 * Math.sin(t * 0.8)) * (1 - bk * 0.95) * (1 - cl * 0.55);
+        if (cl > 0) root.position.add(tmp.set(Math.sin(t * 61) * 3.5, Math.sin(t * 47 + 1) * 3.0, 0).multiplyScalar(cl));
         lidU.rotation.x = -o * 0.58; lidL.rotation.x = o * 0.42;
         eyeball.visible = open > 0.01;
         // gaze: toward the target, with small saccades

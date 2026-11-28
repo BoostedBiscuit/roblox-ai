@@ -30,7 +30,7 @@ Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
   'use strict';
   const RT = window.RT, A = RT.anim, { clamp, lerp, ease } = RT;
   const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
-  const DURATION = 9;
+  const DURATION = 12;
   const renderer = RT.mood.renderer(null, { pixelRatio: 1 });
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.05, 2200);
@@ -47,15 +47,18 @@ Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
   const C0 = maze.cell(4, 9);
 
   const shots = RT.camera.list([
-    { t0: 0, pos: [[LX + 0.55, 2.0, LZ + 9.6]], look: [[LX + 0.55, 1.85, LZ]], fov: [44, 44], fx: { aperture: 0 } },
-    { t0: 1, face: 'neutral', pos: () => head(nara, -0.25).add(V3(0.35, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
-    { t0: 2, face: 'worried', pos: () => head(nara, -0.25).add(V3(-0.45, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
-    { t0: 3, face: 'shocked', pos: () => head(nara, -0.25).add(V3(0.3, -0.1, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
-    { t0: 4, face: 'squeeze', pos: () => head(nara, -0.25).add(V3(-0.25, 0.05, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
-    { t0: 5, juno: true, pos: () => head(juno, -0.25).add(V3(0.45, 0.05, 2.2)), look: () => head(juno, -0.12), fov: [34, 34], focusOn: () => head(juno) },
-    { t0: 6, pole: true, pos: [[1.5, 2.3, 3.0]], look: [[0, 4.05, 0]], fov: [46, 46], focusDist: 3.6 },
-    { t0: 7, loom: true, pos: [[1.2, 0.55, 2.9]], look: [[-0.1, 3.0, -1.5]], fov: [58, 58], focusDist: 4.4 },
-    { t0: 8, corridor: true, pos: [[C0.x + 0.3, 1.7, SP.HALF + 3.6]], look: [[C0.x, 1.3, C0.z - 6]], fov: [50, 50], focusDist: 5.2 },
+    { t0: 0, pos: [[LX - 0.25, 2.0, LZ + 8.2]], look: [[LX - 0.25, 1.9, LZ - 1]], fov: [42, 42], fx: { aperture: 0 } },
+    { t0: 1, full: 'nara', pos: () => nara.position.clone().add(V3(1.9, 1.35, 4.3)), look: () => nara.position.clone().add(V3(0, 1.15, 0)), fov: [38, 38], focusOn: () => head(nara) },
+    { t0: 2, full: 'juno', pos: () => juno.position.clone().add(V3(-1.9, 1.35, 4.3)), look: () => juno.position.clone().add(V3(0, 1.15, 0)), fov: [38, 38], focusOn: () => head(juno) },
+    { t0: 3, run: true, pos: () => nara.position.clone().add(V3(0.7, 1.15, 3.4)), look: () => nara.position.clone().add(V3(0, 1.15, 0)), fov: [46, 46], focusOn: () => head(nara), fx: { motion: 0.4 } },
+    { t0: 4, face: 'neutral', pos: () => head(nara, -0.25).add(V3(0.35, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 5, face: 'worried', pos: () => head(nara, -0.25).add(V3(-0.45, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 6, face: 'shocked', pos: () => head(nara, -0.25).add(V3(0.3, -0.1, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 7, face: 'squeeze', pos: () => head(nara, -0.25).add(V3(-0.25, 0.05, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 8, juno: true, pos: () => head(juno, -0.25).add(V3(0.45, 0.05, 2.2)), look: () => head(juno, -0.12), fov: [34, 34], focusOn: () => head(juno) },
+    { t0: 9, pole: true, pos: [[1.5, 2.3, 3.0]], look: [[0, 4.05, 0]], fov: [46, 46], focusDist: 3.6 },
+    { t0: 10, loom: true, pos: [[1.2, 0.55, 2.9]], look: [[-0.1, 3.0, -1.5]], fov: [58, 58], focusDist: 4.4 },
+    { t0: 11, corridor: true, pos: [[C0.x + 0.3, 1.7, SP.HALF + 3.6]], look: [[C0.x, 1.3, C0.z - 6]], fov: [50, 50], focusDist: 5.2 },
   ]);
   for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
 
@@ -65,9 +68,16 @@ Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
     maze.update(t);
     for (const c of [nara, juno, crow]) { c.visible = true; c.rig.setEyes(null); c.rig.setMouth(false); }
     // lineup / close-ups: standing at the entrance
-    nara.position.set(LX - 1.25, 0, LZ); nara.rotation.set(0, 0.12, 0); A.apply(nara, A.pose('idle', t)); nara.rig.setFace(s.face || 'neutral');
-    juno.position.set(LX + 0.5, 0, LZ + 0.1); juno.rotation.set(0, -0.15, 0); A.apply(juno, Object.assign(A.pose('idle', t + 1), { hz: 0.08 })); juno.rig.setFace('smiling');
-    crow.position.set(LX + 2.45, 0, LZ - 0.5); crow.rotation.set(0, -0.2, 0); A.apply(crow, { hx: 0.18, hz: -0.12, aLf: 0.1, aRf: 0.1, aLo: 0.25, aRo: 0.25 }); crow.rig.setFace('awake');
+    nara.position.set(LX - 1.3, 0, LZ); nara.rotation.set(0, 0.12, 0); A.apply(nara, A.pose('idle', t)); nara.rig.setFace(s.face || 'neutral');
+    juno.position.set(LX + 0.85, 0, LZ + 0.1); juno.rotation.set(0, -0.15, 0); A.apply(juno, Object.assign(A.pose('idle', t + 1), { hz: 0.08 })); juno.rig.setFace('smiling');
+    crow.position.set(LX - 0.3, 0, LZ - 3.2); crow.rotation.set(0, 0, 0); A.apply(crow, { hx: 0.18, hz: -0.12, aLf: 0.1, aRf: 0.1, aLo: 0.25, aRo: 0.25 }); crow.rig.setFace('awake');
+    if (s.full === 'nara') { nara.rotation.set(0, 0.45, 0); A.apply(nara, A.pose('idle', t)); juno.visible = false; crow.visible = false; }
+    if (s.full === 'juno') { juno.rotation.set(0, -0.45, 0); nara.visible = false; crow.visible = false; }
+    if (s.run) {           // running toward the camera out of the maze, arms flung up (classic run)
+      juno.visible = false; crow.visible = false;
+      const p = A.path([[LX, LZ - 8], [LX, LZ + 6]], 5.2, 2.6, 0.75)(t); nara.position.set(p.x, 0, p.z); nara.rotation.set(0, 0, 0);
+      A.set(nara, 'run', t, { phase: p.phase }); nara.rig.setFace('scared');
+    }
     if (s.pole || s.loom || s.corridor) { juno.visible = false; }
     if (s.pole) {          // hung on the pole in the clearing: arms along the crossbar, head down, feet dangling
       nara.visible = false;
@@ -81,7 +91,7 @@ Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
     }
     if (s.corridor) {      // walking away into the maze
       crow.visible = false;
-      const p = A.path([[C0.x + 0.2, SP.HALF + 1.2], [C0.x, C0.z - 1.2]], 1.1, 6.0, 0.5)(t);
+      const p = A.path([[C0.x + 0.2, SP.HALF + 1.2], [C0.x, C0.z - 1.2]], 1.1, 9.0, 0.5)(t);
       nara.position.set(p.x, 0, p.z); nara.rotation.set(0, p.yaw, 0); A.set(nara, 'walk', t, { phase: p.phase });
     }
     for (const c of [nara, juno, crow]) { c.rig.update(t); if (!c.visible) c.position.y = -999; }
@@ -98,7 +108,7 @@ Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
 
   RT.player.start({
     name: 'maze-look', duration: DURATION, renderer, scene, camera, frame, render, narration: { lines: [] }, speakers: {},
-    black: () => 0, white: () => 0, stills: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5],
+    black: () => 0, white: () => 0, stills: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5],
     menu: { title: 'The Corn Maze', sub: 'Character look test: Nara, Juno, the scarecrow.' },
     thumbnail() { render(0.5); },
   });

@@ -32,6 +32,15 @@
     hw: 1.25, hh: 1.1, hd: 1.16, hr: 0.24,                // head: rounded box (a bit wider than tall)
     shoe: 0.43,                                           // dome shoe radius
   };
+  // CLASSIC build (S.r6 = true), as in the "In this town" reference: one-piece torso 2 × 2 × 1, one-piece arms and legs
+  // 1 × 2 × 1 (no elbows, knees, separate hands or shoes: hands are the skin-coloured ends of the arms, shoes are painted
+  // on the legs), limbs swing stiffly from the shoulders and hips. Names match DIMS so the pose code works unchanged.
+  const R6 = {
+    uw: 2.0, uh: 2.0, ud: 1.0, lw: 2.0, lh: 0, ld: 1.0,
+    aw: 1.0, ad: 1.0, ua: 2.0, la: 0, hand: 0.5,
+    gw: 0.99, gd: 1.0, ul: 2.0, ll: 0, legX: 0.5,
+    hw: 1.24, hh: 1.18, hd: 1.18, hr: 0.3, shoe: 0,
+  };
 
   // =================================================================================
   // FACES: flat 2D cartoon faces drawn on a canvas and shown on the front of the head.
@@ -391,16 +400,19 @@
     const k = o.k ?? 1, gr = g.createLinearGradient(c.x, c.y, c.x, c.y + c.h);
     gr.addColorStop(0, `rgba(255,255,255,${0.06 * k})`); gr.addColorStop(0.55, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${0.16 * k})`);
     g.fillStyle = gr; g.fillRect(c.x, c.y, c.w, c.h);
-    const r = RT.rng(o.seed || 3); g.strokeStyle = `rgba(0,0,0,${0.09 * k})`; g.lineCap = 'round';
-    for (let i = 0; i < (o.folds ?? 4); i++) { const x = c.x + c.w * (0.15 + r() * 0.7), y = c.y + c.h * (0.2 + r() * 0.6); g.lineWidth = 2 + r() * 3; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + c.w * (r() - 0.5) * 0.2, y + c.h * 0.1, x + c.w * (r() - 0.5) * 0.25, y + c.h * (0.12 + r() * 0.15)); g.stroke(); }
+    const r = RT.rng(o.seed || 3); g.save(); g.filter = 'blur(4px)'; g.lineCap = 'round';      // soft, wide creases (not scratches)
+    for (let i = 0; i < (o.folds ?? 4); i++) { const x = c.x + c.w * (0.15 + r() * 0.7), y = c.y + c.h * (0.2 + r() * 0.6); g.strokeStyle = `rgba(0,0,0,${0.08 * k})`; g.lineWidth = 7 + r() * 6; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + c.w * (r() - 0.5) * 0.2, y + c.h * 0.1, x + c.w * (r() - 0.5) * 0.25, y + c.h * (0.12 + r() * 0.15)); g.stroke();
+      g.strokeStyle = `rgba(255,255,255,${0.05 * k})`; g.lineWidth = 4; g.beginPath(); g.moveTo(x + 6, y); g.quadraticCurveTo(x + 6 + c.w * 0.02, y + c.h * 0.1, x + 6, y + c.h * 0.14); g.stroke(); }
+    g.restore();
   }
 
   // =================================================================================
   // THE AVATAR BUILDER: every character goes through this
   // =================================================================================
   function buildAvatar(S) {
-    const d = Object.assign({}, DIMS, S.dims || {});
+    const d = S.r6 ? Object.assign({}, R6, S.r6dims || {}) : Object.assign({}, DIMS, S.dims || {});
     const C = S.clothes;
+    if (S.r6) return buildClassic(S, d);
     const root = new THREE.Group(); root.name = S.name || 'avatar';
     const unit = RT.STUD * (S.scale || 1);
     const innerG = new THREE.Group(); innerG.scale.setScalar(unit); root.add(innerG);
@@ -477,6 +489,70 @@
     function refresh() { faceMat.map = faceTexture(st, rig.expression, rig._blink, rig.mouthOpen); }
     root.rig = rig; root.userData.rig = rig;
     if (S.build) S.build(rig, d);     // hair, accessories
+    if (RT.anim) RT.anim.apply(root, {}); else applyRest(rig);
+    return root;
+  }
+
+  // the classic one-piece build (see R6 above). Same rig interface as buildAvatar (elbows/knees exist but carry nothing).
+  function buildClassic(S, d) {
+    const C = S.clothes, skin = S.hands || S.skin;
+    const root = new THREE.Group(); root.name = S.name || 'avatar';
+    const unit = RT.STUD * (S.scale || 1);
+    const innerG = new THREE.Group(); innerG.scale.setScalar(unit); root.add(innerG);
+    const hips = new THREE.Group(); hips.rotation.order = 'YXZ'; hips.position.y = d.ul; innerG.add(hips);
+    const waist = new THREE.Group(); waist.rotation.order = 'YXZ'; hips.add(waist);
+    const torso = partBox(d.uw, d.uh, d.ud, 0, d.uh, C.torso, { part: 'upper', classic: true }, { pps: 110, round: 0.1 });
+    torso.position.y = d.uh / 2; waist.add(torso);
+    const neck = new THREE.Group(); neck.rotation.order = 'YXZ'; neck.position.y = d.uh; waist.add(neck);
+    const st = S.face, skinMat = RT.plastic(S.skin);
+    const faceMat = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0, map: faceTexture(st, S.expression || 'neutral', false, false) });
+    const head = RT.mesh(RT.roundedBoxGeometry(d.hw, d.hh, d.hd, d.hr, 4), [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]);
+    const hs = S.headScale || 1;
+    head.scale.setScalar(hs); head.position.y = (d.hh / 2) * hs + 0.02; neck.add(head);
+    const headTop = new THREE.Group(); headTop.position.copy(head.position); headTop.scale.setScalar(hs); neck.add(headTop);
+    // arms: clothing over the whole arm, the hand = a skin band at the end (and the end face)
+    const armPaint = (g, f, c, info) => { C.arm(g, f, c, info); if (S.hands === false) return; if (f === 'bottom') D.rect(g, c, 0, 0, 1, 1, skin); else if (f !== 'top') D.rect(g, c, 0, 0.9, 1, 1, skin); };
+    function arm(side) {
+      const s = side === 'L' ? 1 : -1;
+      const g = new THREE.Group(); g.rotation.order = 'XZY'; g.position.set(s * (d.uw / 2 + d.aw / 2 + 0.005), d.uh - 0.5, 0); waist.add(g);
+      const up = partBox(d.aw, d.ua, d.ad, 0, d.ua, armPaint, { part: 'upper', side, classic: true }, { round: 0.1 });
+      up.position.y = 0.5 - d.ua / 2; g.add(up);
+      const elbow = new THREE.Group(); elbow.position.y = 0.5 - d.ua; g.add(elbow);
+      const hand = new THREE.Group(); elbow.add(hand);
+      const grip = new THREE.Group(); grip.position.set(0, -0.05, 0.1); hand.add(grip);
+      return { g, elbow, hand, grip, up, lo: up };
+    }
+    function leg(side) {
+      const s = side === 'L' ? 1 : -1;
+      const g = new THREE.Group(); g.position.set(s * d.legX, 0, 0); hips.add(g);
+      const up = partBox(d.gw, d.ul, d.gd, 0, d.ul, C.leg, { part: 'upper', side, classic: true }, { round: 0.08 });
+      up.position.y = -d.ul / 2; g.add(up);
+      const knee = new THREE.Group(); knee.position.y = -d.ul; g.add(knee);
+      const foot = new THREE.Object3D(); knee.add(foot);
+      return { g, knee, up, lo: up, foot };
+    }
+    const aL = arm('L'), aR = arm('R'), lL = leg('L'), lR = leg('R');
+    const rig = {
+      root, inner: innerG, hips, waist, neck, head, headTop, upper: torso, lower: torso, classic: true,
+      armL: aL.g, armR: aR.g, elbowL: aL.elbow, elbowR: aR.elbow, handL: aL.hand, handR: aR.hand, gripL: aL.grip, gripR: aR.grip,
+      legL: lL.g, legR: lR.g, kneeL: lL.knee, kneeR: lR.knee, footL: lL.foot, footR: lR.foot,
+      dims: d, unit, spec: S, faceStyle: st, faceMat,
+      base: Object.assign({ aLo: 0, aRo: 0, eL: 0, eR: 0 }, S.base || {}),
+      followers: [], sway: [], props: {},
+      expression: S.expression || 'neutral', mouthOpen: false, eyes: null, blinkSeed: (S.seed || styleId) * 3.17,
+      setFace(e) { if (e && e !== rig.expression) { rig.expression = e; refresh(); } return rig; },
+      setMouth(o) { o = !!o; if (o !== rig.mouthOpen) { rig.mouthOpen = o; refresh(); } return rig; },
+      setEyes(mode) { rig.eyes = mode; refresh(); return rig; },
+      hold(side, obj) { (side === 'L' ? aL.grip : aR.grip).add(obj); return obj; },
+      update(t) {
+        const b = rig.eyes ? rig.eyes === 'closed' : blinking(t, rig.blinkSeed);
+        if (b !== rig._blink) { rig._blink = b; refresh(); }
+        for (const f of rig.sway) f(t, rig);
+      },
+    };
+    function refresh() { faceMat.map = faceTexture(st, rig.expression, rig._blink, rig.mouthOpen); }
+    root.rig = rig; root.userData.rig = rig;
+    if (S.build) S.build(rig, d);
     if (RT.anim) RT.anim.apply(root, {}); else applyRest(rig);
     return root;
   }
@@ -1080,7 +1156,7 @@
   RT.characters = {
     rhea, pip, juno, dax, haskin, vire, guard, citizen, tribute, crowd,
     cast: ['rhea', 'pip', 'juno', 'dax', 'haskin', 'vire', 'guard'],
-    build: buildAvatar, faceStyle, faceTexture, DIMS, EXPR, CROWD_EXPR, COMIC,
+    build: buildAvatar, faceStyle, faceTexture, DIMS, R6, EXPR, CROWD_EXPR, COMIC,
     parts: { H, Cone, Ball, Shard, jaggedHair, cloth, merged, bands, genericClothes, hairStyle, outer: typeof outer === 'function' ? outer : null, SKINS },
   };
 })();

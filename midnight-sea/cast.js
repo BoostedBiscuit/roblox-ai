@@ -25,7 +25,7 @@
       ? C.faceStyle({ skin: COL.skin, sclera: '#070405', iris: '#000000', ring: '#ff2618', noShine: true, brow: COL.hair, browW: 12, lashes: true, bags: true })
       : C.faceStyle({ skin: COL.skin, iris: '#3a2214', brow: COL.hair, browW: 12, lashes: true, bags: true, lidBias: 0.12 });
     return C.build({
-      name: o.shadow ? 'NaraShadow' : 'Nara', skin: COL.skin, shoes: COL.shoes, seed: 21, expression: o.expression || (o.shadow ? 'blank' : 'determined'),
+      name: o.shadow ? 'NaraShadow' : 'Nara', r6: ref, skin: COL.skin, shoes: COL.shoes, seed: 21, expression: o.expression || (o.shadow ? 'blank' : 'determined'),
       dims: { uw: 2.08, ud: 1.06, lw: 1.96, ld: 1.02, aw: 0.78, ad: 0.8 },        // the hoodie is oversized
       face,
       clothes: {
@@ -46,8 +46,8 @@
         },
         arm(g, f, c, info) {
           if (f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, Hd);
-          bands(g, c, [[0.88, COL.hoodie], [1, Hd]]);
-          for (let x = 0.05; x < 1; x += 0.1) D.line(g, c, x, 0.89, x, 0.99, 'rgba(0,0,0,0.18)', 2);
+          if (info && info.classic) { bands(g, c, [[0.8, COL.hoodie], [0.9, Hd]]); for (let x = 0.05; x < 1; x += 0.1) D.line(g, c, x, 0.81, x, 0.87, 'rgba(0,0,0,0.18)', 2); if (info.side === 'L') D.rect(g, c, 0, 0.875, 1, 0.9, COL.red); }   // red string bracelet on the LEFT wrist
+          else { bands(g, c, [[0.88, COL.hoodie], [1, Hd]]); for (let x = 0.05; x < 1; x += 0.1) D.line(g, c, x, 0.89, x, 0.99, 'rgba(0,0,0,0.18)', 2); }
           if (P.outer && P.outer(f, info)) D.stitch(g, c, 0.5, 0.05, 0.5, 0.84);
           shade(g, f, c, 6);
         },
@@ -56,7 +56,7 @@
           bands(g, c, [[0.84, COL.jeans], [0.93, COL.shoes], [1, '#e8e6e0']]);                  // black sneakers, white soles
           if (P.outer && P.outer(f, info)) D.line(g, c, 0.5, 0.02, 0.5, 0.82, '#2a2a33', 2);
           if (f === 'front') D.line(g, c, 0.3, 0.84, 0.7, 0.84, '#e8e6e0', 2);
-          if (ref && f !== 'top' && f !== 'bottom') { D.line(g, c, 0.25, 0.3, 0.75, 0.34, 'rgba(255,255,255,0.06)', 6); P.cloth(g, c, { seed: 7, folds: 3 }); }
+          if (ref && f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed: 7, folds: 3 });
         },
       },
       build(rig, d) {
@@ -81,8 +81,7 @@
         const hood = merged([H(1.45, 0.42, 0.62, 0, 0, 0, -0.25, 0, 0, 0.18)], RT.plastic(COL.hoodie, { roughness: 0.9 }));
         hood.position.set(0, d.uh - 0.05, -d.ud / 2 - 0.18); rig.waist.add(hood);
         // thin red string bracelet on the LEFT wrist
-        const br = RT.mesh(new THREE.TorusGeometry(0.3, 0.045, 6, 16), RT.plastic(COL.red), false); br.rotation.x = Math.PI / 2; br.position.y = 0.08;
-        rig.handL.add(br);
+        if (!ref) { const br = RT.mesh(new THREE.TorusGeometry(0.3, 0.045, 6, 16), RT.plastic(COL.red), false); br.rotation.x = Math.PI / 2; br.position.y = 0.08; rig.handL.add(br); }
       },
     });
   }
@@ -209,7 +208,7 @@
     const COL = { skin: '#e2b48d', hair: '#3a2417', coat: '#efbd2b', trim: '#c9921a', jeans: '#3d5a80', boots: '#b3312a', clip: '#ffd84a', tee: '#2f6f6a' };
     const sh = (g, f, c, seed) => { if (f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed }); };
     return C.build({
-      name: 'Juno', skin: COL.skin, shoes: COL.boots, seed: 31, expression: o.expression || 'smiling',
+      name: 'Juno', r6: true, skin: COL.skin, shoes: COL.boots, seed: 31, expression: o.expression || 'smiling',
       dims: { uw: 2.06, ud: 1.04, lw: 1.98, ld: 1.0, aw: 0.78, ad: 0.8 },          // the raincoat is roomy
       face: C.faceStyle({ comic: true, skin: COL.skin, brow: COL.hair, browW: 13, lashes: true, freckles: true, blush: true, ink: '#1a1210' }),
       clothes: {
@@ -228,20 +227,20 @@
         },
         arm(g, f, c) {
           if (f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, COL.trim);
-          bands(g, c, [[0.86, COL.coat], [0.92, COL.trim], [1, COL.coat]]); sh(g, f, c, 12);
+          bands(g, c, [[0.8, COL.coat], [0.9, COL.trim]]); sh(g, f, c, 12);
         },
         leg(g, f, c) {
           if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.jeans : COL.boots);
           bands(g, c, [[0.66, COL.jeans], [0.7, RT.shade(COL.boots, 0.15)], [1, COL.boots]]);    // tall red rain boots
-          D.line(g, c, 0.2, 0.3, 0.3, 0.5, 'rgba(255,255,255,0.08)', 5); sh(g, f, c, 13);
+          sh(g, f, c, 13);
         },
       },
-      build(rig) {
+      build(rig, d) {
         const hm = RT.plastic(COL.hair, { roughness: 0.55 });
         rig.headTop.add(merged(P.jaggedHair({ seed: 11, crown: 12, lift: 0.4, len: 1.05, fringe: 7, fringeLen: 0.6, sides: 4, sideLen: 1.7, back: 7, backLen: 1.45 }), hm));
         rig.headTop.add(merged([H(0.32, 0.1, 0.12, 0.42, 0.48, 0.5, 0, 0, -0.5, 0.04)], RT.plastic(COL.clip)));   // hair clip
         const hood = merged([H(1.4, 0.4, 0.6, 0, 0, 0, -0.25, 0, 0, 0.18)], RT.plastic(COL.coat, { roughness: 0.55 }));
-        hood.position.set(0, 1.0, -0.68); rig.waist.add(hood);
+        hood.position.set(0, d.uh - 0.05, -d.ud / 2 - 0.18); rig.waist.add(hood);
         // corn leaves caught in her hair (after the maze pushes her out)
         const leafM = new THREE.MeshStandardMaterial({ color: '#c9b276', roughness: 0.9, side: THREE.DoubleSide });
         const leaves = new THREE.Group(); const r = RT.rng(5);

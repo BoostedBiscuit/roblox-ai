@@ -61,7 +61,7 @@ Rising costs: Old Bram taken → Nara's hand cut → Nara taken → stranded out
 22. The next night, at midnight, we opened every shutter. And the sky stayed empty.
 23. Milo doesn't ask to see it anymore.
 
-## Stage 3 · Character and world bible (DRAFT, waiting for approval)
+## Stage 3 · Character and world bible (APPROVED)
 
 All characters are original blocky Roblox-style avatars built in our own 3D pipeline (midnight-sea/cast.js). No real Roblox assets.
 
@@ -118,9 +118,67 @@ Bram's fishing rod and lantern.
 
 ### Look (visual identity)
 - The darker grade from the before/after: deep blacks, muted crimson mid-tones, highlights stay red (no pink-white glare).
-- Red and black while the Eye is open. Proposed: the epilogue (next night) loses the red completely: cold black and grey, so the
-  ending feels like relief.
+- Red and black while the Eye is open. The epilogue (next night) loses the red completely: cold black and grey, so the
+  ending feels like relief (approved).
 - Animation and editing in the style of your reference clip: quick cuts, close-ups, whip pans, shake, motion and depth blur, glow,
   colour split on impacts. Glitch flicker kept gentle (easier on the eyes).
-- Captions: one word at a time, lowercase, yellow with a black outline.
+- Captions: one word at a time, ALL CAPS, yellow with a black outline.
 - Audio: narrator (ElevenLabs Adam, 1.3×) + dreamcore at 50 %. Milo's quoted lines are read by the narrator.
+
+## Stage 4 · Scene plan (DRAFT, waiting for approval)
+
+Approved script: 371 words, 1,901 characters → about 2:16 of narration (+ 2.5 s end card). Times lock to the real voice.
+48 scenes, one main visual action each, cut fast like the reference clip.
+
+| # | Narration covered | Visual action | Characters | Location | Camera | Beat | Sec |
+|---|---|---|---|---|---|---|---|
+| 1 | In this town, a giant Eye opens in the sky at midnight. | The Eye snaps open over a black sea; the sea floods red | — | Beach, midnight | Low wide, slow push | Hook | 3.9 |
+| 2 | If you see it… you walk into the sea. | Footprints in wet sand lead into the red water; the Eye ripples in it | — | Tide line | Low, along the prints | Dread | 4.0 |
+| 3 | Not just in the sky. In a window. | The Eye's reflection slides across a dark window | — | Street | Close on glass | Rule | 1.7 |
+| 4 | A puddle. | A drip hits a street puddle; the Eye wobbles in it | — | Street | Top-down CU | Rule | 1.4 |
+| 5 | Even a black phone screen. | A phone face up on a table; the Eye glints in the black glass | — | Nara's room | CU | Rule | 2.4 |
+| 6 | It stays open for one hour. | Phone clock time-lapse 00:00 → 01:00, the Eye's lids close | — | Phone / sky | CU → sky | Limit | 2.6 |
+| 7 | The only way to stop someone: cover their eyes before the water reaches their knees. | A backlit townsperson walks in; hands cover their eyes at shin height; they stop | 2 townspeople (silhouettes) | Shallows | Low side shot | Rule / hope | 5.0 |
+| 8 | Tonight, Old Bram forgot. He looked up from the pier… | Bram (rod, lantern) glances up; eyes go blank | Bram | Pier end | CU | Small sign | 2.9 |
+| 9 | and walked straight into the red water. | Bram steps off the end; the lantern rolls | Bram | Pier end | Wide, lantern foreground | Shock | 3.4 |
+| 10 | Milo and I were home alone. | Nara and Milo on the sofa in the dark; red lines through the shutters | Nara, Milo | Living room | Medium wide | Calm before | 2.3 |
+| 11 | Shutters closed. Mirrors covered. | Shutter latch; the mirror under its white sheet | — | Living room | Two quick inserts | Safety | 1.8 |
+| 12 | And Milo whispered… "I just want to see it once." | Milo stares at the shutter crack, whispering | Milo | Living room | CU | Setup | 4.4 |
+| 13 | At twelve-oh-five, the wind ripped our shutter open and cracked the glass. | Shutter bangs open, glass cracks, red light floods in | Nara, Milo | Living room | Whip + shake | Danger | 3.5 |
+| 14 | I threw a blanket over it. | Eyes squeezed shut, Nara throws the blanket over the glass | Nara | Window | Medium, motion blur | Decision | 2.3 |
+| 15 | It sliced my hand. | A red cut across her right palm | Nara | Window | Insert | Cost | 2.1 |
+| 16 | Then Milo opened the front door. His whale was still on the porch. | Milo opens the door, reaches for the whale | Milo | Door / porch | Behind him | Mistake | 4.8 |
+| 17 | I dragged him back… | Nara yanks him in; he clutches the whale (left hand) | Nara, Milo | Doorway | Tight, shake | Panic | 1.9 |
+| 18 | and saw it. In the porch window. Staring at me. | The porch glass: the Eye next to her reflection; her pupils shrink | Nara | Porch window | CU on glass | Taken | 3.3 |
+| 19 | My legs started walking. I couldn't stop them. | Nara (taken) walks down the steps toward the beach stair | Nara | Porch → stair | Low tracking, legs | Horror | 3.3 |
+| 20 | Milo squeezed his eyes shut… | Milo shuts his eyes tight, whale in left hand | Milo | Porch | CU | Courage | 1.6 |
+| 21 | and followed the sound of my footsteps. | Milo stumbles after her, eyes shut, listening | Milo, Nara | Beach | Tracking, handheld | Tension | 2.9 |
+| 22 | The water hit my ankles. My shins. | Her feet go deeper: ankles, shins | Nara | Shallows | Low at the waterline | Countdown | 2.8 |
+| 23 | Then two small hands covered my eyes. | On tiptoe, Milo covers her eyes; she stops | Milo, Nara | Shallows | Medium side | Rescue | 2.4 |
+| 24 | I stopped. But we were outside, under the open sky. Forty minutes left. | Two tiny figures on the shore under the huge Eye | Nara, Milo | Beach | Crane up, very wide | Exposed | 4.9 |
+| 25 | We crawled to the pier, eyes shut. | Both crawl over glossy wet sand toward the pier | Nara, Milo | Beach → pier | Low, ahead | Struggle | 2.4 |
+| 26 | Milo let go of his whale to hold my hand. | His hand opens, the whale drops, he grabs her hand | Milo, Nara | Wet sand | CU hands | Sacrifice | 2.8 |
+| 27 | The tide took it. | The whale floats away on the red water | — | Shallows | Low, slow | Loss | 2.4 |
+| 28 | Under the pier, my phone slipped out. Face up. | They huddle behind the third stilt; the phone slides out | Nara, Milo | Under the pier | Low wide, stilts | Shelter | 4.0 |
+| 29 | A black mirror. Red light crawled across it… the Eye was looking for us. | Red light creeps across the black screen; the Eye's edge appears | — | Under the pier | CU screen | Threat | 4.2 |
+| 30 | "Close your eyes," I told Milo. | Nara whispers; Milo nods (we never see his eyes) | Nara, Milo | Under the pier | Over her shoulder | Trust | 2.2 |
+| 31 | I shut mine… and turned the screen to the sky. | Eyes shut, she holds the phone past the pier's edge, screen up | Nara | Pier edge | Low, to the sky | Gamble | 3.7 |
+| 32 | The Eye saw itself. | The Eye stares at its reflection, lids clench, it shudders | — | Sky | CU on the Eye | Turn | 2.3 |
+| 33 | And for the first time… something else walked into the sea. | The giant Eye sinks into the red sea | — | Sky / sea | Very wide | Payoff | 3.2 |
+| 34 | Then Milo's hand slipped out of mine. | His small hand slides out of hers | Nara, Milo | Under the pier | CU hands | Unease | 1.9 |
+| 35 | He never closed his eyes. | Milo, eyes wide open, red glint: taken | Milo | Under the pier | CU push-in | TWIST | 2.7 |
+| 36 | He finally saw it. And now he was following it into the water. | Milo walks toward the red water, the Eye glowing under the surface | Milo | Pier → shallows | Behind him, wide | Horror | 4.9 |
+| 37 | I couldn't look either. | Nara turns away, squeezes her eyes shut | Nara | Under the pier | CU | Despair | 1.9 |
+| 38 | So I shut my eyes and ran toward his splashing. | Nara runs into the water, eyes shut | Nara | Shallows | Shaky tracking | Resolve | 3.1 |
+| 39 | Just like he did for me. | Milo's legs splashing deeper ahead of her | Milo | Shallows | Low, her line | Mirror beat | 2.2 |
+| 40 | The water reached my shins. On Milo, that's almost his knees. | Side by side: water at her shins = just below his knees | Nara, Milo | Shallows | Low side, water line | Ticking clock | 3.1 |
+| 41 | I grabbed his face and covered his eyes. | She catches him from behind, covers his eyes | Nara, Milo | Shallows | Medium, push-in | Rescue | 3.7 |
+| 42 | He stopped. The red drained from the water. | The red drains out of the sea in a wave around them | Nara, Milo | Sea | Wide, rising | Relief | 2.3 |
+| 43 | We never got Old Bram back. | Bram's lantern flickers out on the empty pier | — | Pier end | CU | Cost | 2.1 |
+| 44 | Or the whale. | The empty black sea where the whale was | — | Sea | Wide, still | Cost | 1.9 |
+| 45 | The next night, at midnight, we opened every shutter. | (black & grey) Nara swings the shutters open | Nara | Living room | From outside | Peace | 2.4 |
+| 46 | And the sky stayed empty. | The house, open shutters, empty sky, calm black sea | — | House / sea | Very wide | Resolution | 2.8 |
+| 47 | Milo doesn't ask to see it anymore. | On the porch Milo leans on Nara (bandaged hand), looking at her, not the sky | Nara, Milo | Porch | Medium, slow push | Payoff | 3.1 |
+| 48 | (end card) | THE MIDNIGHT EYE over the black sea | — | — | Static | Outro | 2.5 |
+
+Addition to the bible: scene 7 uses two faceless, backlit townspeople to show the rescue rule (so it doesn't spoil scene 23).

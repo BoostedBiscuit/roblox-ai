@@ -1,5 +1,5 @@
 // =====================================================================================
-// player.js: everything around the 3D picture (THE MIDNIGHT SEA fork: one-word lowercase yellow captions, o.render hook)
+// player.js: everything around the 3D picture (THE MIDNIGHT SEA fork: one-word ALL-CAPS yellow captions, o.render hook)
 //   · the 9:16 stage that fits the phone screen (from the test scene)
 //   · the "▶ Play" / "↺ Replay" menu, the live preview clock and the music/voice playback in live mode
 //   · RENDER MODE (?render=1): time comes from the renderer (frame ÷ 30), never the clock; no menu, no timer
@@ -69,7 +69,7 @@
         const clean = (w) => w.w.replace(/^[…."'“]+/, '').replace(/[.,…;:?"”]+$/, '');   // (a narrator's "?" is heard, not shown)
         let text = clean(ws[i]), key = !!ws[i].key, j = i;
         if (text.replace(/[^\p{L}\p{N}]/gu, '').length <= 2 && !/[.,!?…;:]$/.test(ws[i].w) && ws[i + 1] && (text + clean(ws[i + 1])).length <= 9) { j = i + 1; text += ' ' + clean(ws[j]); key = key || !!ws[j].key; }
-        out.push({ t0: ws[i].start - 0.04, text: text.toLowerCase(), key, lineEnd: line.end });
+        out.push({ t0: ws[i].start - 0.04, text: text.toUpperCase(), key, lineEnd: line.end });   // ALL CAPS (asked for The Midnight Eye)
         i = j;
       }
     }

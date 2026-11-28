@@ -7,7 +7,7 @@
 //   RT.cast.bram() · RT.cast.odell() · RT.cast.pike() · RT.cast.sleeper(seed)   // the sleepwalkers (eyes closed: rig.setEyes('closed'))
 //   RT.cast.phone()                              // Nara's phone (cracked corner), screen: phone.userData.setScreen(text, rec)
 //   RT.cast.nara({ style: 'ref' })               // the same Nara drawn in the "In this town" reference style (comic face, jagged hair, shaded cloth)
-//   RT.cast.juno()                               // THE CORN MAZE: Nara's best friend (yellow raincoat, messy brown bob); rig.props.leaves = corn leaves in her hair
+//   RT.cast.juno()                               // THE CORN MAZE: Nara's best friend, a boy (yellow raincoat, messy swept-up brown hair); rig.props.leaves = corn leaves in his hair
 //   RT.cast.scarecrow()                          // THE CORN MAZE: the Caller (burlap sack head, grey coat, straw, long limbs). Faces: 'neutral' (still) | 'awake'; mouth open = talking
 // =====================================================================================
 (function () {
@@ -21,7 +21,7 @@
     if (o.style === 'ref') COL.hoodie = '#2c2c33';
     const Hd = RT.shade(COL.hoodie, -0.25), Hl = RT.shade(COL.hoodie, 0.14);
     const ref = o.style === 'ref', shade = (g, f, c, seed) => { if (ref && f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed }); };
-    const face = ref ? C.faceStyle({ comic: true, skin: COL.skin, brow: COL.hair, browW: 14, lashes: true, ink: '#1a1210' }) : o.shadow
+    const face = ref ? C.faceStyle({ pretty: 'f', skin: COL.skin, iris: '#7a4a26', irisDark: '#2a150b', irisLight: '#c08a52', brow: '#1d1412', blush: true, lip: '#d2707a', ink: '#1a1110' }) : o.shadow
       ? C.faceStyle({ skin: COL.skin, sclera: '#070405', iris: '#000000', ring: '#ff2618', noShine: true, brow: COL.hair, browW: 12, lashes: true, bags: true })
       : C.faceStyle({ skin: COL.skin, iris: '#3a2214', brow: COL.hair, browW: 12, lashes: true, bags: true, lidBias: 0.12 });
     return C.build({
@@ -61,7 +61,15 @@
       },
       build(rig, d) {
         const hm = RT.plastic(COL.hair, { roughness: 0.5 });
-        if (ref) rig.headTop.add(merged(P.jaggedHair({ seed: 4, crown: 14, lift: 0.08, len: 0.72, frontOnly: true, fringe: 6, fringeLen: 0.62, sides: 3, sideLen: 1.5, back: 0, backPanel: 1.05 }), hm));
+        // a strand that starts at the hairline point (bx, by) and falls in direction a (radians from straight down; + = toward her left/+x)
+        const strand = (bx, by, bz, a, L, w, d = 0.12) => P.Shard(w, L, d, bx + Math.sin(a) * L / 2, by - Math.cos(a) * L / 2, bz, 0, 0, Math.PI + a);
+        if (ref) {   // smooth cap, side-swept bangs, long locks framing the face (the ponytail is added below)
+          const hp = [H(1.38, 0.4, 1.32, 0, 0.5, -0.02, 0, 0, 0, 0.18), H(1.38, 1.05, 0.32, 0, 0.0, -0.5, 0, 0, 0, 0.14),
+            H(0.14, 0.72, 1.0, 0.69, 0.1, -0.12, 0, 0, 0.03, 0.06), H(0.14, 0.72, 1.0, -0.69, 0.1, -0.12, 0, 0, -0.03, 0.06)];
+          for (const sx of [-1, 1]) { hp.push(strand(sx * 0.6, 0.38, 0.5, sx * 0.04, 1.08, 0.26, 0.16)); hp.push(strand(sx * 0.49, 0.4, 0.56, sx * 0.1, 0.78, 0.18, 0.14)); }
+          [[0.5, -0.95, 0.62, 0.44], [0.32, -0.9, 0.66, 0.42], [0.12, -0.86, 0.58, 0.38], [-0.08, -0.8, 0.46, 0.34], [-0.3, -0.5, 0.32, 0.28]].forEach(([x, a, L, w]) => hp.push(strand(x, 0.5, 0.63, a, L, w)));
+          rig.headTop.add(merged(hp, hm));
+        }
         else rig.headTop.add(merged([
           H(1.38, 0.44, 1.32, 0, 0.5, -0.03, 0, 0, 0, 0.2),
           H(1.38, 1.05, 0.34, 0, 0.0, -0.47, 0, 0, 0, 0.14),
@@ -202,15 +210,16 @@
   }
 
 
-  // ---------- THE CORN MAZE: JUNO (Nara's best friend, 15) ----------
-  // yellow raincoat (reads in the fog), messy brown bob with a yellow clip, jeans, red rain boots, freckles. Calls Nara "Vale".
+  // ---------- THE CORN MAZE: JUNO (Nara's best friend, a boy, 15) ----------
+  // yellow raincoat (reads in the fog) over a dark tee, messy swept-up brown hair, jeans, dark sneakers. Handsome face
+  // (hazel eyes, confident half-smile). Calls Nara "Vale".
   function juno(o = {}) {
-    const COL = { skin: '#e2b48d', hair: '#3a2417', coat: '#efbd2b', trim: '#c9921a', jeans: '#3d5a80', boots: '#b3312a', clip: '#ffd84a', tee: '#2f6f6a' };
+    const COL = { skin: '#d9a67f', hair: '#2e1c12', coat: '#efbd2b', trim: '#c9921a', jeans: '#34506f', boots: '#26262b', tee: '#2b3a44' };
     const sh = (g, f, c, seed) => { if (f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed }); };
     return C.build({
-      name: 'Juno', r6: true, skin: COL.skin, shoes: COL.boots, seed: 31, expression: o.expression || 'smiling',
+      name: 'Juno', r6: true, skin: COL.skin, shoes: COL.boots, seed: 31, expression: o.expression || 'smirk',
       dims: { uw: 2.06, ud: 1.04, lw: 1.98, ld: 1.0, aw: 0.78, ad: 0.8 },          // the raincoat is roomy
-      face: C.faceStyle({ comic: true, skin: COL.skin, brow: COL.hair, browW: 13, lashes: true, freckles: true, blush: true, ink: '#1a1210' }),
+      face: C.faceStyle({ pretty: 'm', skin: COL.skin, iris: '#5f7a3e', irisDark: '#1e2c14', irisLight: '#9fba78', brow: '#22150d', lip: '#b77a66', ink: '#181010' }),
       clothes: {
         torso(g, f, c) {
           if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.coat : COL.jeans);
@@ -231,14 +240,20 @@
         },
         leg(g, f, c) {
           if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.jeans : COL.boots);
-          bands(g, c, [[0.66, COL.jeans], [0.7, RT.shade(COL.boots, 0.15)], [1, COL.boots]]);    // tall red rain boots
+          bands(g, c, [[0.84, COL.jeans], [0.93, COL.boots], [1, '#ecebe6']]); D.line(g, c, 0.25, 0.86, 0.75, 0.86, '#ecebe6', 3);   // dark sneakers, white soles
           sh(g, f, c, 13);
         },
       },
       build(rig, d) {
         const hm = RT.plastic(COL.hair, { roughness: 0.55 });
-        rig.headTop.add(merged(P.jaggedHair({ seed: 11, crown: 12, lift: 0.4, len: 1.05, fringe: 7, fringeLen: 0.6, sides: 4, sideLen: 1.7, back: 7, backLen: 1.45 }), hm));
-        rig.headTop.add(merged([H(0.32, 0.1, 0.12, 0.42, 0.48, 0.5, 0, 0, -0.5, 0.04)], RT.plastic(COL.clip)));   // hair clip
+        {   // messy hair with volume on top (layers brushed back), bangs falling over the forehead swept to one side, short sides
+          const Sh = P.Shard, r = RT.rng(19), hp = [H(1.38, 0.42, 1.32, 0, 0.5, -0.02, 0, 0, 0, 0.2), H(1.36, 0.7, 0.3, 0, 0.2, -0.5, 0, 0, 0, 0.12), H(0.12, 0.6, 0.95, 0.68, 0.2, -0.1), H(0.12, 0.6, 0.95, -0.68, 0.2, -0.1)];
+          for (let k = 0; k < 10; k++) { const x = -0.5 + (k % 5) * 0.25 + (r() - 0.5) * 0.08, z = 0.32 - Math.floor(k / 5) * 0.45; hp.push(Sh(0.4, 0.6 + r() * 0.15, 0.24, x, 0.72, z, -1.3 + (r() - 0.5) * 0.3, 0, (r() - 0.5) * 0.4)); }
+          const strand = (bx, by, bz, a, L, w, d = 0.13) => Sh(w, L, d, bx + Math.sin(a) * L / 2, by - Math.cos(a) * L / 2, bz, 0, 0, Math.PI + a);
+          [[0.46, -0.55, 0.5, 0.32], [0.26, -0.45, 0.56, 0.32], [0.04, -0.38, 0.5, 0.3], [-0.18, -0.3, 0.44, 0.28], [-0.4, -0.15, 0.36, 0.24]].forEach(([x, a, L, w]) => hp.push(strand(x, 0.54, 0.63, a, L, w)));
+          for (const sx of [-1, 1]) hp.push(strand(sx * 0.64, 0.5, 0.2, sx * 0.15, 0.5, 0.14, 0.4));
+          rig.headTop.add(merged(hp, hm));
+        }
         const hood = merged([H(1.4, 0.4, 0.6, 0, 0, 0, -0.25, 0, 0, 0.18)], RT.plastic(COL.coat, { roughness: 0.55 }));
         hood.position.set(0, d.uh - 0.05, -d.ud / 2 - 0.18); rig.waist.add(hood);
         // corn leaves caught in her hair (after the maze pushes her out)

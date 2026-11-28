@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Corn Maze · character look test</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<!--
+=====================================================================================
+THE CORN MAZE · CHARACTER LOOK TEST (9 s, one shot per second): the "In this town" reference look: soft foggy daylight,
+natural colours, comic faces with dot pupils, messy jagged hair, shaded clothes. Nara (same design, new style), Juno, the
+scarecrow (on its pole and off it), and a corridor of the maze. No sound.
+Stills:  node midnight-sea/tools/render.js midnight-maze-look --stills
+=====================================================================================
+-->
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../post.js"></script>
+<script src="../cast.js"></script>
+<script src="../maze.js"></script>
+<script>
+(function () {
+  'use strict';
+  const RT = window.RT, A = RT.anim, { clamp, lerp, ease } = RT;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const DURATION = 9;
+  const renderer = RT.mood.renderer(null, { pixelRatio: 1 });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.05, 2200);
+  const env = RT.mood.create(scene, renderer, { mood: 'fogDay', shadowSize: 2048 });
+  const maze = RT.maze.build(scene, env, { seed: 12 });
+  const post = RT.post.create(renderer);
+  const SP = maze.spots;
+
+  const nara = RT.cast.nara({ style: 'ref' }), juno = RT.cast.juno(), crow = RT.cast.scarecrow();
+  for (const c of [nara, juno, crow]) scene.add(c);
+  juno.rig.props.leaves.visible = true;
+  const head = (ch, dy = 0) => { ch.rig.head.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(ch.rig.head.matrixWorld).add(V3(0, dy, 0)); };
+  const E = SP.ENTRANCE, LX = E.x, LZ = E.z + 1.6;       // lineup in front of the entrance sign
+  const C0 = maze.cell(4, 9);
+
+  const shots = RT.camera.list([
+    { t0: 0, pos: [[LX + 0.55, 2.0, LZ + 9.6]], look: [[LX + 0.55, 1.85, LZ]], fov: [44, 44], fx: { aperture: 0 } },
+    { t0: 1, face: 'neutral', pos: () => head(nara, -0.25).add(V3(0.35, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 2, face: 'worried', pos: () => head(nara, -0.25).add(V3(-0.45, 0.05, 2.15)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 3, face: 'shocked', pos: () => head(nara, -0.25).add(V3(0.3, -0.1, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 4, face: 'squeeze', pos: () => head(nara, -0.25).add(V3(-0.25, 0.05, 2.1)), look: () => head(nara, -0.12), fov: [34, 34], focusOn: () => head(nara) },
+    { t0: 5, juno: true, pos: () => head(juno, -0.25).add(V3(0.45, 0.05, 2.2)), look: () => head(juno, -0.12), fov: [34, 34], focusOn: () => head(juno) },
+    { t0: 6, pole: true, pos: [[1.5, 2.3, 3.0]], look: [[0, 4.05, 0]], fov: [46, 46], focusDist: 3.6 },
+    { t0: 7, loom: true, pos: [[1.2, 0.55, 2.9]], look: [[-0.1, 3.0, -1.5]], fov: [58, 58], focusDist: 4.4 },
+    { t0: 8, corridor: true, pos: [[C0.x + 0.3, 1.7, SP.HALF + 3.6]], look: [[C0.x, 1.3, C0.z - 6]], fov: [50, 50], focusDist: 5.2 },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+
+  function frame(t) {
+    const s = shots.at(t);
+    env.set('fogDay');
+    maze.update(t);
+    for (const c of [nara, juno, crow]) { c.visible = true; c.rig.setEyes(null); c.rig.setMouth(false); }
+    // lineup / close-ups: standing at the entrance
+    nara.position.set(LX - 1.25, 0, LZ); nara.rotation.set(0, 0.12, 0); A.apply(nara, A.pose('idle', t)); nara.rig.setFace(s.face || 'neutral');
+    juno.position.set(LX + 0.5, 0, LZ + 0.1); juno.rotation.set(0, -0.15, 0); A.apply(juno, Object.assign(A.pose('idle', t + 1), { hz: 0.08 })); juno.rig.setFace('smiling');
+    crow.position.set(LX + 2.45, 0, LZ - 0.5); crow.rotation.set(0, -0.2, 0); A.apply(crow, { hx: 0.18, hz: -0.12, aLf: 0.1, aRf: 0.1, aLo: 0.25, aRo: 0.25 }); crow.rig.setFace('awake');
+    if (s.pole || s.loom || s.corridor) { juno.visible = false; }
+    if (s.pole) {          // hung on the pole in the clearing: arms along the crossbar, head down, feet dangling
+      nara.visible = false;
+      crow.position.set(0, 4.35 - 2.72, 0.16); crow.rotation.set(0, 0, 0);
+      A.apply(crow, { aLo: 1.5, aRo: 1.5, eL: 0.05, eR: 0.05, hx: 0.38, hz: 0.22, lLf: 0.05, lRf: -0.04, kL: 0.1, kR: 0.05 }); crow.rig.setFace('neutral');
+    }
+    if (s.loom) {          // off the pole, leaning over Nara (low angle from behind her shoulder)
+      crow.position.set(-0.2, 0, -1.8); crow.rotation.set(0, 0.3, 0);
+      A.apply(crow, { lean: 0.32, wx: 0.25, hx: 0.25, aLf: 1.2, aRf: 0.6, aLo: 0.3, aRo: 0.2, eL: 0.4, eR: 0.3 }); crow.rig.setFace('awake'); crow.rig.setMouth(true);
+      nara.position.set(-0.2, 0, 1.15); nara.rotation.set(0, Math.PI + 0.05, 0); A.apply(nara, Object.assign(A.pose('idle', t), { lean: -0.12, hx: -0.45, aLf: 0.6, aRf: 0.6 })); nara.rig.setFace('shocked');
+    }
+    if (s.corridor) {      // walking away into the maze
+      crow.visible = false;
+      const p = A.path([[C0.x + 0.2, SP.HALF + 1.2], [C0.x, C0.z - 1.2]], 1.1, 6.0, 0.5)(t);
+      nara.position.set(p.x, 0, p.z); nara.rotation.set(0, p.yaw, 0); A.set(nara, 'walk', t, { phase: p.phase });
+    }
+    for (const c of [nara, juno, crow]) { c.rig.update(t); if (!c.visible) c.position.y = -999; }
+    RT.camera.apply(camera, s, t);
+    const L = new THREE.Vector3(); camera.getWorldDirection(L);
+    env.follow(camera); env.shadowFocus(camera.position.x + L.x * 5, camera.position.y + L.y * 5, camera.position.z + L.z * 5, 14);
+  }
+  function fxAt(t) {
+    const s = shots.at(t), fx = Object.assign({ grade: 0, bloom: 0.35, vignette: 0.32, grain: 0.05, aperture: 0.6, t }, s.fx);
+    if (s.focusOn) fx.focus = camera.position.distanceTo(s.focusOn()); else if (s.focusDist) fx.focus = s.focusDist;
+    return fx;
+  }
+  function render(t) { post.clearPrev(); frame(t); post.render(scene, camera, fxAt(t)); }
+
+  RT.player.start({
+    name: 'maze-look', duration: DURATION, renderer, scene, camera, frame, render, narration: { lines: [] }, speakers: {},
+    black: () => 0, white: () => 0, stills: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5],
+    menu: { title: 'The Corn Maze', sub: 'Character look test: Nara, Juno, the scarecrow.' },
+    thumbnail() { render(0.5); },
+  });
+})();
+</script>
+</body>
+</html>

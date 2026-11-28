@@ -22,6 +22,10 @@
     overcast: { top: '#7d8796', horizon: '#c9ccd1', sunCol: '#d9dde3', sunDir: [0.3, 0.6, -0.5], sunDisc: 0,
       fog: '#b9bec6', fogNear: 60, fogFar: 700, hemiSky: '#d6dbe3', hemiGround: '#6f6a60', hemi: 1.05,
       sun: '#e8ecf2', sunI: 0.65, fill: '#dfe4ea', fillI: 0.45, exposure: 1.15 },
+    // THE CORN MAZE: a foggy autumn afternoon on the hill: soft overcast light, pale grey-blue fog close in, natural colours
+    fogDay: { top: '#aeb9c3', horizon: '#dde3e7', sunCol: '#eef0f2', sunDir: [0.35, 0.82, 0.3], sunDisc: 0,
+      fog: '#d2d8dc', fogNear: 5, fogFar: 62, hemiSky: '#e8edf1', hemiGround: '#82765a', hemi: 1.15,
+      sun: '#fff4e4', sunI: 0.9, fill: '#e3e8ee', fillI: 0.38, exposure: 1.02 },
     // the Capital: bright, clean, slightly cool, glossy
     capitalDay: { top: '#2f6fd6', horizon: '#bfe0ff', sunCol: '#fff3d6', sunDir: [0.45, 0.55, -0.45], sunDisc: 1,
       fog: '#cfe6ff', fogNear: 150, fogFar: 1600, hemiSky: '#cfe3ff', hemiGround: '#9a8f80', hemi: 0.8,

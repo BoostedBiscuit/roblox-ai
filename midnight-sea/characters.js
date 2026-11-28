@@ -72,8 +72,8 @@
   function faceTexture(st, expr, blink, open, table) {
     const key = `${st.id}|${expr}|${blink ? 1 : 0}|${open ? 1 : 0}`;
     if (faceCache[key]) return faceCache[key];
-    const E = (table || EXPR)[expr] || EXPR.neutral;
-    const tex = RT.canvasTexture(FW, FH, (g) => drawFace(g, st, E, blink, open));
+    const E = st.comic ? (COMIC[expr] || COMIC.neutral) : (table || EXPR)[expr] || EXPR.neutral;
+    const tex = RT.canvasTexture(FW, FH, (g) => st.draw ? st.draw(g, expr, blink, open) : st.comic ? drawComicFace(g, st, E, blink, open) : drawFace(g, st, E, blink, open));
     return (faceCache[key] = tex);
   }
 
@@ -124,6 +124,96 @@
       }
     }
     drawMouth(g, st, E, open, cx, my);
+  }
+
+
+  // =================================================================================
+  // COMIC FACES (faceStyle({ comic: true })): the "In this town" reference look. Thin dark outlines, white eyes
+  // with small dot pupils, short thick brows, crease lines, very readable expressions. Own expression table.
+  //  ew/eh: eye width/height · pupil · lid (0..0.85) · lidTilt · low (smile squint) · brow (+ = lower) · browTilt (+ angry,
+  //  − worried) · browAsym · sclera (tint) · bags · creases · closed: 'soft' | 'squeeze' · mouth: line | smile | wavy |
+  //  gasp | grit | frown | o | cry · curve · mw (mouth width) · look [x, y]
+  // =================================================================================
+  const COMIC = {
+    neutral:     { ew: 1, eh: 0.82, pupil: 1, lid: 0.14, browTilt: 0.04, mouth: 'line', curve: 2, mw: 38 },
+    determined:  { ew: 1, eh: 0.74, pupil: 1, lid: 0.36, lidTilt: 0.24, brow: 12, browTilt: 0.42, mouth: 'line', curve: -3, mw: 36 },
+    unimpressed: { ew: 1.06, eh: 0.72, pupil: 0.9, lid: 0.52, brow: 8, browTilt: 0.08, mouth: 'line', curve: -1, mw: 24, bags: 1, look: [7, 5] },
+    smug:        { ew: 1.06, eh: 0.72, pupil: 0.95, lid: 0.5, lidTilt: -0.08, low: 0.16, brow: 4, browTilt: -0.04, browAsym: -16, mouth: 'smile', curve: 20, mw: 86, dimple: 1 },
+    smiling:     { ew: 1, eh: 0.8, pupil: 1, lid: 0.1, low: 0.3, brow: -6, browTilt: -0.06, mouth: 'smile', curve: 18, mw: 60 },
+    worried:     { ew: 1.12, eh: 0.92, pupil: 0.78, lid: 0, brow: -14, browTilt: -0.4, mouth: 'wavy', mw: 32, sclera: '#d9e9f6', bags: 1 },
+    scared:      { ew: 1.16, eh: 1.0, pupil: 0.6, lid: 0, brow: -22, browTilt: -0.36, mouth: 'wavy', mw: 40, sclera: '#d9e9f6', creases: 1 },
+    shocked:     { ew: 1.22, eh: 1.12, pupil: 0.42, lid: 0, brow: -30, browTilt: -0.12, mouth: 'gasp', mw: 46, sclera: '#d9e9f6', creases: 1 },
+    scream:      { ew: 1.24, eh: 1.14, pupil: 0.4, lid: 0, brow: -32, browTilt: -0.2, mouth: 'gasp', mw: 60, sclera: '#d9e9f6', creases: 1 },
+    squeeze:     { closed: 'squeeze', brow: 12, browTilt: 0.34, mouth: 'grit', mw: 46, creases: 2 },
+    sad:         { ew: 1, eh: 0.8, pupil: 0.95, lid: 0.3, lidTilt: -0.28, brow: -6, browTilt: -0.42, mouth: 'frown', curve: -12, mw: 34, look: [0, 6] },
+    crying:      { ew: 1, eh: 0.8, pupil: 0.95, lid: 0.3, lidTilt: -0.3, brow: -8, browTilt: -0.46, mouth: 'cry', curve: -12, mw: 44, tears: 1, look: [0, 4] },
+    blank:       { ew: 1.06, eh: 0.86, pupil: 0.7, lid: 0, mouth: 'line', curve: 0, mw: 26 },
+    taken:       { ew: 1.1, eh: 0.9, pupil: 0.32, lid: 0, brow: 2, mouth: 'line', curve: 0, mw: 24 },
+    sideEye:     { ew: 1.1, eh: 0.86, pupil: 0.7, lid: 0.12, brow: -10, browTilt: -0.3, mouth: 'wavy', mw: 30, look: [-18, 2], sclera: '#d9e9f6' },
+    smirk:       { ew: 1.04, eh: 0.76, pupil: 0.95, lid: 0.4, lidTilt: 0.06, low: 0.1, brow: 4, browTilt: 0.1, browAsym: -16, mouth: 'smile', curve: 12, mw: 50 },
+  };
+  function drawComicFace(g, st, E, blink, open) {
+    const cx = FW / 2, ink = st.ink || '#16110f', sz = st.eyeSize || 1;
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    g.fillStyle = st.skin; g.fillRect(0, 0, FW, FH);
+    const ey = 236 + (st.eyeY || 0), sp = 98 * (st.eyeSpread || 1), rx = 37 * (E.ew || 1) * sz, ry = 30 * (E.eh || 0.82) * sz;
+    const lid = RT.clamp((E.lid || 0) + (st.lidBias || 0), 0, 0.85), look = E.look || [0, 0], my = 340 + (st.mouthY || 0);
+    if (st.freckles) { g.fillStyle = RT.shade(st.skin, -0.25); for (const s of [-1, 1]) for (let k = 0; k < 4; k++) { g.beginPath(); g.arc(cx + s * (sp - 18 + k * 12), ey + ry + 26 + (k % 2) * 8, 3.4, 0, Math.PI * 2); g.fill(); } }
+    if (st.blush) for (const s of [-1, 1]) { const gr = g.createRadialGradient(cx + s * sp, ey + ry + 36, 2, cx + s * sp, ey + ry + 36, 32); gr.addColorStop(0, 'rgba(255,110,110,0.28)'); gr.addColorStop(1, 'rgba(255,110,110,0)'); g.fillStyle = gr; g.fillRect(cx + s * sp - 40, ey + ry, 80, 72); }
+    for (const s of [-1, 1]) {
+      const x = cx + s * sp;
+      if (blink || E.closed) {
+        g.strokeStyle = ink; g.lineWidth = 7;
+        if (E.closed === 'squeeze') {        // > <  squeezed shut, with crease lines
+          g.beginPath(); g.moveTo(x - s * rx * 0.95, ey - ry * 0.55); g.lineTo(x + s * rx * 0.75, ey + 2); g.lineTo(x - s * rx * 0.95, ey + ry * 0.55); g.stroke();
+          g.lineWidth = 4; for (const k of [-1, 0, 1]) { g.beginPath(); g.moveTo(x + s * rx * 1.0, ey + k * 16); g.lineTo(x + s * rx * 1.35, ey + k * 22); g.stroke(); }
+        } else if ((E.low || 0) > 0.2) { g.beginPath(); g.moveTo(x - rx, ey + 6); g.quadraticCurveTo(x, ey - 22, x + rx, ey + 6); g.stroke(); }
+        else { g.beginPath(); g.moveTo(x - rx, ey + 2); g.quadraticCurveTo(x, ey + 16, x + rx, ey + 2); g.stroke(); }
+        if (st.lashes) { g.lineWidth = 5; g.beginPath(); g.moveTo(x + s * rx * 0.95, ey + 3); g.lineTo(x + s * (rx + 11), ey + 9); g.stroke(); }
+      } else {
+        g.save(); g.beginPath(); g.ellipse(x, ey, rx, ry, 0, 0, Math.PI * 2); g.clip();
+        g.fillStyle = E.sclera || st.sclera || '#fbfbf7'; g.fillRect(x - rx - 2, ey - ry - 2, rx * 2 + 4, ry * 2 + 4);
+        const px = x + look[0] + s * 2, py = ey + look[1] + ry * 0.05, pr = 9.5 * (E.pupil || 1) * sz;
+        g.fillStyle = st.pupilCol || '#0e0b0a'; g.beginPath(); g.arc(px, py, pr, 0, Math.PI * 2); g.fill();
+        g.fillStyle = 'rgba(255,255,255,0.9)'; g.beginPath(); g.arc(px + pr * 0.35, py - pr * 0.4, Math.max(1.6, pr * 0.28), 0, Math.PI * 2); g.fill();
+        if (lid > 0.02) { const yl = ey - ry + 2 * ry * lid, t = (E.lidTilt || 0) * ry, xo = x + s * rx * 1.3, xi = x - s * rx * 1.3, yo = yl - t, yi = yl + t;
+          g.fillStyle = st.skin; g.beginPath(); g.moveTo(xo, ey - ry - 5); g.lineTo(xi, ey - ry - 5); g.lineTo(xi, yi); g.lineTo(xo, yo); g.closePath(); g.fill();
+          g.strokeStyle = ink; g.lineWidth = 6; g.beginPath(); g.moveTo(xo, yo); g.lineTo(xi, yi); g.stroke(); }
+        if ((E.low || 0) > 0.02) { const cy = ey + ry * (2.05 - 2.2 * E.low); g.fillStyle = st.skin; g.beginPath(); g.ellipse(x, cy, rx * 1.6, ry, 0, 0, Math.PI * 2); g.fill(); g.strokeStyle = ink; g.lineWidth = 5; g.stroke(); }
+        g.restore();
+        g.strokeStyle = ink; g.lineWidth = 5.5; g.beginPath(); g.ellipse(x, ey, rx, ry, 0, 0, Math.PI * 2); g.stroke();
+        g.lineWidth = 8; g.beginPath(); g.ellipse(x, ey, rx, ry, 0, Math.PI * 1.08, Math.PI * 1.92); g.stroke();      // heavier top line
+        if (st.lashes) { g.lineWidth = 5; g.beginPath(); g.moveTo(x + s * rx * 0.86, ey - ry * 0.55); g.lineTo(x + s * (rx + 12), ey - ry * 0.95); g.stroke(); }
+      }
+      if (E.bags) { g.strokeStyle = 'rgba(40,25,20,0.45)'; g.lineWidth = 3.5; g.beginPath(); g.moveTo(x - rx * 0.7, ey + ry + 9); g.quadraticCurveTo(x, ey + ry + 19, x + rx * 0.7, ey + ry + 9); g.stroke(); }
+      if (E.creases) { g.strokeStyle = 'rgba(30,20,16,0.55)'; g.lineWidth = 3.5; g.beginPath(); g.moveTo(x + s * rx * 1.18, ey - ry * 0.2); g.lineTo(x + s * rx * 1.42, ey - ry * 0.45); g.moveTo(x + s * rx * 1.2, ey + ry * 0.3); g.lineTo(x + s * rx * 1.45, ey + ry * 0.5); g.stroke(); }
+      if (E.tears) { g.fillStyle = 'rgba(120,200,255,0.9)'; g.beginPath(); g.ellipse(x + s * rx * 0.2, ey + ry + 30, 8, 14, 0, 0, Math.PI * 2); g.fill(); }
+      // brow: a short thick stroke
+      const by = ey - ry - 26 + (E.brow || 0) + (s === 1 ? E.browAsym || 0 : 0) + (st.browY || 0);
+      const tilt = (E.browTilt || 0) * 46, xi = x - s * rx * 0.95, xo = x + s * rx * 1.15, yi = by + tilt, yo = by - tilt * 0.4;
+      g.strokeStyle = st.brow; g.lineWidth = st.browW || 13; g.beginPath(); g.moveTo(xi, yi); g.quadraticCurveTo((xi + xo) / 2, Math.min(yi, yo) - 7, xo, yo); g.stroke();
+    }
+    if ((E.creases || 0) >= 1) { g.strokeStyle = 'rgba(30,20,16,0.5)'; g.lineWidth = 3.5; g.beginPath(); g.moveTo(cx - 10, ey - ry - 40 + (E.brow || 0)); g.lineTo(cx - 4, ey - ry - 18 + (E.brow || 0)); g.moveTo(cx + 10, ey - ry - 40 + (E.brow || 0)); g.lineTo(cx + 4, ey - ry - 18 + (E.brow || 0)); g.stroke(); }
+    // mouth
+    const mw = (E.mw || 38) * (st.mouthW || 1), x0 = cx - mw / 2, x1 = cx + mw / 2, c = E.curve || 0;
+    const line = (fn, w = 5.5) => { g.strokeStyle = ink; g.lineWidth = w; g.beginPath(); fn(); g.stroke(); };
+    const fill = (fn, col = '#2a0e10', tongue) => { g.fillStyle = col; g.beginPath(); fn(); g.fill(); if (tongue) { g.save(); g.beginPath(); fn(); g.clip(); g.fillStyle = '#d4606c'; g.beginPath(); g.ellipse(cx, tongue, mw * 0.3, 14, 0, 0, Math.PI * 2); g.fill(); g.restore(); } g.strokeStyle = ink; g.lineWidth = 5; g.beginPath(); fn(); g.stroke(); };
+    const m = open && (E.mouth === 'line' || E.mouth === 'wavy' || E.mouth === 'frown') ? 'talk' : E.mouth;
+    switch (m) {
+      case 'smile':
+        if (open) fill(() => { g.moveTo(x0, my - 6); g.quadraticCurveTo(cx, my - 2, x1, my - 6); g.quadraticCurveTo(cx, my + c + 18, x0, my - 6); }, '#2a0e10', my + c + 2);
+        else line(() => { g.moveTo(x0, my - 8); g.quadraticCurveTo(cx, my + c, x1, my - 8); });
+        if (E.dimple) line(() => { g.moveTo(x0 - 4, my - 16); g.lineTo(x0 + 3, my - 4); g.moveTo(x1 + 4, my - 16); g.lineTo(x1 - 3, my - 4); }, 4);
+        break;
+      case 'wavy': line(() => { for (let i = 0; i <= 20; i++) { const x = x0 + (mw * i) / 20, y = my + Math.sin((i / 20) * Math.PI * 4) * 4; i ? g.lineTo(x, y) : g.moveTo(x, y); } }, 5); break;
+      case 'gasp': fill(() => { g.moveTo(cx - mw * 0.42, my - 4); g.quadraticCurveTo(cx, my - 22, cx + mw * 0.42, my - 4); g.quadraticCurveTo(cx + mw * 0.5, my + 40, cx, my + 42); g.quadraticCurveTo(cx - mw * 0.5, my + 40, cx - mw * 0.42, my - 4); }, '#1c0a0b', my + 34); break;
+      case 'grit': { g.fillStyle = '#f7f3ea'; g.beginPath(); g.rect(x0, my - 12, mw, 24); g.fill(); g.strokeStyle = ink; g.lineWidth = 5; g.stroke(); g.lineWidth = 3; g.beginPath(); g.moveTo(x0, my); g.lineTo(x1, my); for (let k = 1; k < 5; k++) { g.moveTo(x0 + (mw * k) / 5, my - 12); g.lineTo(x0 + (mw * k) / 5, my + 12); } g.stroke(); break; }
+      case 'frown': line(() => { g.moveTo(x0, my + 6); g.quadraticCurveTo(cx, my + 2 * c, x1, my + 6); }); break;
+      case 'o': fill(() => g.ellipse(cx, my + 8, 13, 18, 0, 0, Math.PI * 2), '#1c0a0b'); break;
+      case 'cry': fill(() => { g.moveTo(x0, my + 12); g.quadraticCurveTo(cx, my - 20, x1, my + 12); g.quadraticCurveTo(cx, my + 26, x0, my + 12); }, '#2a0e10'); break;
+      case 'talk': fill(() => g.ellipse(cx, my + 6, mw * 0.34, 13, 0, 0, Math.PI * 2), '#2a0e10', my + 14); break;
+      default: line(() => { g.moveTo(x0, my); g.quadraticCurveTo(cx, my + 2 * c, x1, my); });
+    }
   }
 
   function openEye(g, x, y, rx, ry, s, E, st, lid, look) {
@@ -263,6 +353,47 @@
   const Ball = (rad, x, y, z, sx = 1, sy = sx, sz = sx) => ({ geo: new THREE.SphereGeometry(rad, 12, 9), matrix: RT.mat4(x, y, z, 0, 0, 0, sx, sy, sz) });
   const Wedge = (w, h, d, x, y, z, rx = 0, ry = 0, rz = 0) => ({ geo: RT.wedgeGeometry(w, h, d), matrix: RT.mat4(x, y, z, rx, ry, rz) });
   function merged(pieces, mat) { return RT.mesh(RT.mergeGeometries(pieces), mat); }
+  // Shard: a 4-sided pyramid (tip at +y) scaled to w × h × d: the strands of messy comic hair
+  const shardGeo = new THREE.ConeGeometry(0.5, 1, 4, 1); shardGeo.rotateY(Math.PI / 4);
+  const Shard = (w, h, d, x, y, z, rx = 0, ry = 0, rz = 0) => ({ geo: shardGeo, matrix: RT.mat4(x, y, z, rx, ry, rz, w, h, d) });
+  // messy jagged hair over the head (head center = origin, head 1.25 × 1.1 × 1.16). o: seed, crown (spikes on top),
+  // fringe (strands over the forehead), back (strands down the back), sides, len (strand length), lift (how much the crown stands up)
+  function jaggedHair(o = {}) {
+    const r = RT.rng(o.seed || 7), P = [], len = o.len || 1, lift = o.lift ?? 0.6;
+    P.push(H(1.36, 0.36, 1.3, 0, 0.5, -0.02, 0, 0, 0, 0.16));                                     // cap
+    const crown = o.crown ?? 12;
+    for (let i = 0; i < crown; i++) {                                                         // spikes all over the top
+      const a = (i / crown) * Math.PI * 2 + r() * 0.4, rad = 0.25 + r() * 0.3, x = Math.sin(a) * rad, z = Math.cos(a) * rad * 0.9 - 0.08;
+      if (o.frontOnly && Math.cos(a) < -0.25) continue;                                      // hair pulled back: no spikes at the back
+      const L = (0.42 + r() * 0.3) * len, w = 0.3 + r() * 0.16;
+      P.push(Shard(w, L, w * 0.7, x * 1.15, 0.62 + L * 0.3, z * 1.1, -Math.cos(a) * (0.9 - lift) + (r() - 0.5) * 0.3, 0, Math.sin(a) * (0.9 - lift) + (r() - 0.5) * 0.3));
+    }
+    const fringe = o.fringe ?? 6;
+    for (let i = 0; i < fringe; i++) {                                                        // strands hanging over the forehead
+      const f = fringe === 1 ? 0.5 : i / (fringe - 1), x = -0.56 + f * 1.12 + (r() - 0.5) * 0.08, L = (0.38 + r() * 0.2) * (o.fringeLen || 1);
+      P.push(Shard(0.26 + r() * 0.08, L, 0.14, x, 0.42 - L * 0.32, 0.6, Math.PI - 0.12, 0, (x * 0.5) + (r() - 0.5) * 0.35));
+    }
+    const sides = o.sides ?? 3;
+    for (const s of [-1, 1]) for (let i = 0; i < sides; i++) {                                // over the ears
+      const z = 0.3 - i * 0.32, L = (0.5 + r() * 0.25) * (o.sideLen || 1);
+      P.push(Shard(0.16, L, 0.32, s * 0.66, 0.36 - L * 0.3, z, Math.PI, 0, -s * (0.12 + r() * 0.12)));
+    }
+    const back = o.back ?? 5;
+    for (let i = 0; i < back; i++) {                                                          // down the back of the head
+      const x = -0.5 + (i / Math.max(1, back - 1)) * 1.0, L = (0.55 + r() * 0.3) * (o.backLen || 1);
+      P.push(Shard(0.3, L, 0.2, x, 0.3 - L * 0.3, -0.6, Math.PI + 0.15, 0, (r() - 0.5) * 0.3));
+    }
+    if (o.backPanel) P.push(H(1.36, o.backPanel, 0.3, 0, 0.42 - o.backPanel / 2, -0.5, 0, 0, 0, 0.12));
+    return P;
+  }
+  // soft fabric shading on a clothing face: darker lower edge and sides + a few fold lines (reads less flat in daylight)
+  function cloth(g, c, o = {}) {
+    const k = o.k ?? 1, gr = g.createLinearGradient(c.x, c.y, c.x, c.y + c.h);
+    gr.addColorStop(0, `rgba(255,255,255,${0.06 * k})`); gr.addColorStop(0.55, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${0.16 * k})`);
+    g.fillStyle = gr; g.fillRect(c.x, c.y, c.w, c.h);
+    const r = RT.rng(o.seed || 3); g.strokeStyle = `rgba(0,0,0,${0.09 * k})`; g.lineCap = 'round';
+    for (let i = 0; i < (o.folds ?? 4); i++) { const x = c.x + c.w * (0.15 + r() * 0.7), y = c.y + c.h * (0.2 + r() * 0.6); g.lineWidth = 2 + r() * 3; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + c.w * (r() - 0.5) * 0.2, y + c.h * 0.1, x + c.w * (r() - 0.5) * 0.25, y + c.h * (0.12 + r() * 0.15)); g.stroke(); }
+  }
 
   // =================================================================================
   // THE AVATAR BUILDER: every character goes through this
@@ -949,7 +1080,7 @@
   RT.characters = {
     rhea, pip, juno, dax, haskin, vire, guard, citizen, tribute, crowd,
     cast: ['rhea', 'pip', 'juno', 'dax', 'haskin', 'vire', 'guard'],
-    build: buildAvatar, faceStyle, faceTexture, DIMS, EXPR, CROWD_EXPR,
-    parts: { H, Cone, Ball, merged, bands, genericClothes, hairStyle, outer: typeof outer === 'function' ? outer : null, SKINS },
+    build: buildAvatar, faceStyle, faceTexture, DIMS, EXPR, CROWD_EXPR, COMIC,
+    parts: { H, Cone, Ball, Shard, jaggedHair, cloth, merged, bands, genericClothes, hairStyle, outer: typeof outer === 'function' ? outer : null, SKINS },
   };
 })();

@@ -6,6 +6,9 @@
 //   const milo = RT.cast.milo();                 // little brother, 8 (striped pyjamas, barefoot, blue plush whale in his LEFT hand)
 //   RT.cast.bram() · RT.cast.odell() · RT.cast.pike() · RT.cast.sleeper(seed)   // the sleepwalkers (eyes closed: rig.setEyes('closed'))
 //   RT.cast.phone()                              // Nara's phone (cracked corner), screen: phone.userData.setScreen(text, rec)
+//   RT.cast.nara({ style: 'ref' })               // the same Nara drawn in the "In this town" reference style (comic face, jagged hair, shaded cloth)
+//   RT.cast.juno()                               // THE CORN MAZE: Nara's best friend (yellow raincoat, messy brown bob); rig.props.leaves = corn leaves in her hair
+//   RT.cast.scarecrow()                          // THE CORN MAZE: the Caller (burlap sack head, grey coat, straw, long limbs). Faces: 'neutral' (still) | 'awake'; mouth open = talking
 // =====================================================================================
 (function () {
   'use strict';
@@ -15,8 +18,10 @@
   // ---------- NARA VALE ----------
   function nara(o = {}) {
     const COL = { skin: '#d7a07e', hair: '#141012', hoodie: '#3a3a40', jeans: '#1b1b21', shoes: '#141416', string: '#e9e6df', red: '#c41e24' };
+    if (o.style === 'ref') COL.hoodie = '#2c2c33';
     const Hd = RT.shade(COL.hoodie, -0.25), Hl = RT.shade(COL.hoodie, 0.14);
-    const face = o.shadow
+    const ref = o.style === 'ref', shade = (g, f, c, seed) => { if (ref && f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed }); };
+    const face = ref ? C.faceStyle({ comic: true, skin: COL.skin, brow: COL.hair, browW: 14, lashes: true, ink: '#1a1210' }) : o.shadow
       ? C.faceStyle({ skin: COL.skin, sclera: '#070405', iris: '#000000', ring: '#ff2618', noShine: true, brow: COL.hair, browW: 12, lashes: true, bags: true })
       : C.faceStyle({ skin: COL.skin, iris: '#3a2214', brow: COL.hair, browW: 12, lashes: true, bags: true, lidBias: 0.12 });
     return C.build({
@@ -37,23 +42,27 @@
           D.rect(g, c, 0, 0.84, 1, 0.92, Hd); for (let x = 0.02; x < 1; x += 0.05) D.line(g, c, x, 0.85, x, 0.91, 'rgba(0,0,0,0.18)', 2);   // ribbed hem
           D.rect(g, c, 0, 0.92, 1, 1, COL.jeans);
           D.rect(g, c, 0.06, 0.2, 0.1, 0.5, Hl);
+          shade(g, f, c, 5);
         },
         arm(g, f, c, info) {
           if (f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, Hd);
           bands(g, c, [[0.88, COL.hoodie], [1, Hd]]);
           for (let x = 0.05; x < 1; x += 0.1) D.line(g, c, x, 0.89, x, 0.99, 'rgba(0,0,0,0.18)', 2);
           if (P.outer && P.outer(f, info)) D.stitch(g, c, 0.5, 0.05, 0.5, 0.84);
+          shade(g, f, c, 6);
         },
         leg(g, f, c, info) {
           if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.jeans : COL.shoes);
           bands(g, c, [[0.84, COL.jeans], [0.93, COL.shoes], [1, '#e8e6e0']]);                  // black sneakers, white soles
           if (P.outer && P.outer(f, info)) D.line(g, c, 0.5, 0.02, 0.5, 0.82, '#2a2a33', 2);
           if (f === 'front') D.line(g, c, 0.3, 0.84, 0.7, 0.84, '#e8e6e0', 2);
+          if (ref && f !== 'top' && f !== 'bottom') { D.line(g, c, 0.25, 0.3, 0.75, 0.34, 'rgba(255,255,255,0.06)', 6); P.cloth(g, c, { seed: 7, folds: 3 }); }
         },
       },
       build(rig, d) {
         const hm = RT.plastic(COL.hair, { roughness: 0.5 });
-        rig.headTop.add(merged([
+        if (ref) rig.headTop.add(merged(P.jaggedHair({ seed: 4, crown: 14, lift: 0.08, len: 0.72, frontOnly: true, fringe: 6, fringeLen: 0.62, sides: 3, sideLen: 1.5, back: 0, backPanel: 1.05 }), hm));
+        else rig.headTop.add(merged([
           H(1.38, 0.44, 1.32, 0, 0.5, -0.03, 0, 0, 0, 0.2),
           H(1.38, 1.05, 0.34, 0, 0.0, -0.47, 0, 0, 0, 0.14),
           H(0.13, 1.0, 0.98, 0.685, -0.02, -0.1, 0, 0, 0.03, 0.06), H(0.13, 1.0, 0.98, -0.685, -0.02, -0.1, 0, 0, -0.03, 0.06),
@@ -193,5 +202,143 @@
     return g;
   }
 
-  RT.cast = { nara, milo, whale, bram, odell, pike, sleeper, phone };
+
+  // ---------- THE CORN MAZE: JUNO (Nara's best friend, 15) ----------
+  // yellow raincoat (reads in the fog), messy brown bob with a yellow clip, jeans, red rain boots, freckles. Calls Nara "Vale".
+  function juno(o = {}) {
+    const COL = { skin: '#e2b48d', hair: '#3a2417', coat: '#efbd2b', trim: '#c9921a', jeans: '#3d5a80', boots: '#b3312a', clip: '#ffd84a', tee: '#2f6f6a' };
+    const sh = (g, f, c, seed) => { if (f !== 'top' && f !== 'bottom') P.cloth(g, c, { seed }); };
+    return C.build({
+      name: 'Juno', skin: COL.skin, shoes: COL.boots, seed: 31, expression: o.expression || 'smiling',
+      dims: { uw: 2.06, ud: 1.04, lw: 1.98, ld: 1.0, aw: 0.78, ad: 0.8 },          // the raincoat is roomy
+      face: C.faceStyle({ comic: true, skin: COL.skin, brow: COL.hair, browW: 13, lashes: true, freckles: true, blush: true, ink: '#1a1210' }),
+      clothes: {
+        torso(g, f, c) {
+          if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.coat : COL.jeans);
+          D.rect(g, c, 0, 0, 1, 1, COL.coat);
+          if (f === 'front') {
+            D.poly(g, c, [[0.36, 0], [0.64, 0], [0.5, 0.1]], COL.tee);                              // tee at the open collar
+            D.rect(g, c, 0.48, 0.08, 0.52, 0.9, COL.trim);                                          // placket
+            for (let k = 0; k < 4; k++) { D.rect(g, c, 0.44, 0.16 + k * 0.19, 0.56, 0.19 + k * 0.19, '#7a5a1c'); }   // toggles
+            D.rect(g, c, 0.12, 0.6, 0.36, 0.76, RT.shade(COL.coat, -0.12)); D.rect(g, c, 0.64, 0.6, 0.88, 0.76, RT.shade(COL.coat, -0.12));   // pockets
+            D.line(g, c, 0.12, 0.6, 0.36, 0.6, COL.trim, 4); D.line(g, c, 0.64, 0.6, 0.88, 0.6, COL.trim, 4);
+          }
+          D.rect(g, c, 0, 0.9, 1, 1, COL.jeans);
+          sh(g, f, c, 11);
+        },
+        arm(g, f, c) {
+          if (f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, COL.trim);
+          bands(g, c, [[0.86, COL.coat], [0.92, COL.trim], [1, COL.coat]]); sh(g, f, c, 12);
+        },
+        leg(g, f, c) {
+          if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.jeans : COL.boots);
+          bands(g, c, [[0.66, COL.jeans], [0.7, RT.shade(COL.boots, 0.15)], [1, COL.boots]]);    // tall red rain boots
+          D.line(g, c, 0.2, 0.3, 0.3, 0.5, 'rgba(255,255,255,0.08)', 5); sh(g, f, c, 13);
+        },
+      },
+      build(rig) {
+        const hm = RT.plastic(COL.hair, { roughness: 0.55 });
+        rig.headTop.add(merged(P.jaggedHair({ seed: 11, crown: 12, lift: 0.4, len: 1.05, fringe: 7, fringeLen: 0.6, sides: 4, sideLen: 1.7, back: 7, backLen: 1.45 }), hm));
+        rig.headTop.add(merged([H(0.32, 0.1, 0.12, 0.42, 0.48, 0.5, 0, 0, -0.5, 0.04)], RT.plastic(COL.clip)));   // hair clip
+        const hood = merged([H(1.4, 0.4, 0.6, 0, 0, 0, -0.25, 0, 0, 0.18)], RT.plastic(COL.coat, { roughness: 0.55 }));
+        hood.position.set(0, 1.0, -0.68); rig.waist.add(hood);
+        // corn leaves caught in her hair (after the maze pushes her out)
+        const leafM = new THREE.MeshStandardMaterial({ color: '#c9b276', roughness: 0.9, side: THREE.DoubleSide });
+        const leaves = new THREE.Group(); const r = RT.rng(5);
+        for (let k = 0; k < 4; k++) { const l = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.62), leafM); l.position.set(-0.4 + k * 0.28, 0.65 + r() * 0.15, 0.1 - r() * 0.4); l.rotation.set(r() - 0.5, r() * 3, (r() - 0.5) * 1.6); leaves.add(l); }
+        leaves.visible = false; rig.headTop.add(leaves); rig.props.leaves = leaves;
+      },
+    });
+  }
+
+  // ---------- THE CORN MAZE: THE SCARECROW (the Caller) ----------
+  // burlap sack head with cut-out eye holes and a stitched mouth, a floppy hat, a long grey patched coat, straw at the
+  // neck, wrists and ankles, very long thin limbs and long straw fingers. Faces: 'neutral' = still (empty eye holes),
+  // 'awake' (pale pin-point pupils in the holes); rig.setMouth(true) = the stitches pull open (it talks).
+  function scarecrow(o = {}) {
+    const COL = { sack: '#a28c66', coat: '#46505a', patch: '#7b6a50', patch2: '#465260', pants: '#6c604d', straw: '#cfae5e', hat: '#4a4238', rope: '#8a7448' };
+    const weave = (g, w, h, seed) => {     // burlap: base, cross-hatch weave, darker stains
+      const r = RT.rng(seed); g.fillStyle = COL.sack; g.fillRect(0, 0, w, h);
+      g.globalAlpha = 0.16; g.strokeStyle = '#4e3f28'; g.lineWidth = 2;
+      for (let x = 0; x < w; x += 7) { g.beginPath(); g.moveTo(x + r() * 2, 0); g.lineTo(x + r() * 2, h); g.stroke(); }
+      for (let y = 0; y < h; y += 7) { g.beginPath(); g.moveTo(0, y + r() * 2); g.lineTo(w, y + r() * 2); g.stroke(); }
+      g.globalAlpha = 0.22; g.fillStyle = '#5a4a30'; for (let k = 0; k < 7; k++) { g.beginPath(); g.ellipse(r() * w, r() * h, 20 + r() * 50, 12 + r() * 30, r() * 3, 0, Math.PI * 2); g.fill(); }
+      g.globalAlpha = 1;
+    };
+    const face = C.faceStyle({ skin: COL.sack, draw(g, expr, blink, open) {
+      const W = 512, Hh = 450; weave(g, W, Hh, 77);
+      // eye holes: ragged dark cuts, stitched around
+      for (const s of [-1, 1]) {
+        const x = 256 + s * 104, y = 200 + (s > 0 ? -10 : 6);
+        g.fillStyle = '#0b0807'; g.beginPath();
+        for (let i = 0; i <= 10; i++) { const a = (i / 10) * Math.PI * 2, rr = (i % 2 ? 0.8 : 1) * (s > 0 ? 54 : 62); g.lineTo(x + Math.cos(a) * rr * 1.05, y + Math.sin(a) * rr * 0.9); }
+        g.closePath(); g.fill();
+        g.strokeStyle = '#3b2c1a'; g.lineWidth = 4; for (let i = 0; i < 9; i++) { const a = (i / 9) * Math.PI * 2; g.beginPath(); g.moveTo(x + Math.cos(a) * 60, y + Math.sin(a) * 50); g.lineTo(x + Math.cos(a) * 76, y + Math.sin(a) * 64); g.stroke(); }
+        if (expr === 'awake' && !blink) { g.fillStyle = '#efe9da'; g.beginPath(); g.arc(x + s * 4, y + 2, 5.5, 0, Math.PI * 2); g.fill(); }
+      }
+      // the stitched mouth: a long seam with cross stitches; open = the seam gapes into a dark slit
+      const my = 340, x0 = 70, x1 = 446;
+      { const gr = g.createLinearGradient(0, 0, 0, 170); gr.addColorStop(0, 'rgba(20,14,8,0.55)'); gr.addColorStop(1, 'rgba(20,14,8,0)'); g.fillStyle = gr; g.fillRect(0, 0, 512, 170); }   // hat-brim shadow
+      if (open) { g.fillStyle = '#0b0807'; g.beginPath(); g.moveTo(x0 + 30, my - 10); g.quadraticCurveTo(256, my + 70, x1 - 30, my - 24); g.quadraticCurveTo(256, my - 4, x0 + 30, my - 10); g.fill(); }
+      g.strokeStyle = '#231a10'; g.lineWidth = 5; g.beginPath(); g.moveTo(x0, my - 18); g.quadraticCurveTo(160, my + 14, 256, my + 4); g.quadraticCurveTo(350, my - 6, x1, my - 30); g.stroke();
+      g.lineWidth = 4; for (let k = 0; k <= 16; k++) { const x = x0 + ((x1 - x0) * k) / 16, y = my - 18 + Math.sin((k / 16) * Math.PI) * 26 - (k / 16) * 10; g.beginPath(); g.moveTo(x - 6, y - 14); g.lineTo(x + 6, y + (open ? 26 : 14)); g.stroke(); }
+    } });
+    return C.build({
+      name: 'Scarecrow', scale: o.scale || 1.25, skin: COL.sack, hands: COL.straw, shoes: COL.straw, seed: 41, expression: o.expression || 'neutral',
+      dims: { uw: 1.72, uh: 1.12, ud: 0.8, lw: 1.6, lh: 1.0, ld: 0.78, aw: 0.44, ad: 0.46, ua: 1.5, la: 1.45, hand: 0.48, gw: 0.5, gd: 0.52, ul: 1.6, ll: 1.6, legX: 0.42, hw: 1.34, hh: 1.3, hd: 1.24, hr: 0.4, shoe: 0.36 },
+      face,
+      base: { aLo: 0.18, aRo: 0.18, eL: 0.1, eR: 0.1 },
+      clothes: {
+        torso(g, f, c) {
+          if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.coat : COL.pants);
+          D.rect(g, c, 0, 0, 1, 1, COL.coat);
+          if (f === 'front') { D.rect(g, c, 0.48, 0, 0.52, 1, RT.shade(COL.coat, -0.25)); for (let k = 0; k < 4; k++) D.circle(g, c, 0.42, 0.18 + k * 0.2, 6, '#2c2620');
+            D.rect(g, c, 0.62, 0.3, 0.86, 0.48, COL.patch); D.stitch(g, c, 0.62, 0.3, 0.86, 0.3, 'rgba(230,220,190,0.6)'); D.stitch(g, c, 0.62, 0.48, 0.86, 0.48, 'rgba(230,220,190,0.6)'); }
+          if (f === 'back') D.rect(g, c, 0.15, 0.55, 0.4, 0.75, COL.patch2);
+          // torn hem: zig-zag teeth at the bottom
+          for (let x = 0; x < 1; x += 0.1) D.poly(g, c, [[x, 0.9], [x + 0.05, 1.0], [x + 0.1, 0.9]], RT.shade(COL.coat, -0.2));
+          P.cloth(g, c, { seed: 21, k: 1.6, folds: 7 });
+        },
+        arm(g, f, c) {
+          if (f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, COL.straw);
+          bands(g, c, [[0.9, COL.coat], [1, RT.shade(COL.coat, -0.2)]]);
+          if (f === 'front') D.rect(g, c, 0.2, 0.25, 0.8, 0.38, COL.patch2);
+          for (let x = 0.05; x < 1; x += 0.12) D.line(g, c, x, 0.88, x + 0.03, 1.0, COL.straw, 3);   // straw poking out of the cuff
+          P.cloth(g, c, { seed: 22, k: 1.4, folds: 5 });
+        },
+        leg(g, f, c) {
+          if (f === 'top' || f === 'bottom') return D.rect(g, c, 0, 0, 1, 1, f === 'top' ? COL.pants : COL.straw);
+          bands(g, c, [[0.82, COL.pants], [0.88, COL.rope], [1, COL.pants]]);
+          if (f === 'front') D.rect(g, c, 0.25, 0.4, 0.75, 0.55, COL.patch);
+          for (let x = 0.05; x < 1; x += 0.12) D.line(g, c, x, 0.9, x + 0.02, 1.0, COL.straw, 3);
+          P.cloth(g, c, { seed: 23, k: 1.4, folds: 5 });
+        },
+      },
+      build(rig, d) {
+        const strawM = RT.plastic(COL.straw, { roughness: 0.9 }), r = RT.rng(43);
+        // the hat: floppy brim, dented crown
+        const hat = new THREE.Group(); hat.position.set(0, 0.62, 0); hat.rotation.set(-0.12, 0, 0.1); rig.headTop.add(hat);
+        const brimG = new THREE.CylinderGeometry(1.25, 1.3, 0.06, 22, 1); { const p = brimG.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i), rr = Math.hypot(x, z); p.setY(i, p.getY(i) - Math.max(0, rr - 0.7) * 0.28 * (1 + 0.6 * Math.sin(Math.atan2(z, x) * 3))); } brimG.computeVertexNormals(); }
+        hat.add(RT.mesh(brimG, RT.plastic(COL.hat, { roughness: 0.95 })));
+        const crown = RT.mesh(new THREE.CylinderGeometry(0.58, 0.68, 0.62, 14), RT.plastic(COL.hat, { roughness: 0.95 })); crown.position.y = 0.3; crown.rotation.z = 0.08; hat.add(crown);
+        hat.add(merged([H(1.38, 0.1, 1.38, 0, 0.08, 0, 0, 0, 0, 0.04)], RT.plastic('#2e2822')));
+        // straw under the hat, at the neck (rope collar)
+        const tufts = [];
+        for (let k = 0; k < 14; k++) { const a = (k / 14) * Math.PI * 2; tufts.push(Cone(0.05, 0.5 + r() * 0.3, Math.sin(a) * 0.62, 0.42, Math.cos(a) * 0.58, Math.cos(a) * 1.9, 0, -Math.sin(a) * 1.9, 3)); }
+        for (let k = 0; k < 16; k++) { const a = (k / 16) * Math.PI * 2; tufts.push(Cone(0.05, 0.45 + r() * 0.3, Math.sin(a) * 0.5, -0.78, Math.cos(a) * 0.45, Math.PI - Math.cos(a) * 0.5, 0, Math.sin(a) * 0.5, 3)); }
+        rig.headTop.add(merged(tufts, strawM));
+        const rope = RT.mesh(new THREE.TorusGeometry(0.5, 0.06, 6, 18), RT.plastic(COL.rope, { roughness: 0.9 })); rope.rotation.x = Math.PI / 2; rope.position.y = -0.62; rig.headTop.add(rope);
+        // long straw fingers
+        for (const [hand, s] of [[rig.handL, 1], [rig.handR, -1]]) {
+          const F = []; for (let k = 0; k < 4; k++) F.push(Cone(0.05, 0.9 + r() * 0.25, s * (0.12 - k * 0.05) - s * 0.05, -0.75, -0.18 + k * 0.12, 0.08 * (k - 1.5), 0, Math.PI + s * 0.12, 3));
+          hand.add(merged(F, strawM));
+        }
+        // coat tails hanging below the hips
+        const tails = merged([H(0.78, 1.0, 0.1, -0.42, -0.5, -0.36, 0.05, 0, 0.04, 0.03), H(0.78, 1.0, 0.1, 0.42, -0.5, -0.36, 0.05, 0, -0.04, 0.03), H(0.7, 0.85, 0.1, -0.46, -0.42, 0.36, -0.05, 0, 0.04, 0.03)], RT.plastic(COL.coat, { roughness: 0.95 }));
+        rig.hips.add(tails);
+      },
+    });
+  }
+
+  RT.cast = { nara, milo, whale, bram, odell, pike, sleeper, phone, juno, scarecrow };
 })();

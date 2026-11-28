@@ -45,8 +45,8 @@
     // THE MIDNIGHT SEA. midnight: black sky, a big pale-red moon low over the sea (discDir), moonlight from higher up (sunDir)
     // so it falls through the pier planks; the red sea adds its own glow (bay.js). dawnRed: cold grey-red sunrise.
     midnight: { top: '#030102', horizon: '#2c0708', sunCol: '#ff5040', sunDir: [0.22, 0.62, 0.75], discDir: [-0.16, 0.1, 1], discCol: '#ffb2a2', discScale: 0.95, glowScale: 260,
-      sunDisc: 0.75, moon: 1, fog: '#160405', fogNear: 25, fogFar: 330, hemiSky: '#8a3a36', hemiGround: '#2a0807', hemi: 0.5,
-      sun: '#ffa090', sunI: 1.25, fill: '#ff7a68', fillI: 0.16, exposure: 0.95 },
+      sunDisc: 0.75, moon: 1, fog: '#160405', fogNear: 25, fogFar: 330, hemiSky: '#8a3a36', hemiGround: '#2a0807', hemi: 0.72,
+      sun: '#ffa090', sunI: 1.25, fill: '#ff7a68', fillI: 0.22, exposure: 1.05 },
     dawnRed: { top: '#2a1517', horizon: '#b8655a', sunCol: '#ffb4a0', sunDir: [-0.2, 0.2, 1], discDir: [-0.2, 0.06, 1], discCol: '#ffd6c8', discScale: 1.1,
       sunDisc: 0.8, fog: '#5a3330', fogNear: 30, fogFar: 420, hemiSky: '#d09a90', hemiGround: '#3a2422', hemi: 0.95,
       sun: '#ffc4b0', sunI: 1.1, fill: '#e0a8a0', fillI: 0.4, exposure: 1.2 },

@@ -85,7 +85,9 @@ separate block arms and legs, simple expressive 2D-style faces. No real Roblox a
   - a low stone seawall with stairs up to the town behind;
   - jagged black rocks on the far right.
 - The sea: inky black by day. At midnight it turns glossy blood-red, glowing faintly from below, with black wave crests and a low mist on the water.
-- Sky: black, with a large pale-red moon low over the sea (always the same position: above the horizon, right of the pier).
+- Sky: black. Instead of a moon, THE EYE (approved after the look tests): a giant realistic eye low over the sea, right of the pier.
+  It opens at midnight (right before the sea turns red), closes at dawn, and always looks toward Nara. In the last shot it opens
+  again over the empty beach, still watching her.
 - Fixed details: tide line of foam; driftwood; a red-and-white life ring on the pier rail.
 
 **UNDER THE PIER** (Nara's hiding spot)
@@ -108,7 +110,7 @@ separate block arms and legs, simple expressive 2D-style faces. No real Roblox a
 
 ### Look (town visual identity)
 - Palette: RED AND BLACK only. Crushed deep blacks, crimson highlights, everything else desaturated. No purple, no blue.
-- Light: the red moon as backlight / rim light; red glow from the sea; small warm streetlamps on the hill.
+- Light: the eye's red glow as backlight; red glow from the sea; small warm streetlamps on the hill.
 - Atmosphere: low mist over the water, ash particles, light film grain, heavy vignette.
 - Animation and editing (from the reference video):
   - a cut every 1–1.5 s;
@@ -119,7 +121,7 @@ separate block arms and legs, simple expressive 2D-style faces. No real Roblox a
 - Captions: one word at a time, lowercase, bold, yellow (#FFE45C) with a black outline, centred.
 - Voice: ElevenLabs Adam at 1.3× (same as our other series), about 1,050 characters.
 
-## Stage 4 · Scene plan (DRAFT, waiting for approval)
+## Stage 4 · Scene plan (APPROVED; the moon shots use the eye instead)
 
 Times are estimates (Adam 1.3×); they settle after the voice is recorded. Each scene is one main action, cut into 1–3 quick shots
 (about 1–1.5 s each, like the reference). Total about 1:20 including a 2.5 s end card.
@@ -164,3 +166,10 @@ Times are estimates (Adam 1.3×); they settle after the voice is recorded. Each 
 | 36 | It's hiding them… from me. | Under the red surface: the whole town standing still underwater, all facing her | Sleepwalkers | Sea (underwater view) | Slow push through the surface | Twist | 2.4 |
 | 37 | And this morning… nobody walked back out. | Nara alone on the empty beach; empty town; flat red sea | Nara | Beach (dawn) | Very wide, slow crane up | Cliffhanger | 2.6 |
 | 38 | (end card) | Title THE MIDNIGHT SEA + "Follow for more" over the red sea | — | — | Static | Outro | 2.5 |
+
+## Production notes
+- The Midnight Sea stays a standalone story with Nara (option B). Recurring protagonist for the next videos: name chosen as "Nara"
+  (to confirm: the same character, or a new "Nara" for the following videos).
+- Audio: narrator (ElevenLabs Adam, 1.3x) + dreamcore at 50 % only, no sound effects for now.
+- Small staging changes while building: the phone is propped on a crate in front of Nara under the pier (it films the beach,
+  so the footage shows her walking out from her hiding spot); the dogs are shot as silhouettes against the red sea.

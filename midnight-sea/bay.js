@@ -191,11 +191,24 @@
     const doorM = RT.plastic('#2a2320', { roughness: 0.9 });
     const wallMs = PAINTS.map((c) => new THREE.MeshStandardMaterial({ map: plankTex(c, RT.shade(c, 0.35)), roughness: 0.92 }));
     const houses = [];
-    function house(x, z, w, d, h, k, yaw = 0) {
+    function house(x, z, w, d, h, k, yaw = 0, o = {}) {
       const y0 = ground(x, z) - 0.05;
       const T = (lx, ly, lz, rx = 0, ry = 0, rz = 0) => new THREE.Matrix4().makeRotationY(yaw).multiply(M(lx, ly, lz, rx, ry, rz)).premultiply(new THREE.Matrix4().makeTranslation(x, y0, z));
       const wm = wallMs[k % wallMs.length];
-      B.add(wm, wallBox(w, h, d, 3.2, 2.4), T(0, h / 2, 0));
+      if (!o.hole) B.add(wm, wallBox(w, h, d, 3.2, 2.4), T(0, h / 2, 0));
+      else {   // Nara's house: a real open window upstairs (front wall in pieces) and a dark room behind it
+        const t = 0.22, hx = w * 0.26, hy = h * 0.72, hw = 0.85, hh = 1.15;
+        B.add(wm, wallBox(w, h, t, 3.2, 2.4), T(0, h / 2, -d / 2 + t / 2));
+        for (const sx of [-1, 1]) B.add(wm, wallBox(t, h, d, 3.2, 2.4), T(sx * (w / 2 - t / 2), h / 2, 0));
+        const fz = d / 2 - t / 2, L = -w / 2, Rr = w / 2;
+        B.add(wm, wallBox(hx - hw / 2 - L, h, t, 3.2, 2.4), T((L + hx - hw / 2) / 2, h / 2, fz));
+        B.add(wm, wallBox(Rr - hx - hw / 2, h, t, 3.2, 2.4), T((Rr + hx + hw / 2) / 2, h / 2, fz));
+        B.add(wm, wallBox(hw, hy - hh / 2, t, 3.2, 2.4), T(hx, (hy - hh / 2) / 2, fz));
+        B.add(wm, wallBox(hw, h - hy - hh / 2, t, 3.2, 2.4), T(hx, (h + hy + hh / 2) / 2, fz));
+        B.add(RT.plastic('#1a1412', { roughness: 1 }), new THREE.BoxGeometry(w - 0.5, 0.12, d - 0.5), T(0, h * 0.38, 0));     // upstairs floor
+        B.add(RT.plastic('#241c1a', { roughness: 1 }), new THREE.BoxGeometry(w - 0.5, 0.1, d - 0.5), T(0, h - 0.05, 0));      // ceiling
+        B.add(RT.plastic('#2c2422', { roughness: 1 }), new THREE.BoxGeometry(w - 0.5, h * 0.38, 0.1), T(0, h * 0.19, d / 2 - 0.3));
+      }
       const roof = new THREE.Shape(); roof.moveTo(-w / 2 - 0.35, 0); roof.lineTo(w / 2 + 0.35, 0); roof.lineTo(0, w * 0.62); roof.closePath();
       const rg = new THREE.ExtrudeGeometry(roof, { depth: d + 0.6, bevelEnabled: false }); rg.translate(0, 0, -(d + 0.6) / 2);
       B.add(roofM, rg, T(0, h, 0));
@@ -203,6 +216,8 @@
       B.add(wm, new THREE.ShapeGeometry(gable), T(0, h, d / 2 + 0.01)); B.add(wm, new THREE.ShapeGeometry(gable), T(0, h, -d / 2 - 0.01, 0, Math.PI, 0));
       for (const fy of [h * 0.28, h * 0.72]) for (const fx of (w > 4.6 ? [-w * 0.26, w * 0.26] : [w * 0.22])) {
         if (fy < h * 0.5 && fx < 0 && w > 4.6) continue;
+        const isHole = o.hole && fy > h * 0.5 && fx > 0;
+        if (isHole) { for (const [bw, bh, bx, by] of [[1.05, 0.1, 0, 0.62], [1.05, 0.1, 0, -0.62], [0.1, 1.35, 0.5, 0], [0.1, 1.35, -0.5, 0], [0.06, 1.15, 0, 0]]) B.add(trimM, new THREE.BoxGeometry(bw, bh, 0.12), T(fx + bx, fy + by, d / 2 + 0.03)); continue; }
         B.add(trimM, new THREE.BoxGeometry(1.05, 1.35, 0.12), T(fx, fy, d / 2 + 0.03)); B.add(winM, new THREE.BoxGeometry(0.85, 1.15, 0.14), T(fx, fy, d / 2 + 0.05));
       }
       B.add(doorM, new THREE.BoxGeometry(1.0, 2.0, 0.12), T(w > 4.6 ? -w * 0.26 : -w * 0.22, 1.0, d / 2 + 0.05));
@@ -215,9 +230,10 @@
     for (const [rz, xs] of [[-46, [-62, -52, -42, -33, -24, -15, -6, 7, 16, 25]], [-62, [-66, -56, -47, -38, -29, -20, -11, -2, 8, 17, 26, 35]], [-78, [-60, -50, -41, -32, -23, -14, -5, 5, 14, 23, 32, 41]]])
       for (const x of xs) { const w = 4.2 + r() * 1.4; house(x + (r() - 0.5) * 1.5, rz + (r() - 0.5) * 2, w, 5.5 + r(), 5.6 + r() * 1.0, k++); }
     // Nara's house: the last one, nearest the beach (pier side)
-    const NH = { x: 35, z: -46, w: 5.2, d: 6, h: 6.2 }; house(NH.x, NH.z, NH.w, NH.d, NH.h, 4);
+    const NH = { x: 35, z: -46, w: 5.2, d: 6, h: 6.2 }; house(NH.x, NH.z, NH.w, NH.d, NH.h, 4, 0, { hole: true });
     const NARA_HOUSE = new THREE.Vector3(NH.x, ground(NH.x, NH.z), NH.z);
-    const NARA_WINDOW = new THREE.Vector3(NH.x + NH.w * 0.26, NARA_HOUSE.y + NH.h * 0.72, NH.z + NH.d / 2 + 0.06);
+    const NARA_WINDOW = new THREE.Vector3(NH.x + NH.w * 0.26, NARA_HOUSE.y - 0.05 + NH.h * 0.72, NH.z + NH.d / 2 + 0.06);
+    const NARA_FLOOR = NARA_HOUSE.y - 0.05 + NH.h * 0.38 + 0.06;
     // streetlamps (dim orange-red) along the street
     const lampM = new THREE.MeshStandardMaterial({ color: '#2a1810', emissive: '#ff6a2a', emissiveIntensity: 1.6 });
     const LAMPS = [-40, -18, 0, 18, 32];
@@ -268,12 +284,12 @@
       g.strokeStyle = '#ff5a1a'; g.lineWidth = 5; g.beginPath(); g.ellipse(32, 46, 16, 29, 0, 0, 6.3); g.stroke(); g.beginPath(); g.ellipse(32, 100, 12, 17, 0, 0, 6.3); g.stroke();
       for (let i = 0; i < 30; i++) { g.fillStyle = 'rgba(255,120,40,0.9)'; g.fillRect(14 + r() * 36, 20 + r() * 96, 2, 2); }
     });
-    const printM = new THREE.MeshStandardMaterial({ map: printTex, transparent: true, depthWrite: false, emissive: '#ffffff', emissiveMap: emberTex, emissiveIntensity: 1.5, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 });
+    const printM = new THREE.MeshStandardMaterial({ map: printTex, transparent: true, depthWrite: false, emissive: '#ffffff', emissiveMap: emberTex, emissiveIntensity: 1.5, roughness: 1, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
     function footprints(path, o2 = {}) {
       const g = new THREE.Group(); g.userData.noDepth = true;
       path.forEach(([x, z, yaw], i) => {
         const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.66), printM); m.rotation.set(-Math.PI / 2, 0, -yaw);
-        const side = i % 2 ? 1 : -1; m.position.set(x + Math.cos(yaw) * 0.16 * side, ground(x, z) + 0.02, z - Math.sin(yaw) * 0.16 * side);
+        const side = i % 2 ? 1 : -1; m.position.set(x + Math.cos(yaw) * 0.16 * side, ground(x, z) + 0.075, z - Math.sin(yaw) * 0.16 * side);
         m.userData.i = i; g.add(m);
       });
       g.userData.show = (n) => g.children.forEach((m) => (m.visible = m.userData.i < n));
@@ -284,7 +300,7 @@
     const skyEye = RT.skyEye ? RT.skyEye.create(G, env) : null;
 
     const spots = { STAIRS: new THREE.Vector3(0, ground(0, -26), -26), PIER_X, DECK_Y, STILT3: new THREE.Vector3(PIER_X - 1.9, ground(PIER_X - 1.9, -12), -12), STILTS,
-      NARA_HOUSE, NARA_WINDOW, BOATS, LAMPS, ground };
+      NARA_HOUSE, NARA_WINDOW, NARA_FLOOR, BOATS, LAMPS, ground };
 
     const bay = {
       group: G, sea, seaM, spots, ground, mists, ash, footprints, printM, lampLights, lifeRing, eye: skyEye,

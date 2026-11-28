@@ -46,5 +46,359 @@ time    sound                     volume  options
 -->
 </head>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../common.js"></script>
+<script src="../mood.js"></script>
+<script src="../characters.js"></script>
+<script src="../animations.js"></script>
+<script src="../animals.js"></script>
+<script src="../camera.js"></script>
+<script src="../player.js"></script>
+<script src="../post.js"></script>
+<script src="../cast.js"></script>
+<script src="../skyeye.js"></script>
+<script src="../bay.js"></script>
+<script src="../audio/voice/ep1_narration.js"></script>
+<script>
+(function () {
+  'use strict';
+  const RT = window.RT, A = RT.anim, { clamp, lerp, ease, easeOut } = RT;
+  const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const NAR = window.RT_NARRATION.ep1, L = (n) => NAR.lines[n], S = (n) => L(n).start, E = (n) => L(n).end;
+  // start time of a word in line n (exact match first, then prefix; nth = which occurrence)
+  const W = (n, word, nth = 0) => { const cl = (x) => x.toLowerCase().replace(/[^a-z']/g, ''), ws = L(n).words;
+    let m = ws.filter((x) => cl(x.w) === word); if (!m.length) m = ws.filter((x) => cl(x.w).startsWith(word));
+    if (!m[nth]) throw new Error('no word ' + word + ' in line ' + n); return m[nth].start; };
+  const TITLE_T = 69.8, DURATION = 72.3;
+  let rec = null;
+
+  // ---------- world ----------
+  const renderer = RT.mood.renderer(null, { pixelRatio: 1 });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 9 / 16, 0.05, 1800);
+  const env = RT.mood.create(scene, renderer, { mood: 'midnight', shadowSize: 2048 });
+  const bay = RT.bay.build(scene, env);
+  const post = RT.post.create(renderer);
+  const SP = bay.spots, gy = SP.ground, eye = bay.eye;
+  const faceLight = new THREE.PointLight('#ff4a36', 0, 7, 2); scene.add(faceLight);
+  const yawTo = (a, b) => Math.atan2(b[0] - a[0], b[2] - a[2]);
+
+  // ---------- cast (locked designs, cast.js) ----------
+  const nara = RT.cast.nara(), shadow = RT.cast.nara({ shadow: true }), milo = RT.cast.milo();
+  const odell = RT.cast.odell(), bram = RT.cast.bram(), pike = RT.cast.pike();
+  const sleepers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((k) => RT.cast.sleeper(k));
+  const walkers = [odell, bram, pike, ...sleepers];
+  for (const c of [nara, shadow, milo, ...walkers]) scene.add(c);
+  const dogs = [['#1c1a1a', [-6, 3.4, -33.4], 0.3], ['#a8743f', [31.5, gy(31.5, -39.5), -39.5], 2.6], ['#7d7a76', [13.5, 3.4, -33.2], -0.4]].map(([c, p, yaw], i) => {
+    const d = RT.animals.make('dog', { seed: 3 + i, color: c, yaw, scale: 1.7 }); d.position.set(...p); scene.add(d); return d; });
+  const dogHead = (d) => d.children[0].children[0];
+  const phone = RT.cast.phone(); scene.add(phone);
+  const slipper = new THREE.Group(); { const m = RT.plastic('#7a6a5c', { roughness: 0.95 }); slipper.add(RT.mesh(RT.roundedBoxGeometry(0.34, 0.08, 0.72, 0.04, 2), m)); const strap = RT.mesh(RT.roundedBoxGeometry(0.36, 0.16, 0.26, 0.07, 2), RT.plastic('#5e4f44', { roughness: 0.95 })); strap.position.set(0, 0.08, 0.16); slipper.add(strap); }
+  slipper.position.set(3.2, gy(3.2, -6) + 0.05, -6); slipper.rotation.y = 0.7; scene.add(slipper);
+  const handMats = [nara.rig.handL.children[0].material, nara.rig.handR.children[0].material], skinCol = handMats[0].color.clone();
+
+  // sleepwalker lines: from the foot of the seawall into the sea (their feet follow the sand, so the sea swallows them)
+  const LINES = walkers.map((w, i) => { const x = -5.5 + (i % 6) * 2.2 + (i > 5 ? 1.1 : 0) + (i > 11 ? -0.5 : 0), z0 = -27.5 - Math.floor(i / 6) * 2.4 - (i % 3) * 1.1;
+    return { w, x, z0, i, path: A.path([[x, z0], [x + (i % 2 ? 0.6 : -0.6), 70]], 0.95, 0, 0.42) }; });
+  function sleepwalk(w, t, p, deep = 0) {
+    const sink = Math.max(0, p.z - 2) * deep;
+    w.position.set(p.x, gy(p.x, p.z) - sink, p.z); w.rotation.y = p.yaw;
+    const P = A.pose('walk', t, { phase: p.phase, amp: 0.5 }); P.aLf = P.aLf * 0.35 + 0.2; P.aRf = P.aRf * 0.35 + 0.2; P.hx = 0.18; P.lean = 0.04;
+    A.apply(w, P); w.rig.setEyes('closed'); w.rig.update(t); w.visible = true;
+  }
+  function stand(ch, t, P2 = {}) { A.apply(ch, Object.assign(A.pose('idle', t), P2)); ch.rig.update(t); }
+
+  // fixed places
+  const PIER_SPOT = SP.STILT3.clone().add(V3(-0.15, 0, -0.75));          // Nara crouched behind the third stilt
+  const MILO_SPOT = [6.6, 0, -4.6], MILO_SPOT_X = 6.6, MILO_SPOT_Z = -4.6;   // ten steps from the water
+  const TO_MILO = V3(MILO_SPOT_X - PIER_SPOT.x, 0, MILO_SPOT_Z - PIER_SPOT.z).normalize();
+  const PHONE_AT = PIER_SPOT.clone().addScaledVector(TO_MILO, 0.95).add(V3(0, 0.78, 0));   // propped on a crate in front of her, filming the beach
+  const PHONE_BACK = TO_MILO.clone().multiplyScalar(-1);                                   // the side the screen faces (toward her)
+  const crate = RT.mesh(RT.roundedBoxGeometry(0.55, 0.6, 0.45, 0.03, 1), RT.plastic('#3a2e26', { roughness: 0.95 }));
+  crate.position.copy(PIER_SPOT).addScaledVector(TO_MILO, 0.95).add(V3(0, 0.3, 0)); crate.rotation.y = Math.atan2(TO_MILO.x, TO_MILO.z); scene.add(crate);
+  const DAWN_NARA = [-6.4, 0, -12.6];                                        // by the fishing boats at dawn
+  const TRAIL = []; for (let k = 0; k < 34; k++) { const f = k / 33, x = lerp(2.6, 0.4, f) + Math.sin(k * 0.9) * 0.15, z = lerp(-1.2, -25.4, f); TRAIL.push([x, z, Math.PI + 0.09]); }
+  const trail = bay.footprints(TRAIL);
+  const SH_PATH = [[21.6, -13.3], [20.2, -12.9], [16, -10.5], [11, -7.5], [8.6, -5.4]];   // from her hiding spot, past the phone, toward Milo
+  const shTrail = bay.footprints(SH_PATH.length ? (() => { const out = [], p = A.path(SH_PATH, 1, 0, 0.5); for (let d = 0.3; d < p(999).length; d += 0.72) { const q = p(d); out.push([q.x, q.z, q.yaw]); } return out; })() : []);
+
+  // ---------- shots (exact narration order; see the scene plan in STORY.md) ----------
+  const head = (ch, dy = 0) => { ch.rig.head.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(ch.rig.head.matrixWorld).add(V3(0, dy, 0)); };
+  const fwd = (ch, d = 1) => V3(Math.sin(ch.rotation.y) * d, 0, Math.cos(ch.rotation.y) * d);
+  const hands = () => { const a = new THREE.Vector3(), b = new THREE.Vector3(); nara.rig.handL.updateWorldMatrix(true, false); nara.rig.handR.updateWorldMatrix(true, false); a.setFromMatrixPosition(nara.rig.handL.matrixWorld); b.setFromMatrixPosition(nara.rig.handR.matrixWorld); return a.lerp(b, 0.5); };
+  const night = 'midnight', dawn = 'dawnRed';
+  const shots = RT.camera.list([
+    // 1. phone 23:59 → 00:00, then THE EYE opens over the black sea
+    { t0: 0.0, sc: 1, mood: night, sea: 'black', eye: 0, naraAt: 'pier', phoneAt: 'stilt', screen: ['00:00', false, '#3a0a0a'], screenAt: W(0, 'midnight'), pos: (lt, p) => PHONE_AT.clone().addScaledVector(PHONE_BACK, lerp(0.62, 0.52, p)).add(V3(-0.04, 0.07, 0)), look: () => PHONE_AT.clone(), fov: [36, 32], focusOn: () => phone.position, fx: { bloom: 1.1, aperture: 0.9 } },
+    { t0: 1.45, sc: 1, mood: night, sea: 'black', eye: 'open', eyeT: W(0, 'midnight'), pos: [[16.5, 1.15, -3.6], [16.3, 1.1, -3.0]], look: [[3, 13, 120], [3, 10, 120]], fov: [58, 54], fx: { bloom: 1.2, ca: 0.15 } },
+    // 2. the sea turns red (low at the waterline, the glow races in), whip out
+    { t0: W(0, 'the'), sc: 2, mood: night, sea: 'spread', spreadT: W(0, 'the'), eye: 1, pos: [[3, 0.55, -1.8], [-1, 0.6, -1.6]], look: [[6, 0.9, 40], [-2, 0.9, 40]], fov: [52, 50], fx: { bloom: 1.2, ca: 0.2, motion: 0.6 }, whipOut: 1 },
+    // 3. everyone walks in: XCU Mrs. Odell's closed eyes, then feet into the red water (silhouettes)
+    { t0: W(0, 'and'), sc: 3, mood: night, sea: 'red', eye: 1, clk: 24, pos: () => head(odell, 0.02).add(V3(0.4, 0.0, 1.9)), look: () => head(odell, -0.04), fov: [33, 31], focusOn: () => head(odell), key: [0.4, 0.4, 1.4, 1.0], fx: { bloom: 0.9, aperture: 0.9 }, whipIn: 1 },
+    { t0: 5.3, sc: 3, mood: night, sea: 'red', eye: 1, clk: 30, pos: [[1.2, 0.28, -4.2], [1.0, 0.3, -3.5]], look: [[0.2, 0.35, 6], [0.2, 0.4, 6]], fov: [42, 40], focusDist: 4.5, fx: { bloom: 1.0, aperture: 0.7, ca: 0.2 } },
+    // 4. sunrise: they walk back out, dry; Old Bram blinks awake
+    { t0: S(1) - 0.1, sc: 4, mood: dawn, sea: 'dawn', eye: 0, walkOut: true, pos: [[-2, 2.2, -14], [-2, 2.0, -12.5]], look: [[2, 1.2, 8], [2, 1.1, 8]], fov: [46, 44], focusDist: 14, fx: { bloom: 0.8, aperture: 0.3 } },
+    { t0: W(1, 'dry') - 0.6, sc: 4, mood: dawn, sea: 'dawn', eye: 0, walkOut: true, pos: () => head(bram, -0.35).add(fwd(bram, 2.7)).add(V3(0.6, 0, 0)), look: () => head(bram, -0.5), fov: [40, 38], focusOn: () => head(bram, -0.4), fx: { bloom: 0.8, aperture: 0.8 } },
+    { t0: W(1, 'remembering') - 0.12, sc: 4, mood: dawn, sea: 'dawn', eye: 0, walkOut: true, bramWakes: W(1, 'remembering') + 0.25, pos: () => head(bram, 0.02).add(fwd(bram, 1.2)).add(V3(0.15, 0, 0)), look: () => head(bram, 0.0), fov: [30, 28], focusOn: () => head(bram), fx: { bloom: 0.8, aperture: 0.9 } },
+    // 5. everyone except me: Nara alone at the foot of the seawall as they all walk past her (push-in)
+    { t0: S(2) - 0.18, sc: 5, mood: night, sea: 'red', eye: 1, clk: 4, naraAt: 'seawall', pos: (lt, p) => head(nara, -0.05).add(V3(lerp(2.6, 1.5, p), 0.05, lerp(3.6, 2.2, p))), look: () => head(nara, -0.08), fov: [42, 38], focusOn: () => head(nara), key: [0.6, 0.4, 1.5, 1.3], fx: { bloom: 0.9, aperture: 0.7 } },
+    // 6. never slept through a single midnight: XCU tired eyes, then her window from outside
+    { t0: W(2, 'i') - 0.1, sc: 6, mood: night, sea: 'red', eye: 1, naraAt: 'window', pos: () => V3(SP.NARA_WINDOW.x, head(nara).y + 0.02, SP.NARA_WINDOW.z + 0.95), look: () => head(nara, 0.03), fov: [27, 25], focusOn: () => head(nara), key: [0.2, 0.3, 1.3, 1.4], fx: { bloom: 0.9, aperture: 1.0 } },
+    { t0: W(2, 'single') - 0.35, sc: 6, mood: night, sea: 'red', eye: 1, naraAt: 'window', pos: [[SP.NARA_WINDOW.x - 4.5, SP.NARA_WINDOW.y - 1.2, SP.NARA_WINDOW.z + 8.5], [SP.NARA_WINDOW.x - 4.2, SP.NARA_WINDOW.y - 1.1, SP.NARA_WINDOW.z + 7.8]], look: [[SP.NARA_WINDOW.x, SP.NARA_WINDOW.y + 0.2, SP.NARA_WINDOW.z]], fov: [36, 34], focusDist: 9.6, fx: { bloom: 1.0, aperture: 0.4 } },
+    // 7. one person doesn't reach the water: a lone sleepwalker far behind (long lens), a dark blur whips past, black
+    { t0: S(3) - 0.18, sc: 7, mood: night, sea: 'red', eye: 1, clk: 40, lone: true, pos: [[-3.5, 1.4, -27], [-3.3, 1.4, -26.4]], look: [[2.2, 1.6, -6], [2.2, 1.6, -5.4]], fov: [26, 24], focusDist: 16, fx: { bloom: 1.0, aperture: 0.4 } },
+    { t0: W(3, 'reach') - 0.05, sc: 7, mood: night, sea: 'red', eye: 1, clk: 40, lone: true, blur: true, pos: [[-3.3, 1.4, -26.4]], look: [[2.2, 1.6, -5.4]], fov: [24, 24], focusDist: 16, fx: { bloom: 1.0, aperture: 0.4 } },
+    // 8. by morning they're gone: a single slipper on the dawn sand
+    { t0: S(4) - 0.15, sc: 8, mood: dawn, sea: 'dawn', eye: 0, pos: [[slipper.position.x - 0.6, slipper.position.y + 0.5, slipper.position.z - 1.9], [slipper.position.x - 0.5, slipper.position.y + 0.42, slipper.position.z - 1.6]], look: [[slipper.position.x, slipper.position.y + 0.05, slipper.position.z]], fov: [34, 32], focusOn: () => slipper.position, fx: { bloom: 0.6, aperture: 0.55 } },
+    // 9. burned black footprints leading up toward the town
+    { t0: W(4, 'all') - 0.2, sc: 9, mood: dawn, sea: 'dawn', eye: 0, trail: true, pos: (lt, p) => { const x = lerp(4.0, 2.6, p), z = lerp(-1.5, -13, p); return V3(x, gy(x, z) + 0.6, z); }, look: (lt, p) => { const x = lerp(1.8, 0.8, p), z = lerp(-5.5, -19, p); return V3(x, gy(x, z) + 0.05, z); }, fov: [46, 44], ease: 'linear', focusDist: 4.5, fx: { bloom: 0.9, aperture: 0.6, motion: 0.4 } },
+    // 10–11. I wake up on the beach (eyes snap open), black ash on my hands
+    { t0: S(5) - 0.17, sc: 10, mood: dawn, sea: 'dawn', eye: 0, naraAt: 'lying', wakeT: W(5, 'wake'), pos: (lt, p) => head(nara).add(V3(0.02, lerp(4.5, 1.2, ease(clamp(lt / 1.0, 0, 1))), 0.01)), look: () => head(nara), fov: [40, 32], focusOn: () => head(nara), key: [0, 1.2, 0.3, 1.2], fx: { bloom: 0.8, aperture: 0.8 } },
+    { t0: W(5, 'with') - 0.14, sc: 11, mood: dawn, sea: 'dawn', eye: 0, naraAt: 'hands', ash: 0.9, pos: (lt, p) => head(nara, 0.05).add(fwd(nara, 0.2)), look: () => hands(), fov: [46, 40], focusOn: () => hands(), key: [0, 0, 0, 1.4], fx: { bloom: 0.8, aperture: 0.9 } },
+    // 12. Milo, the slowest sleepwalker: bare feet, then Milo with his whale while everyone passes him
+    { t0: S(6) - 0.32, sc: 12, mood: night, sea: 'red', eye: 1, clk: 16, milo: 'slow', pos: (lt, p) => milo.position.clone().add(fwd(milo, 2.0)).add(V3(0.35, 0.45, 0)), look: () => milo.position.clone().add(V3(0, 0.45, 0)), fov: [40, 38], focusOn: () => milo.position.clone().add(V3(0, 0.4, 0)), fx: { bloom: 0.9, aperture: 0.8 } },
+    { t0: W(6, 'is') - 0.15, sc: 12, mood: night, sea: 'red', eye: 1, clk: 16, milo: 'slow', pos: (lt, p) => head(milo, -0.25).add(V3(lerp(-3.4, -2.6, p), 0.15, lerp(2.9, 2.2, p))), look: () => head(milo, -0.35), fov: [44, 40], focusOn: () => head(milo), key: [-0.8, 0.4, 1.2, 1.0], fx: { bloom: 1.0, aperture: 0.6 } },
+    // 13–15. tonight, under the pier (sea still black), phone recording 23:58, determined eyes
+    { t0: S(7) - 0.13, sc: 13, mood: night, sea: 'black', eye: 0, naraAt: 'pier', phoneAt: 'stilt', pos: (lt, p) => V3(lerp(16.6, 17.8, p), 1.0, lerp(-17.5, -16.4, p)), look: () => head(nara, -0.3), fov: [44, 40], focusOn: () => head(nara), key: [-1.2, 0.5, 1.2, 1.6], fx: { bloom: 0.9, aperture: 0.5 } },
+    { t0: W(7, 'with') - 0.04, sc: 14, mood: night, sea: 'black', eye: 0, naraAt: 'pier', phoneAt: 'stilt', screen: ['23:58', true], pos: () => PHONE_AT.clone().addScaledVector(PHONE_BACK, 0.85).add(V3(0.06, 0.2, 0)), look: () => PHONE_AT.clone(), fov: [38, 33], focusOn: () => PHONE_AT, fx: { bloom: 1.0, aperture: 1.0 } },
+    { t0: W(7, 'to') - 0.05, sc: 15, mood: night, sea: 'black', eye: 0, naraAt: 'pier', naraFace: 'determined', phoneAt: 'stilt', pos: (lt, p) => head(nara, 0.02).add(fwd(nara, lerp(1.6, 1.25, p))).add(V3(0.1, 0.02, 0)), look: () => head(nara, 0.02), fov: [30, 28], focusOn: () => head(nara), key: [-1.2, 0.5, 1.2, 1.6], fx: { bloom: 0.9, aperture: 1.0 } },
+    // 16–18. Midnight: 00:00 (zoom punch), red light floods under the pier, the whole town walks in
+    { t0: S(8) - 0.23, sc: 16, mood: night, sea: 'black', eye: 0, naraAt: 'pier', phoneAt: 'stilt', screen: ['00:00', true], screenAt: S(8) + 0.02, pos: () => PHONE_AT.clone().addScaledVector(PHONE_BACK, 0.8).add(V3(-0.05, 0.16, 0)), look: () => PHONE_AT.clone(), fov: [38, 28], focusOn: () => PHONE_AT, punch: S(8) + 0.02, fx: { bloom: 1.1, aperture: 1.0 } },
+    { t0: W(8, 'the') - 0.15, sc: 17, mood: night, sea: 'flood', floodT: W(8, 'the'), eye: 1, naraAt: 'pier', naraFace: 'scared', phoneAt: 'stilt', pos: () => head(nara, 0.0).add(fwd(nara, 1.45)).add(V3(0.15, 0.05, 0.0)), look: () => head(nara, 0.0), fov: [32, 30], focusOn: () => head(nara), keyFlood: true, fx: { bloom: 1.1, aperture: 1.0 } },
+    { t0: W(8, 'the', 1) - 0.18, sc: 18, mood: night, sea: 'red', eye: 1, clk: 22, pos: [[3.5, 0.32, 2.2], [3.2, 0.34, 2.6]], look: [[0.5, 1.6, -22], [0.5, 1.7, -22]], fov: [50, 48], focusDist: 8, fx: { bloom: 1.0, aperture: 0.35 } },
+    // 19. except Milo, ten steps from the water (over Nara's shoulder, from under the pier); the last heads sink
+    { t0: S(9) - 0.1, sc: 19, mood: night, sea: 'red', eye: 1, clk: 62, milo: 'alone', naraAt: 'pier', phoneAt: 'stilt', pos: () => head(nara, 0.15).addScaledVector(TO_MILO, -0.9).add(V3(-TO_MILO.z * 0.55, 0, TO_MILO.x * 0.55)), look: () => V3(MILO_SPOT[0], 1.0, MILO_SPOT[2]), fov: [34, 30], focusDist: 16.5, fx: { bloom: 1.0, aperture: 0.5 } },
+    // 20–21. every dog in town howls (three cuts) … right at the pier (heads turn, whip)
+    { t0: S(10) - 0.28, sc: 20, mood: night, sea: 'red', eye: 1, dog: 0, pos: () => dogs[0].position.clone().add(V3(0.7, 0.55, -2.3)), look: () => dogs[0].position.clone().add(V3(0, 1.25, 1.5)), fov: [40, 40], key: [0, 0, 0, 2.0], focusOn: () => dogs[0].position.clone().add(V3(0, 1.1, 0)), fx: { bloom: 1.0, aperture: 0.8 } },
+    { t0: W(10, 'dog') - 0.02, sc: 20, mood: night, sea: 'red', eye: 1, dog: 1, pos: () => dogs[1].position.clone().add(V3(-1.6, 0.5, 1.2)), look: () => dogs[1].position.clone().add(V3(0, 1.0, 0)), fov: [38, 38], focusOn: () => dogs[1].position.clone().add(V3(0, 1.0, 0)), fx: { bloom: 1.0, aperture: 0.8 } },
+    { t0: W(10, 'started') - 0.1, sc: 20, mood: night, sea: 'red', eye: 1, dog: 2, pos: () => dogs[2].position.clone().add(V3(-0.8, 0.4, -2.2)), look: () => dogs[2].position.clone().add(V3(0, 1.3, 1.6)), fov: [44, 42], focusOn: () => dogs[2].position.clone().add(V3(0, 1.1, 0)), fx: { bloom: 1.0, aperture: 0.8 }, whipOut: -1 },
+    { t0: W(10, 'right') - 0.3, sc: 21, mood: night, sea: 'red', eye: 1, dogsTurn: true, naraAt: 'pier', phoneAt: 'stilt', pos: [[8, 5.6, -30], [8.4, 5.4, -29.4]], look: [[2, 3.8, -31], [20, 2.0, -14]], fov: [46, 40], ease: 'out', moveDur: 0.35, focusDist: 12, fx: { bloom: 1.0, aperture: 0.3, motion: 0.8 }, whipIn: -1 },
+    // 22. like something was standing right behind me: her eyes slide sideways; push into the dark behind her
+    { t0: W(10, 'like') - 0.15, sc: 22, mood: night, sea: 'red', eye: 1, naraAt: 'pier', naraFace: 'sideEye', phoneAt: 'stilt', ash: 0.7, pos: (lt, p) => head(nara, 0.0).add(fwd(nara, lerp(1.35, 0.2, ease(clamp((lt - 0.9) / 1.2, 0, 1))))).add(V3(0.1, 0.03, 0)).add(V3(0, 0, -lerp(0, 1.0, ease(clamp((lt - 0.9) / 1.2, 0, 1))))), look: (lt, p) => head(nara, 0.0).add(fwd(nara, -lerp(0, 3, ease(clamp((lt - 0.9) / 1.2, 0, 1))))), fov: [30, 34], focusOn: () => head(nara), key: [-1.0, 0.5, 1.0, 1.4], fx: { bloom: 0.9, aperture: 0.9 } },
+    // 23. I ran to push Milo into the sea: shaky tracking, speed lines
+    { t0: S(11) - 0.19, sc: 23, mood: night, sea: 'red', eye: 1, naraAt: 'run', milo: 'alone', phoneAt: 'stilt', pos: () => nara.position.clone().add(fwd(nara, 1.6)).add(V3(Math.cos(nara.rotation.y) * 2.2, 1.35, -Math.sin(nara.rotation.y) * 2.2)), look: () => nara.position.clone().add(V3(0, 1.15, 0)).add(fwd(nara, 0.6)), fov: [52, 52], shake: 0.012, fx: { bloom: 1.0, motion: 0.9, zoom: 0.35, zoomCenter: [0.5, 0.55] } },
+    // 24–25. the water pulls away from her feet (it always does); her desperate face
+    { t0: W(11, 'but') - 0.12, sc: 24, mood: night, sea: 'red', eye: 1, naraAt: 'shore', milo: 'alone', recoilT: W(11, 'pulled'), pos: () => nara.position.clone().add(V3(1.3, 0.62, 3.4)), look: () => nara.position.clone().add(V3(0, 0.3, 0.2)), fov: [40, 40], focusOn: () => nara.position.clone().add(V3(0, 0.2, 0.3)), key: [0, 0, 0, 1.6], fx: { bloom: 1.1, aperture: 0.8 } },
+    { t0: W(11, 'it') - 0.15, sc: 25, mood: night, sea: 'red', eye: 1, naraAt: 'shore', naraFace: 'crying', milo: 'alone', recoil: 1, pos: () => head(nara, 0.0).add(fwd(nara, 1.4)).add(V3(0.2, 0.05, 0)), look: () => head(nara, -0.02), fov: [32, 30], focusOn: () => head(nara), key: [0.3, 0.4, 1.3, 1.3], fx: { bloom: 0.9, aperture: 1.0 } },
+    // 26–28. Milo wakes up; he looks at me… screams (her POV); runs into the red water
+    { t0: S(12) - 0.19, sc: 26, mood: night, sea: 'red', eye: 1, naraAt: 'shore', milo: 'wake', wakeT: W(12, 'woke'), pos: () => head(milo, 0.02).add(fwd(milo, 1.0)), look: () => head(milo, 0.02), fov: [30, 28], focusOn: () => head(milo), key: [0.3, 0.4, 1.0, 1.2], fx: { bloom: 0.9, aperture: 1.0 } },
+    { t0: W(12, 'he') - 0.13, sc: 27, mood: night, sea: 'red', eye: 1, naraAt: 'shore', milo: 'scream', screamT: W(12, 'screamed'), pos: () => head(nara, -0.05), look: () => head(milo, 0.0), fov: [40, 36], focusOn: () => head(milo), key: [0.4, 0.6, 0.8, 1.2], fx: { bloom: 1.0, aperture: 0.9 } },
+    { t0: W(12, 'and') - 0.07, sc: 28, mood: night, sea: 'red', eye: 1, naraAt: 'shore', milo: 'run', runT: W(12, 'and'), pos: (lt, p) => V3(MILO_SPOT[0] + 2.8, 0.45, MILO_SPOT[2] + lerp(2, 6, p)), look: () => milo.position.clone().add(V3(0, 0.8, 0)), fov: [44, 42], focusOn: () => milo.position.clone().add(V3(0, 0.8, 0)), fx: { bloom: 1.1, aperture: 0.6, motion: 0.6 } },
+    // 29. at sunrise, I watched the video (by the boats, thumb on play)
+    { t0: S(13) - 0.38, sc: 29, mood: dawn, sea: 'dawn', eye: 0, naraAt: 'boats', phoneAt: 'hand2', screen: ['▶', false, '#2a0808'], pos: (lt, p) => head(nara, -0.4).add(V3(lerp(2.2, 1.6, p), 0.35, lerp(2.0, 1.5, p))), look: () => head(nara, -0.45), fov: [40, 36], focusOn: () => head(nara), key: [0.2, -0.3, 0.5, 1.0], fx: { bloom: 0.9, aperture: 0.8 } },
+    // 30–34. THE VIDEO (phone footage from the stilt): no monster… just me. Black eyes. Burning footprints. Chasing my brother.
+    { t0: S(14) - 0.15, sc: 30, mood: night, sea: 'red', eye: 1, footage: true, clk: 64, milo: 'alone', pos: () => PHONE_AT.clone(), look: () => V3(MILO_SPOT[0], 1.1, MILO_SPOT[2]), fov: [40, 38], fx: { bloom: 1.0, glitch: 0.12, grain: 0.3, ca: 0.3 } },
+    { t0: W(14, 'just') - 0.05, sc: 31, mood: night, sea: 'red', eye: 1, footage: true, shadowT: W(14, 'just') - 2.6, milo: 'alone', pos: () => PHONE_AT.clone(), look: () => V3(MILO_SPOT[0], 1.1, MILO_SPOT[2]), fov: [44, 44], focusOn: () => head(shadow), key: [0, 0, 0, 2.2], fx: { bloom: 1.0, glitch: 0.35, grain: 0.3, ca: 0.4, aperture: 0.15 } },
+    { t0: W(14, 'black') - 0.08, sc: 32, mood: night, sea: 'red', eye: 1, footage: true, shadowT: W(14, 'just') - 2.6, shadowLook: true, milo: 'alone', ash: 0.9, pos: () => PHONE_AT.clone(), look: () => head(shadow, 0.0), fov: [16, 11], focusOn: () => head(shadow), key: [0, 0, 0, 2.6], fx: { bloom: 1.1, glitch: 0.4, grain: 0.32, ca: 0.5, aperture: 0.3 } },
+    { t0: W(14, 'burning') - 0.1, sc: 33, mood: night, sea: 'red', eye: 1, footage: true, shadowT: W(14, 'just') - 2.6, prints: true, milo: 'alone', pos: () => PHONE_AT.clone(), look: () => shadow.position.clone().add(V3(1.2, 0.1, -0.8)), fov: [26, 22], fx: { bloom: 1.2, glitch: 0.35, grain: 0.32, ca: 0.4 } },
+    { t0: W(14, 'chasing') - 0.1, sc: 34, mood: night, sea: 'red', eye: 1, footage: true, shadowT: W(14, 'just') - 2.6, shadowRun: W(14, 'chasing') - 0.1, prints: true, milo: 'flee', pos: () => PHONE_AT.clone(), look: () => shadow.position.clone().lerp(milo.position, 0.5).add(V3(0, 1.0, 0)), fov: [40, 36], fx: { bloom: 1.1, glitch: 0.75, grain: 0.35, ca: 0.6 } },
+    // 35. the sea isn't taking them: she lowers the phone, horrified (slow pull back, red sea behind)
+    { t0: S(15) - 0.29, sc: 35, mood: dawn, sea: 'dawn', eye: 0, naraAt: 'boatsUp', naraFace: 'shocked', phoneAt: 'hand2', screen: ['', false, '#140303'], pos: (lt, p) => head(nara, -0.05).add(fwd(nara, lerp(1.35, 2.0, p))).add(V3(0.25, 0.05, 0)), look: () => head(nara, -0.1), fov: [32, 34], focusOn: () => head(nara), key: [-0.6, 0.3, -0.8, 1.1], fx: { bloom: 0.9, aperture: 1.0 } },
+    // 36. it's hiding them… from me: through the surface, the whole town standing underwater, all facing her
+    { t0: W(15, "it's") - 0.15, sc: 36, mood: dawn, sea: 'dawn', eye: 0, under: true, pos: (lt, p) => V3(4, lerp(1.4, -2.0, ease(clamp(lt / 1.1, 0, 1))), lerp(30, 33, p)), look: (lt, p) => V3(4, lerp(-1.6, -1.8, p), 60), fov: [48, 44], focusDist: 16, fx: { bloom: 1.0, aperture: 0.25 } },
+    // 37. and this morning… nobody walked back out (Nara alone; the eye opens in the dawn sky)
+    { t0: S(16) - 0.36, sc: 37, mood: dawn, sea: 'dawn', eye: 'open', eyeT: W(16, 'nobody') + 0.1, naraAt: 'alone', pos: [[6.5, 1.7, -10.5], [8.5, 8.5, -24]], look: [[5.6, 1.3, -3], [4, 13, 80]], fov: [46, 50], ease: 'inout', focusDist: 14, fx: { bloom: 1.1, aperture: 0.3 } },
+    // 38. end card over the red sea and the eye
+    { t0: TITLE_T, sc: 38, mood: dawn, sea: 'dawn', eye: 1, pos: [[8.5, 8.5, -24], [8.6, 8.8, -24.5]], look: [[4, 13, 80]], fov: [50, 50], fx: { bloom: 1.1 } },
+  ]);
+  for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
+
+  // ---------- the world at time t ----------
+  const tmpV = new THREE.Vector3();
+  function frame(t) {
+    const s = shots.at(t), lt = t - s.t0;
+    env.set(s.mood);
+    // the sea
+    let red = 1, spread = 99999, origin = [-4, 95], glow = 1, amp = 0.22, recoil = [0, 0, 2.5, 0];
+    if (s.sea === 'black') red = 0;
+    if (s.sea === 'spread') { const k = clamp((t - s.spreadT) / 1.3, 0, 1); spread = Math.pow(k, 1.3) * 175 + 1; }
+    if (s.sea === 'flood') { origin = [18, 30]; spread = clamp((t - s.floodT) / 0.7, 0, 1) * 60 + 1; }
+    if (s.sea === 'dawn') { red = 0.8; glow = 0.35; amp = 0.12; }
+    if (s.recoilT !== undefined || s.recoil) { const k = s.recoil || ease(clamp((t - s.recoilT) / 0.5, 0, 1)); recoil = [nara.position.x, nara.position.z + 0.15, 1.5, k]; }
+    bay.update(t, { red, spread, origin, glow, amp, recoil, seaLight: s.mood === dawn ? 0.35 : 0.7, mist: s.mood === dawn ? 0.45 : 0.32, ash: s.ash || (s.footage ? 0.5 : 0.25),
+      ashAt: camera.position.clone().add(camera.getWorldDirection(tmpV).multiplyScalar(4)), embers: s.mood === dawn ? (s.trail ? 3.2 : 0.5) : 1.6 });
+    // underwater (scene 36): dense red water, the surface seen from below
+    const under = !!s.under && camera.position.y < 0.05;
+    bay.seaM.side = s.under ? THREE.DoubleSide : THREE.FrontSide;
+    if (under) { scene.fog.color.set('#2a0403'); scene.fog.near = 2; scene.fog.far = 46; }
+
+    // the sleepwalkers (each shot sets their clock)
+    const clk = s.clk !== undefined ? s.clk + lt : null;
+    for (const Ln of LINES) {
+      const w = Ln.w;
+      if (s.walkOut) {                       // dawn: walking back out of the sea toward the beach
+        const p = A.path([[Ln.x, 14 + Ln.i * 0.9], [Ln.x, -20]], 0.95, 0, 0.42)(lt + 1.2 + (s.sc === 4 && s.t0 > S(1) ? (s.t0 - shots.shots.find((q) => q.sc === 4).t0) : 0));
+        w.position.set(p.x, gy(p.x, p.z), p.z); w.rotation.y = Math.PI;
+        const P = A.pose('walk', t, { phase: p.phase, amp: 0.5 }); P.hx = 0.1; A.apply(w, P);
+        if (w === bram && s.bramWakes && t > s.bramWakes) { w.rig.setEyes(null); w.rig.setFace('shocked'); } else { w.rig.setEyes('closed'); w.rig.setFace('neutral'); }
+        w.rig.update(t); w.visible = true; continue;
+      }
+      if (s.under) {                         // standing still on the seabed, all facing the shore (and her)
+        const x = -6 + (Ln.i % 6) * 2.6 + (Ln.i % 2 ? 0.6 : 0), z = 50 + Math.floor(Ln.i / 6) * 3.2 + (Ln.i % 3) * 0.8;
+        w.position.set(x, -3.25, z); w.rotation.y = Math.PI; stand(w, t * 0.4 + Ln.i, { hx: -0.05 }); w.rig.setEyes('open'); w.rig.setFace('blank'); w.visible = true; continue;
+      }
+      if (clk === null) { w.visible = false; continue; }
+      if (s.lone) { w.visible = Ln.i === 9 || Ln.i < 6; if (Ln.i === 9) { const p = Ln.path(clk - 20); sleepwalk(w, t, p); } else if (w.visible) sleepwalk(w, t, Ln.path(clk + 18), 0.05); continue; }
+      const p = Ln.path(clk - Ln.i * 0.35); sleepwalk(w, t, p, 0.04);
+      if (s.sc === 5 && Ln.i % 2 === 0) w.position.x += 0;   // (lines pass on both sides of Nara)
+    }
+    for (const w of walkers) if (!w.visible) continue; else w.visible = w.position.y > -3.0 || s.under;
+
+    // Nara (her own memory) and the shadow (only in the footage)
+    nara.visible = !!s.naraAt && !s.footage && s.sc !== 27; nara.rig.head.visible = s.sc !== 11; nara.rig.headTop.visible = s.sc !== 11; shadow.visible = !!s.footage && t > (s.shadowT || 1e9);
+    for (const m of handMats) m.color.copy(skinCol);
+    nara.rotation.set(0, 0, 0); nara.rig.setEyes(null);
+    const nf = s.naraFace || 'neutral';
+    if (s.naraAt === 'seawall') { nara.position.set(3.2, gy(3.2, -24.5), -24.5); nara.rotation.y = 0.2; stand(nara, t, { hx: 0.08 }); nara.rig.setFace('sad'); }
+    if (s.naraAt === 'window') { nara.position.set(SP.NARA_WINDOW.x - 0.05, SP.NARA_FLOOR, SP.NARA_WINDOW.z - 0.75); nara.rotation.y = 0.05; stand(nara, t, { hx: -0.05 }); nara.rig.setFace('determined'); }
+    if (s.naraAt === 'lying') { nara.position.set(DAWN_NARA[0] + 3, gy(DAWN_NARA[0] + 3, -9) + 0.27, -9); nara.rotation.set(-Math.PI / 2, 0, 0.3); A.apply(nara, { aLo: 0.35, aRo: 0.2, hy: 0.2 });
+      if (t < s.wakeT) nara.rig.setEyes('closed'); else nara.rig.setFace('shocked'); nara.rig.update(t); }
+    if (s.naraAt === 'hands') { nara.position.set(DAWN_NARA[0] + 3, gy(DAWN_NARA[0] + 3, -9), -9); nara.rotation.y = 0.4;
+      A.apply(nara, { y: -1.5, lLf: 1.45, lRf: 1.5, kL: 0.3, kR: 0.45, wx: 0.12, hx: 0.5, aLf: 0.95 + Math.sin(t * 2) * 0.02, aRf: 0.9, eL: 0.55, eR: 0.6, aLt: -0.5, aRt: -0.5, aLo: -0.12, aRo: -0.12 });
+      for (const m of handMats) m.color.set('#4a4442'); nara.rig.setFace('scared'); nara.rig.update(t); }
+    if (s.naraAt === 'pier' || s.naraAt === 'run' && t < s.t0) {
+      nara.position.copy(PIER_SPOT); nara.rotation.y = yawTo([PIER_SPOT.x, 0, PIER_SPOT.z], MILO_SPOT) + 0.15;
+      A.apply(nara, { y: -0.9, lLf: 1.35, kL: 2.0, lRf: 0.55, kR: 1.55, lean: 0.38, hx: s.phoneAt === 'hand2' ? 0.35 : -0.28, hy: s.naraFace === 'sideEye' ? 0.35 : 0.1, aLf: 0.55, eL: 1.2, aRf: s.phoneAt === 'hand2' ? 1.35 : 0.9, eR: s.phoneAt === 'hand2' ? 1.6 : 1.3, wx: 0.05 + Math.sin(t * 1.4) * 0.01 });
+      nara.rig.setFace(nf === 'neutral' ? 'determined' : nf); nara.rig.update(t);
+    }
+    if (s.naraAt === 'run') {
+      const p = A.path([[PIER_SPOT.x, PIER_SPOT.z], [9.4, -3.6]], 6.2, s.t0 - 0.35, 1.1)(t);
+      nara.position.set(p.x, gy(p.x, p.z), p.z); nara.rotation.y = p.yaw; A.set(nara, 'run', t, { phase: p.phase }); nara.rig.setFace('scared'); nara.rig.update(t);
+    }
+    if (s.naraAt === 'shore') {
+      const sz = s.sc === 24 ? 0.45 : -0.6; nara.position.set(8.6, gy(8.6, sz), sz); nara.rotation.y = s.sc === 24 ? 0.15 : yawTo([8.6, 0, -0.6], MILO_SPOT);
+      stand(nara, t, s.sc === 24 ? { lLf: 0.35, kL: 0.3, lean: 0.1, aLf: 0.4, aRf: 0.5 } : { aLf: 0.7, eL: 0.6, aRf: 0.75, eR: 0.6, hx: 0.1 }); nara.rig.setFace(nf === 'neutral' ? 'scared' : nf);
+    }
+    if (s.naraAt === 'boats' || s.naraAt === 'boatsUp') {
+      nara.position.set(DAWN_NARA[0], gy(DAWN_NARA[0], DAWN_NARA[2]), DAWN_NARA[2]); nara.rotation.y = 0.55;
+      const up = s.naraAt === 'boatsUp' ? ease(clamp(lt / 0.6, 0, 1)) : 0;
+      A.apply(nara, { y: -1.5, lLf: 1.45, lRf: 1.5, kL: 0.35, kR: 0.5, wx: 0.12 - up * 0.1, hx: 0.42 - up * 0.45, aLf: 0.95 - up * 0.5, eL: 1.15 - up * 0.6, aRf: 0.95 - up * 0.55, eR: 1.15 - up * 0.65 });
+      nara.rig.setFace(s.naraAt === 'boatsUp' ? 'shocked' : 'sad'); nara.rig.update(t);
+    }
+    if (s.naraAt === 'alone') { nara.position.set(5.6, gy(5.6, -3), -3); nara.rotation.y = 0.1; stand(nara, t, { hx: 0.06 }); nara.rig.setFace('sad'); }
+
+    // the shadow (footage): walks out from under the pier toward Milo, looks back at the phone, then runs at him
+    if (shadow.visible) {
+      const run = s.shadowRun && t > s.shadowRun;
+      const pth = A.path(SH_PATH, run ? 3.6 : 1.35, s.shadowT, run ? 0.9 : 0.5);
+      const p = run ? pth(t + (s.shadowRun - s.shadowT) * (1.35 / 3.6) * 2.2) : pth(t);
+      shadow.position.set(p.x, gy(p.x, p.z), p.z); shadow.rotation.y = p.yaw;
+      let P = A.pose(run ? 'run' : 'walk', t, { phase: p.phase });
+      if (s.shadowLook) {   // she stops and turns around to face the phone: black eyes, red rings
+        const q = pth(s.t0 - 0.1); shadow.position.set(q.x, gy(q.x, q.z), q.z);
+        const k = ease(clamp((t - s.t0) / 0.35, 0, 1)); shadow.rotation.y = q.yaw + Math.PI * k; P = A.pose('idle', t); P.hx = -0.05;
+      }
+      A.apply(shadow, P);
+      shadow.rig.setFace('blank'); shadow.rig.update(t);
+      shTrail.userData.show(s.prints ? Math.floor(p.length && p.done ? 99 : (pth(t).x < 999 ? Math.max(0, Math.round((Math.hypot(p.x - SH_PATH[0][0], p.z - SH_PATH[0][1])) / 0.72)) : 0)) : 0);
+    } else shTrail.userData.show(0);
+    trail.visible = !!s.trail; trail.userData.show(s.trail ? Math.floor(clamp(lt / 2.6, 0, 1) * 34) : 0);
+
+    // Milo
+    milo.visible = (!!s.milo || !!s.under) && !(s.sc === 28 && milo.position.y < -1.9);
+    milo.rotation.set(0, 0, 0);
+    if (s.under) { milo.visible = true; milo.position.set(4.2, -3.25, 48.6); milo.rotation.y = Math.PI; stand(milo, t * 0.4, { hx: -0.08, aLf: 0.35, eL: 0.9 }); milo.rig.setEyes('open'); milo.rig.setFace('blank'); milo.rig.setMouth(false); }
+    if (s.milo === 'slow') {
+      const p = A.path([[6.2, -22], [6.6, 0]], 0.42, 0, 0.3)(s.clk + lt); milo.position.set(p.x, gy(p.x, p.z), p.z); milo.rotation.y = p.yaw;
+      const P = A.pose('walk', t, { phase: p.phase, amp: 0.4 }); P.aLf = 0.35; P.eL = 0.9; P.aRf = P.aRf * 0.4 + 0.1; P.hx = 0.22; A.apply(milo, P); milo.rig.setEyes('closed'); milo.rig.update(t);
+    }
+    if (s.milo === 'alone' || s.milo === 'wake' || s.milo === 'scream') {
+      milo.position.set(MILO_SPOT[0], gy(MILO_SPOT[0], MILO_SPOT[2]), MILO_SPOT[2]); milo.rotation.y = s.milo === 'alone' ? 0.0 : yawTo(MILO_SPOT, [nara.position.x, 0, nara.position.z]);
+      const P = A.pose('idle', t); P.aLf = 0.35; P.eL = 0.9; P.hx = s.milo === 'alone' ? 0.24 : -0.12;
+      if (s.milo === 'scream' && t > s.screamT) { P.aLf = 1.1; P.eL = 1.4; P.aRf = 1.1; P.eR = 1.4; P.lean = -0.12; P.hx = -0.3; }
+      A.apply(milo, P);
+      if (s.milo === 'alone' || (s.milo === 'wake' && t < s.wakeT)) { milo.rig.setEyes('closed'); }
+      else { milo.rig.setEyes('open'); milo.rig.setFace(s.milo === 'scream' && t > s.screamT ? 'scream' : 'scared'); milo.rig.setMouth(s.milo === 'scream' && t > s.screamT); }
+      milo.rig.update(t);
+    }
+    if (s.milo === 'run' || s.milo === 'flee') {
+      const t0 = s.milo === 'run' ? s.runT : s.t0 + 0.25;
+      const p = A.path([[MILO_SPOT[0], MILO_SPOT[2]], [4.6, 24]], 4.6, t0, 0.75)(t);
+      const sink = Math.max(0, p.z) * 0.16;
+      milo.position.set(p.x, gy(p.x, p.z) - sink, p.z); milo.rotation.y = p.yaw; A.set(milo, p.moving ? 'run' : 'idle', t, { phase: p.phase });
+      milo.rig.setEyes('open'); milo.rig.setFace('scream'); milo.rig.setMouth(true); milo.rig.update(t);
+    }
+
+    // the dogs: howl (head up), then all turn toward the pier
+    dogs.forEach((d, i) => {
+      d.update(t); const h = dogHead(d);
+      const howl = s.sc === 20 || s.sc === 21;
+      if (howl) { h.rotation.x = -1.0 + Math.sin(t * 3 + i) * 0.05; }
+      if (s.dogsTurn) { const k = ease(clamp((t - s.t0) / 0.35, 0, 1)); d.rotation.y = lerp(d.rotation.y, yawTo([d.position.x, 0, d.position.z], [PIER_SPOT.x, 0, PIER_SPOT.z]), k); h.rotation.x = lerp(-1.0, -0.25, k); h.rotation.y = 0; }
+    });
+
+    // the phone: in her hand (scene 1, dawn), or propped on the stilt filming the beach
+    phone.visible = !!s.phoneAt && !s.footage;
+    if (s.phoneAt === 'hand') { phone.position.set(20.6, 1.6, -12.0); phone.rotation.set(-0.35, -2.2, 0); phone.userData.setScreen(t < W(0, 'midnight') ? '23:59' : '00:00', false, '#3a0a0a'); }
+    if (s.phoneAt === 'stilt') { phone.position.copy(PHONE_AT); phone.rotation.set(-0.12, Math.atan2(PHONE_BACK.x, PHONE_BACK.z), 0);
+      const sc = s.screen || ['23:58', true]; phone.userData.setScreen(s.screenAt && t < s.screenAt ? '23:59' : sc[0], sc[1], sc[2]); }
+    if (s.phoneAt === 'hand2') { nara.rig.gripR.updateWorldMatrix(true, false); phone.position.setFromMatrixPosition(nara.rig.gripR.matrixWorld).add(V3(0, 0.05, 0)); phone.lookAt(head(nara));   // the screen faces her
+      if (s.screenFlip) phone.userData.setScreen(t < s.screenFlip ? '23:59' : '00:00', false, '#3a0a0a'); else phone.userData.setScreen(...(s.screen || ['', false])); }
+
+    // camera
+    RT.camera.apply(camera, s, t);
+    if (s.blur) { const k = clamp((t - s.t0 - 0.12) / 0.3, 0, 1); shadow.visible = k > 0 && k < 1; if (shadow.visible) { shadow.position.copy(camera.position).add(camera.getWorldDirection(tmpV).multiplyScalar(1.6)).add(V3(lerp(-1.8, 1.8, k), -1.5, 0)); shadow.rotation.y = Math.PI / 2; A.set(shadow, 'run', t * 2); shadow.rig.update(t); } }
+    faceLight.intensity = 0;
+    if (s.focusOn) { const F = s.focusOn(); faceLight.position.copy(F).add(camera.position.clone().sub(F).setY(0).normalize().multiplyScalar(1.3)).add(V3(0, 0.55, 0));
+      faceLight.intensity = s.key ? s.key[3] : s.mood === dawn ? 0.6 : 1.0; }
+    if (s.keyFlood) { faceLight.position.copy(head(nara)).add(V3(0.8, 0.2, 1.4)); faceLight.intensity = 2.4 * ease(clamp((t - s.floodT) / 0.5, 0, 1)) + 0.4; }
+    camera.getWorldDirection(tmpV);
+    env.follow(camera); env.shadowFocus(camera.position.x + tmpV.x * 6, camera.position.y + tmpV.y * 6, camera.position.z + tmpV.z * 6, s.sc === 13 || s.sc === 15 || s.sc === 17 || s.sc === 22 ? 10 : 24);
+    // the eye: opens at midnight, closes at dawn (except the last shots), always watching Nara
+    eye.place(camera);
+    let open = s.eye === 'open' ? clamp((t - s.eyeT) / 0.8, 0, 1) : s.eye ? 1 : 0;
+    eye.group.visible = open > 0.001 || s.eye === 'open';
+    eye.set(open, (s.footage && shadow.visible) ? head(shadow) : nara.visible ? head(nara) : V3(15, 1, -10), t);
+    if (rec) { rec.style.opacity = s.footage ? '1' : '0'; if (s.footage) rec.querySelector('.ts').textContent = `00:00:${String(41 + Math.floor(t - S(14))).padStart(2, '0')}`; }
+  }
+
+  // post effects for time t: grade, glow, depth blur, motion blur; whip pans, zoom punches, colour split at cuts; footage glitch
+  function fxAt(t) {
+    const s = shots.at(t), fx = Object.assign({ grade: 1, bloom: 0.9, vignette: 0.6, grain: 0.13, t }, s.fx);
+    if (s.focusOn) fx.focus = camera.position.distanceTo(s.focusOn()); else if (s.focusDist) fx.focus = s.focusDist;
+    const next = shots.shots[s.i + 1];
+    if (s.whipOut && next) fx.whip = s.whipOut * clamp(1 - (next.t0 - t) / 0.16, 0, 1);
+    if (s.whipIn) fx.whip = s.whipIn * clamp(1 - (t - s.t0) / 0.16, 0, 1);
+    if (s.blur) { const k = clamp((t - s.t0 - 0.12) / 0.3, 0, 1); if (k > 0 && k < 1) fx.whip = 0.9 * Math.sin(k * Math.PI); }
+    if (s.punch && t > s.punch) { const k = Math.exp(-(t - s.punch) * 8); fx.zoom = 0.9 * k; fx.ca = (fx.ca || 0) + 0.8 * k; }
+    if (s.screamT && t > s.screamT) { const k = Math.exp(-(t - s.screamT) * 5); fx.ca = (fx.ca || 0) + 1.2 * k; fx.zoom = 0.5 * k; }
+    for (const c of shots.cuts()) { const k = clamp(1 - Math.abs(t - c) / 0.08, 0, 1); fx.ca = (fx.ca || 0) + 0.45 * k; }
+    if (s.footage) fx.lift = 0.02;
+    if (s.footage) fx.glitch = (s.fx.glitch || 0) * (0.35 + 0.65 * (Math.sin(t * 37) > 0.5 ? 1 : 0)) + (t - s.t0 < 0.1 ? 0.8 : 0);
+    if (s.under && camera.position.y < 0.05) { fx.lift = -0.04; fx.vignette = 0.85; fx.bloom = 1.3; }
+    return fx;
+  }
+  function render(t) {
+    const dt = 1 / 30;
+    if (t >= dt && shots.at(t - dt) === shots.at(t)) { frame(t - dt); post.capturePrev(camera); } else post.clearPrev();
+    frame(t);
+    post.render(scene, camera, fxAt(t));
+  }
+  const cuts = shots.cuts();
+  const black = (t) => Math.max(clamp(1 - t / 0.35, 0, 1), (t > W(3, 'reach') + 0.38 && t < S(4) - 0.15) ? 1 : 0, t > TITLE_T ? 0.55 * clamp((t - TITLE_T) / 0.4, 0, 1) : 0);
+
+  RT.player.start({
+    name: 'ep1', duration: DURATION, renderer, scene, camera, frame, render, narration: NAR, speakers: {},
+    black, white: () => 0, audio: '../audio/mix/ep1_mix.mp3',
+    title: { t0: TITLE_T + 0.1, html: '<div class="t1" style="color:#ff4a3a;text-shadow:0 0 calc(var(--u)*6) rgba(255,40,20,.6),0 calc(var(--u)*.6) calc(var(--u)*1.2) #000">THE MIDNIGHT SEA</div><div class="t2">AN “IN THIS TOWN” STORY</div><div class="t3" style="color:#ffe45c">Follow for more.</div>' },
+    menu: { title: 'The Midnight Sea', sub: 'In this town, every night at midnight, the sea turns red…' },
+    // two thumbnail options: 1 = the eye over the red sea, 2 = the phone footage (black eyes)
+    thumbnail(n) {
+      render(n === '2' ? 60.85 : 3.45);
+      const d = document.createElement('div');
+      d.style.cssText = 'position:absolute;left:4%;right:4%;top:' + (n === '2' ? '60%' : '9%') + ';text-align:center;font:900 calc(var(--u)*13.5) Montserrat,Arial Black,sans-serif;line-height:1.0;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.9) 0 #000';
+      d.innerHTML = n === '2' ? 'IT WAS<br><span style="color:#ffe45c">ME?!</span>' : 'THE SEA TURNS<br><span style="color:#ffe45c">RED</span> AT MIDNIGHT';
+      document.getElementById('stage').appendChild(d);
+    },
+  });
+  const stage = document.getElementById('stage');
+  rec = document.createElement('div');
+  rec.innerHTML = '<div style="position:absolute;left:7%;top:6%;display:flex;align-items:center;gap:calc(var(--u)*1.6);font:800 calc(var(--u)*4.2) Inter,system-ui,sans-serif;color:#fff;text-shadow:0 0 6px #000"><span style="width:calc(var(--u)*3);height:calc(var(--u)*3);border-radius:50%;background:#ff2a2a;display:inline-block"></span>REC</div>' +
+    '<div class="ts" style="position:absolute;right:7%;top:6%;font:700 calc(var(--u)*4) ui-monospace,Menlo,monospace;color:#fff;text-shadow:0 0 6px #000">00:00:41</div>' +
+    '<div style="position:absolute;inset:4%;border:calc(var(--u)*0.5) solid rgba(255,255,255,0.75);clip-path:polygon(0 0,12% 0,12% 0.6%,0.9% 0.6%,0.9% 7%,0 7%,0 93%,0.9% 93%,0.9% 99.4%,12% 99.4%,12% 100%,0 100%,0 0,100% 0,100% 7%,99.1% 7%,99.1% 0.6%,88% 0.6%,88% 0,100% 0,100% 100%,88% 100%,88% 99.4%,99.1% 99.4%,99.1% 93%,100% 93%,100% 100%)"></div>';
+  rec.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;';
+  stage.insertBefore(rec, document.getElementById('cap'));
+})();
+</script>
 </body>
 </html>

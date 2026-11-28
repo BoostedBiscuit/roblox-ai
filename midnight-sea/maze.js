@@ -5,6 +5,11 @@
 //   maze.cell(i, j) world centre of a cell (i = column west→east, j = row north→south, 0..N-1)
 //   maze.route(a, b) list of world points from cell a [i, j] to cell b through the open passages
 //   maze.ground(x, z) floor height (flat: 0) · maze.update(t) drifting mist
+//   o.gates: { name: [kind, i, j, closedAtStart] } walls that move (kind 'H' = Hw[j][i], 'V' = Vw[j][i]): maze.gates[name].set(k)
+//            k = 1 closed (stalks fill the gap), 0 open (stalks bunched into the walls at both ends, leaning away)
+//   maze.disturb([{ x, z, r, a, mode: 'push' | 'shiver', t }])  bend the stalks near a point (call every frame; resets itself)
+//   maze.grow(k)        time-lapse: every stalk scaled by its own growth curve (k 0..1; 1 = normal) · maze.footprints(pts)
+//   o.roadSouth: the farm road runs past the entrance (south) instead of the north; o.noExit: no north opening
 // The walls are rows of instanced corn stalks (one draw call); the floor has darker soil along the walls.
 // =====================================================================================
 (function () {
@@ -13,7 +18,7 @@
   const N = 10, CELL = 3.4, HALF = (N * CELL) / 2, CORN_H = 3.1;
 
   // a perfect maze (seeded depth-first carve), a 2 × 2 clearing in the middle, an entrance (south) and an exit (north)
-  function generate(seed) {
+  function generate(seed, o = {}) {
     const r = RT.rng(seed);
     const Hw = [], Vw = [];          // Hw[j][i]: wall along the NORTH edge of row j (j = 0..N), Vw[j][i]: wall along the WEST edge of column i (i = 0..N)
     for (let j = 0; j <= N; j++) { Hw.push(Array(N).fill(true)); }
@@ -29,7 +34,8 @@
     }
     Vw[4][5] = false; Vw[5][5] = false; Hw[5][4] = false; Hw[5][5] = false;     // the clearing (cells 4–5 × 4–5)
     Hw[N][4] = false;                                                             // entrance (south, column 4)
-    Hw[0][7] = false;                                                             // exit (north, column 7) → the road
+    if (!o.noExit) Hw[0][7] = false;                                              // exit (north, column 7) → the road
+    for (const k in o.gates || {}) { const [kind, i, j] = o.gates[k]; if (kind === 'H') Hw[j][i] = false; else Vw[j][i] = false; }   // moving walls are built separately
     return { Hw, Vw };
   }
 
@@ -56,7 +62,8 @@
 
   function build(scene, env, o = {}) {
     const G = new THREE.Group(); G.name = 'CornMaze'; scene.add(G);
-    const { Hw, Vw } = generate(o.seed || 12);
+    const { Hw, Vw } = generate(o.seed || 12, o);
+    const RZs = HALF + 6.5;                                                    // the road on the entrance side (o.roadSouth)
     const r = RT.rng((o.seed || 12) * 7 + 1);
     const X = (i) => -HALF + (i + 0.5) * CELL, Z = (j) => -HALF + (j + 0.5) * CELL;
 
@@ -76,7 +83,8 @@
     for (let k = 0; k < 2600; k++) {
       const a = r() * Math.PI * 2, rad = HALF + 1.2 + Math.pow(r(), 1.6) * 26, x = Math.cos(a) * rad * 1.05, z = Math.sin(a) * rad;
       if (Math.max(Math.abs(x), Math.abs(z)) < HALF + 0.9) continue;
-      if (z < -HALF - 2.4 && z > -HALF - 8.5) continue;                 // keep the road clear
+      if (!o.roadSouth && z < -HALF - 2.4 && z > -HALF - 8.5) continue;   // keep the road clear
+      if (o.roadSouth && z > HALF + 0.9 && z < RZs + 4.5 && Math.abs(x) < 70) continue;
       if (Math.abs(x - X(4)) < 2.2 && z > HALF) continue;               // and the way in
       spotsList.push([x, z]);
     }
@@ -85,12 +93,23 @@
     const corn = new THREE.InstancedMesh(stalk, cornM, spotsList.length);
     const cols = ['#c9ae6b', '#b69c5e', '#a8a05e', '#d4bd82', '#9a9156', '#bfa86a'].map((c) => new THREE.Color(c));
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sv = new THREE.Vector3(), pv = new THREE.Vector3();
+    const B = { x: [], z: [], yaw: [], tx: [], tz: [], s: [], h: [], delay: [] };       // base transforms (growth, bending)
+    const GRID = {}, gkey = (x, z) => Math.floor(x) + ',' + Math.floor(z);
     spotsList.forEach(([x, z], k) => {
-      const s = 0.9 + r() * 0.2;
-      e.set((r() - 0.5) * 0.12, r() * Math.PI * 2, (r() - 0.5) * 0.12); q.setFromEuler(e);
-      sv.set(s, s * (0.92 + r() * 0.2), s); pv.set(x, 0, z);
+      const s = 0.9 + r() * 0.2, tx = (r() - 0.5) * 0.12, yaw = r() * Math.PI * 2, tz = (r() - 0.5) * 0.12, h = 0.92 + r() * 0.2;
+      e.set(tx, yaw, tz); q.setFromEuler(e);
+      sv.set(s, s * h, s); pv.set(x, 0, z);
       m.compose(pv, q, sv); corn.setMatrixAt(k, m); corn.setColorAt(k, cols[Math.floor(r() * cols.length)]);
+      B.x.push(x); B.z.push(z); B.yaw.push(yaw); B.tx.push(tx); B.tz.push(tz); B.s.push(s); B.h.push(h); B.delay.push(r() * 0.55);
+      (GRID[gkey(x, z)] = GRID[gkey(x, z)] || []).push(k);
     });
+    // set one instance from its base transform with an extra bend (bx, bz: lean in radians about x and z) and growth g
+    function setStalk(mesh, k, bx = 0, bz = 0, g = 1, base = B) {
+      e.set(base.tx[k] + bx, 0, base.tz[k] + bz); q.setFromEuler(e);
+      const qy = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), base.yaw[k]); q.multiply(qy);
+      sv.set(base.s[k], Math.max(0.001, base.s[k] * base.h[k] * g), base.s[k]); pv.set(base.x[k], 0, base.z[k]);
+      m.compose(pv, q, sv); mesh.setMatrixAt(k, m);
+    }
     corn.instanceMatrix.needsUpdate = true; if (corn.instanceColor) corn.instanceColor.needsUpdate = true;
     corn.frustumCulled = false; G.add(corn);
 
@@ -117,13 +136,14 @@
 
     // ---- the road (north) with a fence, the entrance (south) with a sign, hay bales and pumpkins ----
     const wood = RT.plastic('#6a523a', { roughness: 0.95 }), woodD = RT.plastic('#4a3a2a', { roughness: 0.95 });
-    const RZ = -HALF - 5.2;
+    const RZ = o.roadSouth ? RZs : -HALF - 5.2;
     const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 4.6), new THREE.MeshStandardMaterial({ color: '#8f897d', roughness: 1 }));
     road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, RZ); road.receiveShadow = true; G.add(road);
     for (let x = -60; x <= 60; x += 2.4) {
-      if (Math.abs(x - X(7)) < 1.4) continue;
-      const post = RT.mesh(new THREE.BoxGeometry(0.16, 1.3, 0.16), wood); post.position.set(x, 0.65, RZ + 2.6); G.add(post);
-      for (const y of [0.45, 0.95]) { const rail = RT.mesh(new THREE.BoxGeometry(2.4, 0.1, 0.06), wood); rail.position.set(x + 1.2, y, RZ + 2.6); G.add(rail); }
+      const FZ = o.roadSouth ? RZ + 2.9 : RZ + 2.6;                       // the fence on the far side of the road
+      if (!o.roadSouth && Math.abs(x - X(7)) < 1.4) continue;
+      const post = RT.mesh(new THREE.BoxGeometry(0.16, 1.3, 0.16), wood); post.position.set(x, 0.65, FZ); G.add(post);
+      for (const y of [0.45, 0.95]) { const rail = RT.mesh(new THREE.BoxGeometry(2.4, 0.1, 0.06), wood); rail.position.set(x + 1.2, y, FZ); G.add(rail); }
     }
     const signTex = RT.canvasTexture(512, 192, (g) => {
       g.fillStyle = '#6b4f34'; g.fillRect(0, 0, 512, 192); g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 3; for (let y = 32; y < 192; y += 38) { g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
@@ -164,6 +184,67 @@
       G.add(sp); mists.push(sp);
     }
 
+    // ---- moving walls (gates) ----
+    const gates = {};
+    for (const name in o.gates || {}) {
+      const [kind, i, j, closed] = o.gates[name];
+      const x0 = kind === 'H' ? -HALF + i * CELL : -HALF + i * CELL, z0 = kind === 'H' ? -HALF + j * CELL : -HALF + j * CELL;
+      const x1 = kind === 'H' ? x0 + CELL : x0, z1 = kind === 'H' ? z0 : z0 + CELL;
+      const len = CELL, ux = (x1 - x0) / len, uz = (z1 - z0) / len, list = [];
+      for (let d = 0.1; d <= len - 0.1; d += 0.28) for (const off of [-0.3, 0, 0.3]) list.push([d + (r() - 0.5) * 0.1, off + (r() - 0.5) * 0.1]);
+      const gm = new THREE.InstancedMesh(stalk, cornM, list.length); gm.frustumCulled = false; G.add(gm);
+      const GB = { x: [], z: [], yaw: [], tx: [], tz: [], s: [], h: [] };
+      list.forEach(([d, off], k) => { GB.yaw.push(r() * 6.28); GB.tx.push((r() - 0.5) * 0.1); GB.tz.push((r() - 0.5) * 0.1); GB.s.push(0.9 + r() * 0.2); GB.h.push(0.94 + r() * 0.18); GB.x.push(0); GB.z.push(0); gm.setColorAt(k, cols[Math.floor(r() * cols.length)]); });
+      if (gm.instanceColor) gm.instanceColor.needsUpdate = true;
+      const gate = { mesh: gm, k: closed ? 1 : 0, x0, z0, x1, z1, mid: new THREE.Vector3((x0 + x1) / 2, 0, (z0 + z1) / 2),
+        set(k, shiver = 0, t = 0) {
+          gate.k = k;
+          list.forEach(([d, off], n) => {
+            const end = d < len / 2 ? 0 : len, kk = RT.clamp(k, 0, 1.2), dd = end + (d - end) * Math.min(kk, 1);
+            GB.x[n] = x0 + ux * dd - uz * off; GB.z[n] = z0 + uz * dd + ux * off;
+            const lean = (1 - Math.min(kk, 1)) * 0.55 * (d < len / 2 ? -1 : 1) + (kk > 1 ? (kk - 1) * Math.sin(n * 1.7) : 0) + shiver * Math.sin(t * 31 + n * 2.3) * 0.08;
+            setStalk(gm, n, uz * lean, -ux * lean, 1, GB);
+          });
+          gm.instanceMatrix.needsUpdate = true; return gate;
+        } };
+      gate.set(gate.k); gates[name] = gate;
+    }
+    // ---- bending the stalks near a point (resets the previous frame's bends) ----
+    let touched = [];
+    function disturb(list = []) {
+      for (const k of touched) setStalk(corn, k);
+      touched = [];
+      for (const D of list) {
+        const R0 = D.r || 1.4;
+        for (let gx = Math.floor(D.x - R0); gx <= Math.floor(D.x + R0); gx++) for (let gz = Math.floor(D.z - R0); gz <= Math.floor(D.z + R0); gz++) {
+          for (const k of GRID[gx + ',' + gz] || []) {
+            const dx = B.x[k] - D.x, dz = B.z[k] - D.z, dist = Math.hypot(dx, dz); if (dist > R0) continue;
+            const f = 1 - dist / R0, a = (D.a ?? 1) * f;
+            if (D.mode === 'shiver') { const w = Math.sin((D.t || 0) * 26 + k * 1.3) * 0.09 * a; setStalk(corn, k, w, w * 0.7); }
+            else { const nx = dx / (dist || 1), nz = dz / (dist || 1), ang = a * 1.15; setStalk(corn, k, nz * ang, -nx * ang); }
+            touched.push(k);
+          }
+        }
+      }
+      corn.instanceMatrix.needsUpdate = true;
+    }
+    // ---- time-lapse growth ----
+    let grown = 1;
+    function grow(k) {
+      if (k >= 1 && grown >= 1) return; grown = k;
+      for (let n = 0; n < B.x.length; n++) setStalk(corn, n, 0, 0, RT.clamp((k - B.delay[n]) / 0.45, 0, 1));
+      corn.instanceMatrix.needsUpdate = true;
+    }
+    // ---- footprints (small dark prints pressed into the dirt; show(n) reveals the first n) ----
+    function footprints(pts) {
+      const grp = new THREE.Group(); G.add(grp);
+      const tex = RT.canvasTexture(64, 128, (g) => { g.fillStyle = 'rgba(40,28,16,0.75)'; g.beginPath(); g.ellipse(32, 44, 20, 34, 0, 0, Math.PI * 2); g.fill(); g.beginPath(); g.ellipse(32, 100, 15, 20, 0, 0, Math.PI * 2); g.fill(); });
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+      pts.forEach(([x, z, yaw]) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.32), mat); p.rotation.set(-Math.PI / 2, 0, yaw); p.position.set(x, 0.012, z); grp.add(p); });
+      grp.show = (n) => grp.children.forEach((c, i) => { c.visible = i < n; });
+      return grp;
+    }
+
     const cell = (i, j) => new THREE.Vector3(X(i), 0, Z(j));
     const open = (i, j, di, dj) => {
       if (di === 1) return !Vw[j][i + 1]; if (di === -1) return !Vw[j][i]; if (dj === 1) return !Hw[j + 1][i]; return !Hw[j][i];
@@ -182,10 +263,10 @@
     }
     const spots = {
       ENTRANCE: new THREE.Vector3(X(4), 0, HALF + 2.0), CENTER: new THREE.Vector3(0, 0, 0), POLE: new THREE.Vector3(0, 0, 0),
-      EXIT: new THREE.Vector3(X(7), 0, -HALF - 0.8), ROAD: new THREE.Vector3(X(7), 0, RZ), CELL, HALF, N, CORN_H,
+      EXIT: new THREE.Vector3(X(7), 0, -HALF - 0.8), ROAD: new THREE.Vector3(o.roadSouth ? 0 : X(7), 0, RZ), CELL, HALF, N, CORN_H, SIGN: new THREE.Vector3(ex, 0, ez),
     };
     return {
-      group: G, corn, floor, pole, sign, spots, cell, route, open, walls: { Hw, Vw }, ground: () => 0,
+      group: G, corn, floor, pole, sign, spots, cell, route, open, walls: { Hw, Vw }, ground: () => 0, gates, disturb, grow, footprints, X, Z,
       update(t) { for (const sp of mists) { const u = sp.userData; sp.position.set(((u.x + t * u.v + 30) % 60) - 30, u.y, u.z); } },
     };
   }

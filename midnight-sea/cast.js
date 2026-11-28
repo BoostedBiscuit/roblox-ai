@@ -288,12 +288,17 @@
         for (let i = 0; i <= 10; i++) { const a = (i / 10) * Math.PI * 2, rr = (i % 2 ? 0.8 : 1) * (s > 0 ? 54 : 62); g.lineTo(x + Math.cos(a) * rr * 1.05, y + Math.sin(a) * rr * 0.9); }
         g.closePath(); g.fill();
         g.strokeStyle = '#3b2c1a'; g.lineWidth = 4; for (let i = 0; i < 9; i++) { const a = (i / 9) * Math.PI * 2; g.beginPath(); g.moveTo(x + Math.cos(a) * 60, y + Math.sin(a) * 50); g.lineTo(x + Math.cos(a) * 76, y + Math.sin(a) * 64); g.stroke(); }
-        if (expr === 'awake' && !blink) { g.fillStyle = '#efe9da'; g.beginPath(); g.arc(x + s * 4, y + 2, 5.5, 0, Math.PI * 2); g.fill(); }
+        if ((expr === 'awake' || expr === 'grin') && !blink) { g.fillStyle = '#efe9da'; g.beginPath(); g.arc(x + s * 4, y + 2, 5.5, 0, Math.PI * 2); g.fill(); }
       }
       // the stitched mouth: a long seam with cross stitches; open = the seam gapes into a dark slit
       const my = 340, x0 = 70, x1 = 446;
       { const gr = g.createLinearGradient(0, 0, 0, 170); gr.addColorStop(0, 'rgba(20,14,8,0.55)'); gr.addColorStop(1, 'rgba(20,14,8,0)'); g.fillStyle = gr; g.fillRect(0, 0, 512, 170); }   // hat-brim shadow
       if (open) { g.fillStyle = '#0b0807'; g.beginPath(); g.moveTo(x0 + 30, my - 10); g.quadraticCurveTo(256, my + 70, x1 - 30, my - 24); g.quadraticCurveTo(256, my - 4, x0 + 30, my - 10); g.fill(); }
+      if (expr === 'grin') {     // the seam curls up at both ends into a long stitched smile
+        g.strokeStyle = '#231a10'; g.lineWidth = 6; g.beginPath(); g.moveTo(x0 - 10, my - 60); g.quadraticCurveTo(140, my + 40, 256, my + 34); g.quadraticCurveTo(372, my + 30, x1 + 10, my - 66); g.stroke();
+        g.lineWidth = 4; for (let k = 0; k <= 16; k++) { const u = k / 16, x = x0 + (x1 - x0) * u, y = my + 34 - Math.pow(Math.abs(u - 0.5) * 2, 2) * 96; g.beginPath(); g.moveTo(x - 6, y - 14); g.lineTo(x + 6, y + 14); g.stroke(); }
+        return;
+      }
       g.strokeStyle = '#231a10'; g.lineWidth = 5; g.beginPath(); g.moveTo(x0, my - 18); g.quadraticCurveTo(160, my + 14, 256, my + 4); g.quadraticCurveTo(350, my - 6, x1, my - 30); g.stroke();
       g.lineWidth = 4; for (let k = 0; k <= 16; k++) { const x = x0 + ((x1 - x0) * k) / 16, y = my - 18 + Math.sin((k / 16) * Math.PI) * 26 - (k / 16) * 10; g.beginPath(); g.moveTo(x - 6, y - 14); g.lineTo(x + 6, y + (open ? 26 : 14)); g.stroke(); }
     } });

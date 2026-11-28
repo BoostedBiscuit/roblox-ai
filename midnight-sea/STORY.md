@@ -168,8 +168,10 @@ Times are estimates (Adam 1.3×); they settle after the voice is recorded. Each 
 | 38 | (end card) | Title THE MIDNIGHT SEA + "Follow for more" over the red sea | — | — | Static | Outro | 2.5 |
 
 ## Production notes
-- The Midnight Sea stays a standalone story with Nara (option B). Recurring protagonist for the next videos: name chosen as "Nara"
-  (to confirm: the same character, or a new "Nara" for the following videos).
+- The Midnight Sea stays a standalone story (option B).
+- SERIES PROTAGONIST (decided): NARA VALE, the SAME character with the SAME locked look (Stage 3 above; built by RT.cast.nara() in
+  midnight-sea/cast.js) is the protagonist of every future "In this town…" video. Each video is its own standalone story in a new
+  town; the stories do not continue The Midnight Sea's plot unless asked. Her look never changes between videos.
 - Audio: narrator (ElevenLabs Adam, 1.3x) + dreamcore at 50 % only, no sound effects for now.
 - Small staging changes while building: the phone is propped on a crate in front of Nara under the pier (it films the beach,
   so the footage shows her walking out from her hiding spot); the dogs are shot as silhouettes against the red sea.

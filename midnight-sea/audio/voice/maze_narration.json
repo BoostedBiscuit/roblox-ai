@@ -1,0 +1,1196 @@
+{
+ "video": "maze",
+ "voice": "Adam (sped up 1.3x)",
+ "tempo": 1.3,
+ "lines": [
+  {
+   "at": 0.5,
+   "who": "narrator",
+   "text": "In this town, if you hear your name inside the corn maze… you walk the other way.",
+   "raw": "audio/voice/maze/l01_9764d1c3e3.mp3",
+   "clip": "midnight-sea/build/maze/voice/l01_9764d1c3e3_r1.3_p0.5.wav",
+   "start": 0.5,
+   "end": 3.832,
+   "words": [
+    {
+     "w": "In",
+     "start": 0.5,
+     "end": 0.598
+    },
+    {
+     "w": "this",
+     "start": 0.634,
+     "end": 0.741
+    },
+    {
+     "w": "town,",
+     "start": 0.786,
+     "end": 1.018
+    },
+    {
+     "w": "if",
+     "start": 1.062,
+     "end": 1.116
+    },
+    {
+     "w": "you",
+     "start": 1.152,
+     "end": 1.215
+    },
+    {
+     "w": "hear",
+     "start": 1.268,
+     "end": 1.384
+    },
+    {
+     "w": "your",
+     "start": 1.428,
+     "end": 1.509
+    },
+    {
+     "w": "name",
+     "start": 1.554,
+     "end": 1.75
+    },
+    {
+     "w": "inside",
+     "start": 1.786,
+     "end": 2.108
+    },
+    {
+     "w": "the",
+     "start": 2.135,
+     "end": 2.188
+    },
+    {
+     "w": "corn",
+     "start": 2.224,
+     "end": 2.438
+    },
+    {
+     "w": "maze…",
+     "start": 2.482,
+     "end": 2.786
+    },
+    {
+     "w": "you",
+     "start": 2.902,
+     "end": 2.992
+    },
+    {
+     "w": "walk",
+     "start": 3.045,
+     "end": 3.197
+    },
+    {
+     "w": "the",
+     "start": 3.242,
+     "end": 3.305
+    },
+    {
+     "w": "other",
+     "start": 3.349,
+     "end": 3.474
+    },
+    {
+     "w": "way.",
+     "start": 3.518,
+     "end": 3.724
+    }
+   ]
+  },
+  {
+   "at": 4.332,
+   "who": "narrator",
+   "text": "Every autumn it grows back overnight. And every few years, a kid walks in… and never walks out.",
+   "raw": "audio/voice/maze/l02_8c0fc27a29.mp3",
+   "clip": "midnight-sea/build/maze/voice/l02_8c0fc27a29_r1.3_p0.5.wav",
+   "start": 4.332,
+   "end": 8.932,
+   "words": [
+    {
+     "w": "Every",
+     "start": 4.332,
+     "end": 4.547
+    },
+    {
+     "w": "autumn",
+     "start": 4.6,
+     "end": 4.85
+    },
+    {
+     "w": "it",
+     "start": 4.877,
+     "end": 4.921
+    },
+    {
+     "w": "grows",
+     "start": 4.957,
+     "end": 5.19
+    },
+    {
+     "w": "back",
+     "start": 5.234,
+     "end": 5.404
+    },
+    {
+     "w": "overnight.",
+     "start": 5.457,
+     "end": 5.841
+    },
+    {
+     "w": "And",
+     "start": 6.047,
+     "end": 6.172
+    },
+    {
+     "w": "every",
+     "start": 6.217,
+     "end": 6.359
+    },
+    {
+     "w": "few",
+     "start": 6.395,
+     "end": 6.529
+    },
+    {
+     "w": "years,",
+     "start": 6.574,
+     "end": 6.806
+    },
+    {
+     "w": "a",
+     "start": 6.841,
+     "end": 6.868
+    },
+    {
+     "w": "kid",
+     "start": 6.922,
+     "end": 7.154
+    },
+    {
+     "w": "walks",
+     "start": 7.207,
+     "end": 7.457
+    },
+    {
+     "w": "in…",
+     "start": 7.511,
+     "end": 7.672
+    },
+    {
+     "w": "and",
+     "start": 7.958,
+     "end": 8.083
+    },
+    {
+     "w": "never",
+     "start": 8.137,
+     "end": 8.315
+    },
+    {
+     "w": "walks",
+     "start": 8.36,
+     "end": 8.574
+    },
+    {
+     "w": "out.",
+     "start": 8.619,
+     "end": 8.824
+    }
+   ]
+  },
+  {
+   "at": 9.432,
+   "who": "narrator",
+   "text": "Everyone says the maze is alive. That it moves.",
+   "raw": "audio/voice/maze/l03_91226c8fb8.mp3",
+   "clip": "midnight-sea/build/maze/voice/l03_91226c8fb8_r1.3_p0.5.wav",
+   "start": 9.432,
+   "end": 11.531,
+   "words": [
+    {
+     "w": "Everyone",
+     "start": 9.432,
+     "end": 9.763
+    },
+    {
+     "w": "says",
+     "start": 9.789,
+     "end": 9.968
+    },
+    {
+     "w": "the",
+     "start": 10.013,
+     "end": 10.066
+    },
+    {
+     "w": "maze",
+     "start": 10.102,
+     "end": 10.307
+    },
+    {
+     "w": "is",
+     "start": 10.334,
+     "end": 10.397
+    },
+    {
+     "w": "alive.",
+     "start": 10.432,
+     "end": 10.78
+    },
+    {
+     "w": "That",
+     "start": 10.817,
+     "end": 10.941
+    },
+    {
+     "w": "it",
+     "start": 10.968,
+     "end": 11.022
+    },
+    {
+     "w": "moves.",
+     "start": 11.075,
+     "end": 11.424
+    }
+   ]
+  },
+  {
+   "at": 12.131,
+   "who": "narrator",
+   "text": "My best friend Juno has called me Vale since we were five. Today he went in on a dare. He didn't come out.",
+   "raw": "audio/voice/maze/l04_80094c1bf0.mp3",
+   "clip": "midnight-sea/build/maze/voice/l04_80094c1bf0_r1.3_p0.5.wav",
+   "start": 12.131,
+   "end": 17.124,
+   "words": [
+    {
+     "w": "My",
+     "start": 12.131,
+     "end": 12.256
+    },
+    {
+     "w": "best",
+     "start": 12.309,
+     "end": 12.453
+    },
+    {
+     "w": "friend",
+     "start": 12.479,
+     "end": 12.64
+    },
+    {
+     "w": "Juno",
+     "start": 12.693,
+     "end": 12.953
+    },
+    {
+     "w": "has",
+     "start": 13.006,
+     "end": 13.086
+    },
+    {
+     "w": "called",
+     "start": 13.14,
+     "end": 13.336
+    },
+    {
+     "w": "me",
+     "start": 13.363,
+     "end": 13.435
+    },
+    {
+     "w": "Vale",
+     "start": 13.489,
+     "end": 13.855
+    },
+    {
+     "w": "since",
+     "start": 13.89,
+     "end": 14.069
+    },
+    {
+     "w": "we",
+     "start": 14.096,
+     "end": 14.167
+    },
+    {
+     "w": "were",
+     "start": 14.212,
+     "end": 14.31
+    },
+    {
+     "w": "five.",
+     "start": 14.346,
+     "end": 14.703
+    },
+    {
+     "w": "Today",
+     "start": 14.917,
+     "end": 15.159
+    },
+    {
+     "w": "he",
+     "start": 15.203,
+     "end": 15.256
+    },
+    {
+     "w": "went",
+     "start": 15.31,
+     "end": 15.444
+    },
+    {
+     "w": "in",
+     "start": 15.48,
+     "end": 15.543
+    },
+    {
+     "w": "on",
+     "start": 15.596,
+     "end": 15.668
+    },
+    {
+     "w": "a",
+     "start": 15.713,
+     "end": 15.73
+    },
+    {
+     "w": "dare.",
+     "start": 15.783,
+     "end": 16.132
+    },
+    {
+     "w": "He",
+     "start": 16.356,
+     "end": 16.436
+    },
+    {
+     "w": "didn't",
+     "start": 16.471,
+     "end": 16.632
+    },
+    {
+     "w": "come",
+     "start": 16.659,
+     "end": 16.802
+    },
+    {
+     "w": "out.",
+     "start": 16.829,
+     "end": 17.016
+    }
+   ]
+  },
+  {
+   "at": 17.724,
+   "who": "narrator",
+   "text": "So I went in after him. Behind me, the corn closed. The way out was gone.",
+   "raw": "audio/voice/maze/l05_2577f6b87c.mp3",
+   "clip": "midnight-sea/build/maze/voice/l05_2577f6b87c_r1.3_p0.5.wav",
+   "start": 17.724,
+   "end": 21.547,
+   "words": [
+    {
+     "w": "So",
+     "start": 17.724,
+     "end": 17.849
+    },
+    {
+     "w": "I",
+     "start": 17.902,
+     "end": 17.92
+    },
+    {
+     "w": "went",
+     "start": 17.974,
+     "end": 18.099
+    },
+    {
+     "w": "in",
+     "start": 18.135,
+     "end": 18.189
+    },
+    {
+     "w": "after",
+     "start": 18.242,
+     "end": 18.439
+    },
+    {
+     "w": "him.",
+     "start": 18.474,
+     "end": 18.563
+    },
+    {
+     "w": "Behind",
+     "start": 18.849,
+     "end": 19.171
+    },
+    {
+     "w": "me,",
+     "start": 19.224,
+     "end": 19.394
+    },
+    {
+     "w": "the",
+     "start": 19.43,
+     "end": 19.483
+    },
+    {
+     "w": "corn",
+     "start": 19.528,
+     "end": 19.751
+    },
+    {
+     "w": "closed.",
+     "start": 19.805,
+     "end": 20.269
+    },
+    {
+     "w": "The",
+     "start": 20.448,
+     "end": 20.537
+    },
+    {
+     "w": "way",
+     "start": 20.582,
+     "end": 20.698
+    },
+    {
+     "w": "out",
+     "start": 20.752,
+     "end": 20.886
+    },
+    {
+     "w": "was",
+     "start": 20.93,
+     "end": 21.029
+    },
+    {
+     "w": "gone.",
+     "start": 21.073,
+     "end": 21.439
+    }
+   ]
+  },
+  {
+   "at": 22.047,
+   "who": "narrator",
+   "text": "Then, from the fog: \"Nara!\" Juno's voice.",
+   "raw": "audio/voice/maze/l06_f875b0753c.mp3",
+   "clip": "midnight-sea/build/maze/voice/l06_f875b0753c_r1.3_p0.5.wav",
+   "start": 22.047,
+   "end": 24.96,
+   "words": [
+    {
+     "w": "Then,",
+     "start": 22.047,
+     "end": 22.235
+    },
+    {
+     "w": "from",
+     "start": 22.288,
+     "end": 22.422
+    },
+    {
+     "w": "the",
+     "start": 22.467,
+     "end": 22.52
+    },
+    {
+     "w": "fog:",
+     "start": 22.556,
+     "end": 22.895
+    },
+    {
+     "w": "\"Nara!\"",
+     "start": 23.28,
+     "end": 23.691
+    },
+    {
+     "w": "Juno's",
+     "start": 24.075,
+     "end": 24.397
+    },
+    {
+     "w": "voice.",
+     "start": 24.442,
+     "end": 24.852
+    }
+   ]
+  },
+  {
+   "at": 25.46,
+   "who": "narrator",
+   "text": "I ran toward it. The corn slammed shut in front of me. Again. And again. But when I turned away… a path opened.",
+   "raw": "audio/voice/maze/l07_48b19ac9c5.mp3",
+   "clip": "midnight-sea/build/maze/voice/l07_48b19ac9c5_r1.3_p0.5.wav",
+   "start": 25.46,
+   "end": 32.017,
+   "words": [
+    {
+     "w": "I",
+     "start": 25.46,
+     "end": 25.522
+    },
+    {
+     "w": "ran",
+     "start": 25.603,
+     "end": 25.772
+    },
+    {
+     "w": "toward",
+     "start": 25.826,
+     "end": 26.103
+    },
+    {
+     "w": "it.",
+     "start": 26.148,
+     "end": 26.219
+    },
+    {
+     "w": "The",
+     "start": 26.452,
+     "end": 26.549
+    },
+    {
+     "w": "corn",
+     "start": 26.594,
+     "end": 26.791
+    },
+    {
+     "w": "slammed",
+     "start": 26.845,
+     "end": 27.192
+    },
+    {
+     "w": "shut",
+     "start": 27.228,
+     "end": 27.398
+    },
+    {
+     "w": "in",
+     "start": 27.452,
+     "end": 27.523
+    },
+    {
+     "w": "front",
+     "start": 27.577,
+     "end": 27.728
+    },
+    {
+     "w": "of",
+     "start": 27.755,
+     "end": 27.791
+    },
+    {
+     "w": "me.",
+     "start": 27.835,
+     "end": 27.996
+    },
+    {
+     "w": "Again.",
+     "start": 28.095,
+     "end": 28.47
+    },
+    {
+     "w": "And",
+     "start": 28.631,
+     "end": 28.773
+    },
+    {
+     "w": "again.",
+     "start": 28.818,
+     "end": 29.175
+    },
+    {
+     "w": "But",
+     "start": 29.56,
+     "end": 29.676
+    },
+    {
+     "w": "when",
+     "start": 29.703,
+     "end": 29.802
+    },
+    {
+     "w": "I",
+     "start": 29.837,
+     "end": 29.855
+    },
+    {
+     "w": "turned",
+     "start": 29.908,
+     "end": 30.123
+    },
+    {
+     "w": "away…",
+     "start": 30.149,
+     "end": 30.498
+    },
+    {
+     "w": "a",
+     "start": 30.882,
+     "end": 30.927
+    },
+    {
+     "w": "path",
+     "start": 31.007,
+     "end": 31.365
+    },
+    {
+     "w": "opened.",
+     "start": 31.489,
+     "end": 31.909
+    }
+   ]
+  },
+  {
+   "at": 32.517,
+   "who": "narrator",
+   "text": "The maze was keeping me from him. So I crawled under the stalks.",
+   "raw": "audio/voice/maze/l08_92b78c6e96.mp3",
+   "clip": "midnight-sea/build/maze/voice/l08_92b78c6e96_r1.3_p0.5.wav",
+   "start": 32.517,
+   "end": 35.832,
+   "words": [
+    {
+     "w": "The",
+     "start": 32.517,
+     "end": 32.633
+    },
+    {
+     "w": "maze",
+     "start": 32.678,
+     "end": 33.079
+    },
+    {
+     "w": "was",
+     "start": 33.124,
+     "end": 33.24
+    },
+    {
+     "w": "keeping",
+     "start": 33.294,
+     "end": 33.553
+    },
+    {
+     "w": "me",
+     "start": 33.598,
+     "end": 33.669
+    },
+    {
+     "w": "from",
+     "start": 33.705,
+     "end": 33.856
+    },
+    {
+     "w": "him.",
+     "start": 33.91,
+     "end": 34.062
+    },
+    {
+     "w": "So",
+     "start": 34.447,
+     "end": 34.545
+    },
+    {
+     "w": "I",
+     "start": 34.608,
+     "end": 34.626
+    },
+    {
+     "w": "crawled",
+     "start": 34.706,
+     "end": 35.019
+    },
+    {
+     "w": "under",
+     "start": 35.055,
+     "end": 35.179
+    },
+    {
+     "w": "the",
+     "start": 35.215,
+     "end": 35.269
+    },
+    {
+     "w": "stalks.",
+     "start": 35.314,
+     "end": 35.725
+    }
+   ]
+  },
+  {
+   "at": 36.332,
+   "who": "narrator",
+   "text": "\"Nara… over here.\" In the middle of the maze stood the old scarecrow. Juno's voice was coming out of it.",
+   "raw": "audio/voice/maze/l09_8e4184ee5f.mp3",
+   "clip": "midnight-sea/build/maze/voice/l09_8e4184ee5f_r1.3_p0.5.wav",
+   "start": 36.332,
+   "end": 41.813,
+   "words": [
+    {
+     "w": "\"Nara…",
+     "start": 36.363,
+     "end": 36.631
+    },
+    {
+     "w": "over",
+     "start": 37.016,
+     "end": 37.186
+    },
+    {
+     "w": "here.\"",
+     "start": 37.23,
+     "end": 37.489
+    },
+    {
+     "w": "In",
+     "start": 37.874,
+     "end": 37.972
+    },
+    {
+     "w": "the",
+     "start": 38.008,
+     "end": 38.061
+    },
+    {
+     "w": "middle",
+     "start": 38.088,
+     "end": 38.267
+    },
+    {
+     "w": "of",
+     "start": 38.294,
+     "end": 38.338
+    },
+    {
+     "w": "the",
+     "start": 38.374,
+     "end": 38.427
+    },
+    {
+     "w": "maze",
+     "start": 38.481,
+     "end": 38.847
+    },
+    {
+     "w": "stood",
+     "start": 38.91,
+     "end": 39.151
+    },
+    {
+     "w": "the",
+     "start": 39.178,
+     "end": 39.249
+    },
+    {
+     "w": "old",
+     "start": 39.303,
+     "end": 39.49
+    },
+    {
+     "w": "scarecrow.",
+     "start": 39.535,
+     "end": 40.026
+    },
+    {
+     "w": "Juno's",
+     "start": 40.41,
+     "end": 40.705
+    },
+    {
+     "w": "voice",
+     "start": 40.732,
+     "end": 40.928
+    },
+    {
+     "w": "was",
+     "start": 40.955,
+     "end": 41.044
+    },
+    {
+     "w": "coming",
+     "start": 41.098,
+     "end": 41.294
+    },
+    {
+     "w": "out",
+     "start": 41.348,
+     "end": 41.464
+    },
+    {
+     "w": "of",
+     "start": 41.491,
+     "end": 41.544
+    },
+    {
+     "w": "it.",
+     "start": 41.589,
+     "end": 41.705
+    }
+   ]
+  },
+  {
+   "at": 42.313,
+   "who": "narrator",
+   "text": "Then, far behind me, from the road: \"VALE! Where are you?\"",
+   "raw": "audio/voice/maze/l10_06ee64fe94.mp3",
+   "clip": "midnight-sea/build/maze/voice/l10_06ee64fe94_r1.3_p0.5.wav",
+   "start": 42.313,
+   "end": 44.984,
+   "words": [
+    {
+     "w": "Then,",
+     "start": 42.313,
+     "end": 42.536
+    },
+    {
+     "w": "far",
+     "start": 42.59,
+     "end": 42.733
+    },
+    {
+     "w": "behind",
+     "start": 42.786,
+     "end": 43.036
+    },
+    {
+     "w": "me,",
+     "start": 43.081,
+     "end": 43.171
+    },
+    {
+     "w": "from",
+     "start": 43.206,
+     "end": 43.34
+    },
+    {
+     "w": "the",
+     "start": 43.367,
+     "end": 43.421
+    },
+    {
+     "w": "road:",
+     "start": 43.465,
+     "end": 43.706
+    },
+    {
+     "w": "\"VALE!",
+     "start": 43.929,
+     "end": 44.233
+    },
+    {
+     "w": "Where",
+     "start": 44.403,
+     "end": 44.572
+    },
+    {
+     "w": "are",
+     "start": 44.608,
+     "end": 44.725
+    },
+    {
+     "w": "you?\"",
+     "start": 44.76,
+     "end": 44.876
+    }
+   ]
+  },
+  {
+   "at": 45.584,
+   "who": "narrator",
+   "text": "Juno never calls me Nara.",
+   "raw": "audio/voice/maze/l11_b9b4301581.mp3",
+   "clip": "midnight-sea/build/maze/voice/l11_b9b4301581_r1.3_p0.5.wav",
+   "start": 45.584,
+   "end": 46.719,
+   "words": [
+    {
+     "w": "Juno",
+     "start": 45.584,
+     "end": 45.799
+    },
+    {
+     "w": "never",
+     "start": 45.843,
+     "end": 45.968
+    },
+    {
+     "w": "calls",
+     "start": 46.004,
+     "end": 46.191
+    },
+    {
+     "w": "me",
+     "start": 46.227,
+     "end": 46.289
+    },
+    {
+     "w": "Nara.",
+     "start": 46.343,
+     "end": 46.611
+    }
+   ]
+  },
+  {
+   "at": 47.219,
+   "who": "narrator",
+   "text": "The scarecrow's head turned. Its arms came off the pole.",
+   "raw": "audio/voice/maze/l12_432b6a138c.mp3",
+   "clip": "midnight-sea/build/maze/voice/l12_432b6a138c_r1.3_p0.5.wav",
+   "start": 47.219,
+   "end": 50.301,
+   "words": [
+    {
+     "w": "The",
+     "start": 47.219,
+     "end": 47.335
+    },
+    {
+     "w": "scarecrow's",
+     "start": 47.371,
+     "end": 47.853
+    },
+    {
+     "w": "head",
+     "start": 47.907,
+     "end": 48.13
+    },
+    {
+     "w": "turned.",
+     "start": 48.174,
+     "end": 48.577
+    },
+    {
+     "w": "Its",
+     "start": 48.961,
+     "end": 49.104
+    },
+    {
+     "w": "arms",
+     "start": 49.139,
+     "end": 49.362
+    },
+    {
+     "w": "came",
+     "start": 49.407,
+     "end": 49.577
+    },
+    {
+     "w": "off",
+     "start": 49.604,
+     "end": 49.728
+    },
+    {
+     "w": "the",
+     "start": 49.764,
+     "end": 49.818
+    },
+    {
+     "w": "pole.",
+     "start": 49.854,
+     "end": 50.193
+    }
+   ]
+  },
+  {
+   "at": 50.801,
+   "who": "narrator",
+   "text": "Then the corn grabbed me. It dragged me back through wall after wall… and dropped me at Juno's feet.",
+   "raw": "audio/voice/maze/l13_39d229e351.mp3",
+   "clip": "midnight-sea/build/maze/voice/l13_39d229e351_r1.3_p0.5.wav",
+   "start": 50.801,
+   "end": 55.686,
+   "words": [
+    {
+     "w": "Then",
+     "start": 50.801,
+     "end": 50.953
+    },
+    {
+     "w": "the",
+     "start": 50.989,
+     "end": 51.042
+    },
+    {
+     "w": "corn",
+     "start": 51.096,
+     "end": 51.426
+    },
+    {
+     "w": "grabbed",
+     "start": 51.479,
+     "end": 51.774
+    },
+    {
+     "w": "me.",
+     "start": 51.801,
+     "end": 51.962
+    },
+    {
+     "w": "It",
+     "start": 52.283,
+     "end": 52.391
+    },
+    {
+     "w": "dragged",
+     "start": 52.417,
+     "end": 52.676
+    },
+    {
+     "w": "me",
+     "start": 52.703,
+     "end": 52.775
+    },
+    {
+     "w": "back",
+     "start": 52.828,
+     "end": 52.98
+    },
+    {
+     "w": "through",
+     "start": 53.016,
+     "end": 53.194
+    },
+    {
+     "w": "wall",
+     "start": 53.239,
+     "end": 53.463
+    },
+    {
+     "w": "after",
+     "start": 53.516,
+     "end": 53.703
+    },
+    {
+     "w": "wall…",
+     "start": 53.757,
+     "end": 54.034
+    },
+    {
+     "w": "and",
+     "start": 54.383,
+     "end": 54.507
+    },
+    {
+     "w": "dropped",
+     "start": 54.561,
+     "end": 54.811
+    },
+    {
+     "w": "me",
+     "start": 54.829,
+     "end": 54.9
+    },
+    {
+     "w": "at",
+     "start": 54.945,
+     "end": 54.989
+    },
+    {
+     "w": "Juno's",
+     "start": 55.026,
+     "end": 55.311
+    },
+    {
+     "w": "feet.",
+     "start": 55.338,
+     "end": 55.579
+    }
+   ]
+  },
+  {
+   "at": 56.386,
+   "who": "narrator",
+   "text": "The maze was never hungry. It's a fence. And now I know what it's keeping in.",
+   "raw": "audio/voice/maze/l14_e260e16d4d.mp3",
+   "clip": "midnight-sea/build/maze/voice/l14_e260e16d4d_r1.3_p0.5.wav",
+   "start": 56.386,
+   "end": 60.423,
+   "words": [
+    {
+     "w": "The",
+     "start": 56.386,
+     "end": 56.502
+    },
+    {
+     "w": "maze",
+     "start": 56.556,
+     "end": 56.851
+    },
+    {
+     "w": "was",
+     "start": 56.886,
+     "end": 56.975
+    },
+    {
+     "w": "never",
+     "start": 57.02,
+     "end": 57.199
+    },
+    {
+     "w": "hungry.",
+     "start": 57.244,
+     "end": 57.574
+    },
+    {
+     "w": "It's",
+     "start": 57.895,
+     "end": 58.074
+    },
+    {
+     "w": "a",
+     "start": 58.11,
+     "end": 58.137
+    },
+    {
+     "w": "fence.",
+     "start": 58.199,
+     "end": 58.592
+    },
+    {
+     "w": "And",
+     "start": 58.86,
+     "end": 58.985
+    },
+    {
+     "w": "now",
+     "start": 59.03,
+     "end": 59.154
+    },
+    {
+     "w": "I",
+     "start": 59.235,
+     "end": 59.28
+    },
+    {
+     "w": "know",
+     "start": 59.387,
+     "end": 59.53
+    },
+    {
+     "w": "what",
+     "start": 59.574,
+     "end": 59.681
+    },
+    {
+     "w": "it's",
+     "start": 59.708,
+     "end": 59.798
+    },
+    {
+     "w": "keeping",
+     "start": 59.833,
+     "end": 60.074
+    },
+    {
+     "w": "in.",
+     "start": 60.128,
+     "end": 60.315
+    }
+   ]
+  }
+ ]
+}

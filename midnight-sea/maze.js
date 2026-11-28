@@ -90,6 +90,21 @@
     }
     const stalk = stalkGeometry();
     const cornM = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.88, side: THREE.DoubleSide });
+    // a slow, smooth wind sway: the tops move most, neighbours move together (phase from each stalk's position)
+    const wind = { value: 0 };
+    cornM.onBeforeCompile = (sh) => {
+      sh.uniforms.uWind = wind;
+      sh.vertexShader = 'uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+        #ifdef USE_INSTANCING
+          vec2 ip = vec2(instanceMatrix[3][0], instanceMatrix[3][2]);
+        #else
+          vec2 ip = vec2(0.0);
+        #endif
+        float hk = clamp(transformed.y / ${CORN_H.toFixed(2)}, 0.0, 1.2); hk *= hk;
+        float gust = 0.6 + 0.4 * sin(uWind * 0.35 + ip.x * 0.05);
+        transformed.x += sin(uWind * 1.1 + ip.x * 0.32 + ip.y * 0.21) * 0.085 * hk * gust;
+        transformed.z += cos(uWind * 0.9 + ip.x * 0.23 - ip.y * 0.29) * 0.06 * hk * gust;`);
+    };
     const corn = new THREE.InstancedMesh(stalk, cornM, spotsList.length);
     const cols = ['#c9ae6b', '#b69c5e', '#a8a05e', '#d4bd82', '#9a9156', '#bfa86a'].map((c) => new THREE.Color(c));
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sv = new THREE.Vector3(), pv = new THREE.Vector3();
@@ -202,7 +217,7 @@
           list.forEach(([d, off], n) => {
             const end = d < len / 2 ? 0 : len, kk = RT.clamp(k, 0, 1.2), dd = end + (d - end) * Math.min(kk, 1);
             GB.x[n] = x0 + ux * dd - uz * off; GB.z[n] = z0 + uz * dd + ux * off;
-            const lean = (1 - Math.min(kk, 1)) * 0.55 * (d < len / 2 ? -1 : 1) + (kk > 1 ? (kk - 1) * Math.sin(n * 1.7) : 0) + shiver * Math.sin(t * 31 + n * 2.3) * 0.08;
+            const lean = (1 - Math.min(kk, 1)) * 0.55 * (d < len / 2 ? -1 : 1) + (kk > 1 ? (kk - 1) * Math.sin(n * 1.7) * 0.5 : 0) + shiver * Math.sin(t * 6 + d * 1.8) * 0.06;
             setStalk(gm, n, uz * lean, -ux * lean, 1, GB);
           });
           gm.instanceMatrix.needsUpdate = true; return gate;
@@ -220,7 +235,7 @@
           for (const k of GRID[gx + ',' + gz] || []) {
             const dx = B.x[k] - D.x, dz = B.z[k] - D.z, dist = Math.hypot(dx, dz); if (dist > R0) continue;
             const f = 1 - dist / R0, a = (D.a ?? 1) * f;
-            if (D.mode === 'shiver') { const w = Math.sin((D.t || 0) * 26 + k * 1.3) * 0.09 * a; setStalk(corn, k, w, w * 0.7); }
+            if (D.mode === 'shiver') { const ph = (D.t || 0) * 6.5 - dist * 2.2; const w = Math.sin(ph) * 0.11 * a; setStalk(corn, k, w * (dz / (dist || 1)), -w * (dx / (dist || 1))); }
             else { const nx = dx / (dist || 1), nz = dz / (dist || 1), ang = a * 1.15; setStalk(corn, k, nz * ang, -nx * ang); }
             touched.push(k);
           }
@@ -267,7 +282,7 @@
     };
     return {
       group: G, corn, floor, pole, sign, spots, cell, route, open, walls: { Hw, Vw }, ground: () => 0, gates, disturb, grow, footprints, X, Z,
-      update(t) { for (const sp of mists) { const u = sp.userData; sp.position.set(((u.x + t * u.v + 30) % 60) - 30, u.y, u.z); } },
+      update(t) { wind.value = t; for (const sp of mists) { const u = sp.userData; sp.position.set(((u.x + t * u.v + 30) % 60) - 30, u.y, u.z); } },
     };
   }
 

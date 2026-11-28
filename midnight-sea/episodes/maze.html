@@ -147,6 +147,8 @@ time    sound                     volume  options
   const DROP = [-0.35, 21.4], JUNO_ROAD = [-0.4, 24.05];      // she lands on her back, feet toward the maze, head at his feet
   const HANG = 4.35 - 2.72;                       // scarecrow's feet when hung on the crossbar
 
+  // the drag: her path from the clearing to the road (also opens the entrance wall as she reaches it)
+  function dragAt(t) { const k = clamp((t - T.drag) / (T.drop - T.drag), 0, 1), d = Math.pow(k, 1.5); return { x: lerp(NC[0], DROP[0], d), z: lerp(NC[1], DROP[1], d) }; }
   // ---------- story times ----------
   const T = {
     entClose: W(4, 'behind') + 0.2, aClose: W(6, 'slammed') - 0.05, bClose: W(6, 'again') - 0.05, bSnap: W(6, 'again', 1) - 0.05, outOpen: W(6, 'a') - 0.05,
@@ -164,49 +166,49 @@ time    sound                     volume  options
     { t0: W(1, 'and') - 0.12, sc: 5, pos: [[-2.55, 1.75, 18.7], [-2.95, 1.78, 18.05]], look: [[-3.2, 1.75, 17.3]], fov: [42, 40], focusDist: 1.2 },
     { t0: W(1, 'and', 1) - 0.12, sc: 6, shoe: true, pos: [[-1.7, 0.55, 15.55], [-1.2, 0.55, 15.55]], look: [[7, 0.6, 15.35]], fov: [46, 44], focusDist: 3.1 },
     // 7–8. "the maze is alive" (leaves curl), "it moves" (a wall slides shut, from above)
-    { t0: S(2) - 0.2, sc: 7, shiver: [-4.6, 13.6, 3.0], pos: [[-3.2, 0.9, 16.4], [-3.4, 0.95, 16.0]], look: [[-5.6, 3.4, 13.6]], fov: [50, 48], focusDist: 3.4 },
+    { t0: S(2) - 0.2, sc: 7, pos: [[-7.5, 5.0, 13.0], [-4.5, 5.6, 10.0]], look: [[1, 1.2, 2], [2.5, 1.2, 0]], fov: [50, 48], focusDist: 9, fx: { aperture: 0.2 } },
     { t0: W(2, 'that') - 0.12, sc: 8, demo: true, pos: [[3.4, 10.5, -4.0]], look: [[3.4, 0, -5.2]], up: true, fov: [46, 44], focusDist: 10 },
     // 9–12. Juno and Nara at the entrance; "Vale"; he walks in backwards on a dare; she waits
     { t0: S(3) - 0.2, sc: 9, cast: 'pair', pos: [[-1.9, 1.75, 25.2], [-1.9, 1.75, 24.7]], look: [[-1.9, 1.55, 18.8]], fov: [46, 44], focusDist: 6.1 },
-    { t0: W(3, 'has') - 0.1, sc: 10, cast: 'pair', junoTalk: true, pos: () => head(juno, -0.15).add(fwd(juno, 1.75)).add(V3(-0.25, 0, 0)), look: () => head(juno, -0.12), fov: [34, 32], focusOn: () => head(juno) },
+    { t0: W(3, 'has') - 0.1, sc: 10, cast: 'pair', junoTalk: true, pos: [[2.6, 2.6, 23.8], [2.4, 2.55, 23.5]], look: [[-1.9, 1.5, 18.7]], fov: [44, 42], focusOn: () => head(juno) },
     { t0: W(3, 'today') - 0.12, sc: 11, cast: 'dare', pos: [[-2.55, 2.35, 22.2], [-2.45, 2.3, 21.7]], look: [[-1.45, 1.6, 17.0]], fov: [50, 48], focusOn: () => head(juno) },
-    { t0: W(3, 'he', 1) - 0.1, sc: 12, cast: 'wait', pos: (lt, p) => head(nara, -0.12).add(fwd(nara, lerp(1.45, 1.2, p))).add(V3(0.15, 0, 0)), look: () => head(nara, -0.14), fov: [36, 34], focusOn: () => head(nara) },
+    { t0: W(3, 'he', 1) - 0.1, sc: 12, cast: 'wait', pos: [[2.6, 7.6, 25.2], [2.3, 7.2, 24.6]], look: [[-2.4, 0.9, 17.6]], fov: [46, 44], focusDist: 10, fx: { aperture: 0.2 } },
     // 13–15. she goes in; the corn closes behind her; the way out is gone
-    { t0: S(4) - 0.2, sc: 13, cast: 'goIn', pos: () => nara.position.clone().add(V3(0.65, 1.95, 3.3)), look: () => nara.position.clone().add(V3(0, 1.3, -3)), fov: [48, 46], focusOn: () => head(nara) },
-    { t0: W(4, 'behind') - 0.1, sc: 14, cast: 'inside', pos: [[0.15, 2.0, 14.3]], look: [[-1.95, 1.35, 17.1]], fov: [50, 48], focusOn: () => head(nara) },
-    { t0: W(4, 'the', 1) - 0.1, sc: 15, cast: 'facesWall', pos: [[-1.45, 1.95, 16.6], [-1.48, 1.95, 16.5]], look: () => head(nara, -0.1), fov: [38, 36], focusOn: () => head(nara) },
+    { t0: S(4) - 0.2, sc: 13, cast: 'goIn', pos: () => nara.position.clone().add(V3(0.9, 2.9, 4.8)), look: () => nara.position.clone().add(V3(0, 1.0, -3.5)), fov: [48, 46], focusOn: () => head(nara) },
+    { t0: W(4, 'behind') - 0.1, sc: 14, cast: 'inside', pos: [[-0.2, 6.2, 12.6]], look: [[-1.8, 0.9, 16.8]], fov: [50, 48], focusDist: 6 },
+    { t0: W(4, 'the', 1) - 0.1, sc: 15, cast: 'facesWall', pos: [[-0.4, 7.0, 12.2], [-0.5, 7.3, 12.0]], look: [[-1.7, 0.6, 16.0]], fov: [46, 46], focusDist: 7.5, fx: { aperture: 0.3 } },
     // 16–17. "Nara!" from the fog: her head snaps toward the open corridor; down the corridor, only mist
-    { t0: S(5) - 0.2, sc: 16, cast: 'hears', pos: [[0.55, 1.95, 15.75]], look: () => head(nara, -0.1), fov: [36, 36], focusOn: () => head(nara) },
+    { t0: S(5) - 0.2, sc: 16, cast: 'hears', pos: [[1.9, 2.05, 15.6]], look: () => head(nara, -0.45), fov: [46, 46], focusOn: () => head(nara) },
     { t0: W(5, 'juno') - 0.1, sc: 17, pos: [[-1.2, 1.95, 15.4], [-0.6, 1.95, 15.38]], look: [[12, 1.7, 15.3]], fov: [46, 44], focusDist: 9 },
     // 18–23. she runs toward it; the corn slams shut ahead; again (north gap); and again (in her face); she turns away; a way out opens
-    { t0: S(6) - 0.15, sc: 18, cast: 'run', pos: () => nara.position.clone().add(V3(2.9, 1.25, 0.25)), look: () => nara.position.clone().add(V3(0, 1.2, 0)), fov: [48, 48], focusOn: () => head(nara), fx: { motion: 0.5 } },
+    { t0: S(6) - 0.15, sc: 18, cast: 'run', pos: () => nara.position.clone().add(V3(-3.0, 5.6, 0.8)), look: () => nara.position.clone().add(V3(2.2, 0.3, -0.2)), fov: [52, 52], focusOn: () => head(nara), fx: { motion: 0.4 } },
     { t0: W(6, 'the') - 0.1, sc: 19, cast: 'run', pos: () => V3(Math.min(nara.position.x - 4.2, RUN_END - 4.2), 2.3, 16.5), look: () => V3(6.8, 1.4, 15.0), fov: [50, 48], focusDist: 4.6, fx: { motion: 0.4 } },
     { t0: W(6, 'again') - 0.06, sc: 20, cast: 'toB', pos: [[1.3, 2.6, 16.4]], look: [[5.3, 1.5, 13.8]], fov: [46, 46], focusDist: 4.7 },
-    { t0: W(6, 'and') - 0.06, sc: 21, cast: 'atB', pos: [[6.25, 3.05, 16.35]], look: [[5.1, 1.75, 13.6]], fov: [44, 44], focusDist: 3.0, punch: W(6, 'again', 1) },
-    { t0: W(6, 'but') - 0.12, sc: 22, cast: 'away', pos: [[3.55, 1.85, 16.45]], look: () => head(nara, -0.3), fov: [44, 42], focusOn: () => head(nara) },
+    { t0: W(6, 'and') - 0.06, sc: 21, cast: 'atB', pos: [[2.6, 6.2, 17.4]], look: [[5.4, 0.9, 14.0]], fov: [48, 48], focusDist: 7, punch: W(6, 'again', 1) },
+    { t0: W(6, 'but') - 0.12, sc: 22, cast: 'away', pos: [[2.4, 2.0, 16.3]], look: () => head(nara, -0.4), fov: [48, 46], focusOn: () => head(nara) },
     { t0: W(6, 'a') - 0.12, sc: 23, cast: 'away', pos: [[3.75, 2.05, 15.0], [3.85, 2.0, 15.15]], look: [[5.4, 1.1, 17.2]], fov: [50, 48], focusDist: 2.6 },
     // 24–25. "the maze was keeping me from him": she glares at the wall; crawls under it
-    { t0: S(7) - 0.2, sc: 24, cast: 'glare', pos: [[2.45, 1.65, 14.75]], look: [[5.25, 1.55, 14.45]], fov: [46, 44], focusOn: () => head(nara) },
+    { t0: S(7) - 0.2, sc: 24, cast: 'glare', pos: [[4.4, 2.6, 16.5], [3.2, 9.6, 20.2]], look: [[5.2, 1.0, 14.4], [4.2, 0, 9.0]], fov: [50, 52], focusDist: 8, fx: { aperture: 0.2 } },
     { t0: W(7, 'so') - 0.12, sc: 25, cast: 'crawlB', pos: [[3.75, 0.5, 15.3]], look: () => nara.position.clone().add(V3(0, 0.3, -1.4)), fov: [46, 46], focusOn: () => nara.position.clone().add(V3(0, 0.4, 0)) },
     // 26–28. into the clearing; the old scarecrow; Juno's voice is coming out of it
-    { t0: S(8) - 0.2, sc: 26, cast: 'crawlIn', crow: 'hang', pos: [[-0.45, 0.5, 0.9], [-0.5, 0.5, 1.05]], look: [[-1.2, 0.4, 3.0]], fov: [50, 48], focusOn: () => head(nara) },
+    { t0: S(8) - 0.2, sc: 26, cast: 'crawlIn', crow: 'hang', pos: [[-0.2, 0.75, 0.2], [-0.25, 0.75, 0.35]], look: [[-1.2, 0.45, 3.0]], fov: [50, 48], focusOn: () => head(nara) },
     { t0: W(8, 'in') - 0.12, sc: 27, cast: 'clearing', crow: 'hang', pos: [[-2.65, 0.55, 2.45], [-2.45, 0.65, 2.25]], look: [[0, 4.2, 0.2]], fov: [54, 52], focusDist: 4.4 },
-    { t0: W(8, 'juno') - 0.12, sc: 28, cast: 'clearing', crow: 'hang', crowTalk: true, pos: () => head(crow, -0.1).add(V3(-0.35, -0.25, 1.55)), look: () => head(crow, -0.12), fov: [34, 32], focusOn: () => head(crow) },
+    { t0: W(8, 'juno') - 0.12, sc: 28, cast: 'clearing', crow: 'hang', crowTalk: true, pos: () => head(crow, -0.6).add(V3(-0.8, -0.5, 2.9)), look: () => head(crow, -0.7), fov: [40, 38], focusOn: () => head(crow) },
     // 29–31. far behind her, from the road: "VALE!" (the real Juno); she realises
-    { t0: S(9) - 0.15, sc: 29, cast: 'whip', crow: 'hang', pos: [[-0.75, 2.05, 2.95]], look: () => head(nara, -0.1), fov: [38, 38], focusOn: () => head(nara), fx: { motion: 0.6 } },
-    { t0: W(9, 'from') - 0.1, sc: 30, cast: 'road', pos: [[1.55, 1.7, 19.9], [1.4, 1.7, 20.3]], look: () => head(juno, -0.25), fov: [42, 40], focusOn: () => head(juno) },
-    { t0: S(10) - 0.2, sc: 31, cast: 'realise', crow: 'hang', pos: (lt, p) => head(nara, -0.08).add(V3(0.1, 0, lerp(1.35, 1.15, p))), look: () => head(nara, -0.08), fov: [34, 32], focusOn: () => head(nara) },
+    { t0: S(9) - 0.15, sc: 29, cast: 'whip', crow: 'hang', pos: [[-0.6, 2.0, 3.0]], look: () => head(nara, -0.4), fov: [48, 48], focusOn: () => head(nara), fx: { motion: 0.4 } },
+    { t0: W(9, 'from') - 0.1, sc: 30, cast: 'road', pos: [[2.9, 2.3, 19.0], [2.7, 2.3, 19.4]], look: () => head(juno, -0.6), fov: [46, 44], focusOn: () => head(juno) },
+    { t0: S(10) - 0.2, sc: 31, cast: 'realise', crow: 'hang', pos: [[-2.75, 1.3, 2.7], [-2.65, 1.32, 2.55]], look: [[-0.2, 3.5, 0.3]], fov: [58, 56], focusOn: () => head(nara) },
     // 32–33. its head turns to her; its arms come off the pole
-    { t0: S(11) - 0.2, sc: 32, cast: 'clearing', crow: 'wake', pos: () => head(crow, -0.2).add(V3(-0.6, -0.35, 1.6)), look: () => head(crow, -0.15), fov: [36, 34], focusOn: () => head(crow) },
+    { t0: S(11) - 0.2, sc: 32, cast: 'clearing', crow: 'wake', pos: () => head(crow, -0.5).add(V3(-0.9, -0.6, 3.0)), look: () => head(crow, -0.6), fov: [40, 38], focusOn: () => head(crow) },
     { t0: W(11, 'its') - 0.12, sc: 33, cast: 'clearing', crow: 'down', pos: [[1.95, 0.5, 2.75]], look: [[0, 2.6, 0.3]], fov: [56, 56], focusDist: 4.4, shakeAt: W(11, 'pole') },
     // 34–36. the corn grabs her; drags her back through wall after wall; drops her at Juno's feet
-    { t0: S(12) - 0.2, sc: 34, cast: 'grab', crow: 'stand', pos: [[-3.0, 1.9, -0.65]], look: () => nara.position.clone().add(V3(0, 1.1, 0.5)), fov: [46, 46], focusOn: () => head(nara), shake: 0.012 },
-    { t0: W(12, 'it') - 0.1, sc: 35, cast: 'drag', crow: 'reach', pos: () => nara.position.clone().add(V3(0.95, 1.85, 2.9)), look: () => nara.position.clone().add(V3(0, 1.0, -1.5)), fov: [54, 54], focusOn: () => head(nara), fx: { motion: 0.9 } },
+    { t0: S(12) - 0.2, sc: 34, cast: 'grab', crow: 'stand', pos: [[-3.15, 2.5, -1.3]], look: () => nara.position.clone().add(V3(0, 1.0, 0.6)), fov: [48, 48], focusOn: () => head(nara) },
+    { t0: W(12, 'it') - 0.1, sc: 35, cast: 'drag', crow: 'reach', pos: () => nara.position.clone().add(V3(2.2, 8.5, 4.0)), look: () => nara.position.clone().add(V3(0, 0, -0.8)), fov: [52, 52], focusOn: () => head(nara), fx: { motion: 0.5 } },
     { t0: W(12, 'and') - 0.1, sc: 36, cast: 'drop', pos: [[2.3, 1.05, 22.7], [2.15, 1.05, 22.8]], look: [[-0.4, 0.95, 23.4]], fov: [52, 50], focusDist: 2.8 },
     // 37–39. they look back as the edge of the maze knits shut; the maze from above: a fence; what it keeps in
     { t0: S(13) - 0.25, sc: 37, cast: 'lookBack', pos: [[0.15, 2.25, 27.2], [0.1, 2.25, 26.8]], look: [[-1.3, 1.6, 17]], fov: [46, 44], focusDist: 4.5 },
     { t0: W(13, "it's") - 0.12, sc: 38, aerial: true, pos: [[0, 12, 27], [0, 36, 44]], look: [[0, 0, 2], [0, 0, 0]], fov: [50, 52], crow: 'stand' },
-    { t0: W(13, 'and') - 0.12, sc: 39, crow: 'grin', pos: [[2.2, 4.4, 8.6], [0.55, 2.85, 3.3]], look: [[0, 3.6, 0.3], [0, 3.35, 0.45]], fov: [44, 38], focusOn: () => head(crow) },
+    { t0: W(13, 'and') - 0.12, sc: 39, crow: 'grin', pos: [[2.4, 4.6, 9.0], [0.9, 3.3, 4.9]], look: [[0, 3.6, 0.3], [0, 3.2, 0.45]], fov: [44, 40], focusOn: () => head(crow) },
   ]);
   for (const s of shots.shots) s.t1 = shots.shots[s.i + 1] ? shots.shots[s.i + 1].t0 : DURATION;
   const shotOf = (sc) => shots.shots.find((x) => x.sc === sc);
@@ -219,10 +221,13 @@ time    sound                     volume  options
     if (s.aerial) { scene.fog.near = 18; scene.fog.far = 150; }
     maze.update(t);
     // the moving walls
-    G.ENT.set(t < T.entClose ? 0 : t < T.drag + 1.1 ? easeOut(clamp((t - T.entClose) / 0.7, 0, 1)) * (1 + 0.12 * Math.exp(-(t - T.entClose - 0.7) * 6) * (t > T.entClose + 0.7 ? 1 : 0)) : t < T.entShut ? 0.25 : easeOut(clamp((t - T.entShut) / 0.8, 0, 1)) * 0.75 + 0.25, s.sc === 14 ? 1 : 0, t);
-    G.A.set(t < T.aClose ? 0 : easeOut(clamp((t - T.aClose) / 0.32, 0, 1)) + 0.15 * Math.exp(-(t - T.aClose - 0.32) * 7) * (t > T.aClose + 0.32 ? 1 : 0), 0, t);
-    G.B.set(t < T.bClose ? 0 : easeOut(clamp((t - T.bClose) / 0.25, 0, 1)) + (t > T.bSnap ? 0.2 * Math.exp(-(t - T.bSnap) * 5) : 0), s.sc === 25 ? 1.2 : s.sc === 24 ? 0.3 : 0, t);
-    G.OUT.set(t < T.outOpen ? 1 : 1 - ease(clamp((t - T.outOpen) / 1.2, 0, 1)), 0, t);
+    const smooth = (a, b) => RT.smooth(a, a + b, t);                                                             // smoothstep from a over b seconds
+    const settle = (a, b) => (t > a + b ? 0.05 * Math.sin(Math.min(1, (t - a - b) / 0.6) * Math.PI) : 0);     // a soft settle after closing
+    const entOpen = t > T.drag ? RT.clamp((dragAt(t).z - 13.2) / 3.2, 0, 1) : 0;                             // parts as she's dragged through it
+    G.ENT.set(t < T.entClose ? 0 : t < T.drag ? smooth(T.entClose, 0.9) + settle(T.entClose, 0.9) : t < T.entShut ? 1 - 0.85 * ease(Math.min(1, entOpen * 1.6)) : 0.15 + 0.85 * smooth(T.entShut, 1.1) + settle(T.entShut, 1.1), s.sc === 25 ? 1 : 0, t);
+    G.A.set(t < T.aClose ? 0 : smooth(T.aClose, 0.6) + settle(T.aClose, 0.6), 0, t);
+    G.B.set(t < T.bClose ? 0 : smooth(T.bClose, 0.5) + settle(T.bClose, 0.5) + (t > T.bSnap ? 0.07 * Math.sin(Math.min(1, (t - T.bSnap) / 0.7) * Math.PI) : 0), s.sc === 25 ? 1 : 0, t);
+    G.OUT.set(t < T.outOpen ? 1 : 1 - smooth(T.outOpen, 1.4), 0, t);
     G.DEMO.set(s.sc === 8 ? ease(clamp((lt - 0.15) / 0.8, 0, 1)) : 0, 0, t);
     maze.grow(s.grow ? clamp(lt / 1.6, 0.02, 1) : 1);
     prints.visible = !!s.prints; prints.show(s.prints ? Math.floor(clamp(lt / 1.15, 0, 1) * printsPts.length) : 0);
@@ -267,8 +272,7 @@ time    sound                     volume  options
     // the drag: yanked backwards (south) through the walls, off her feet; tendrils behind her
     let dragP = null;
     if (C === 'drag') {
-      const k = clamp((t - T.drag) / (T.drop - T.drag), 0, 1), d = Math.pow(k, 1.5);
-      const x = lerp(NC[0], DROP[0], d), z = lerp(NC[1], DROP[1], d);
+      const { x, z } = dragAt(t);
       put(nara, x, z, Math.PI, 0); A.apply(nara, { fallX: 0.45, lift: 0.9 + Math.sin(t * 17) * 0.06, aLf: 1.7, aRf: 1.4, aLo: 0.2, aRo: 0.3, lLf: 0.7, lRf: 0.45, hx: -0.15 });
       nara.rig.setFace('squeeze'); nara.rig.setMouth(true); dragP = V3(x, 0, z);
     }
@@ -315,7 +319,8 @@ time    sound                     volume  options
     const dist = [];
     if (s.shiver) dist.push({ x: s.shiver[0], z: s.shiver[1], r: s.shiver[2], a: 1, mode: 'shiver', t });
     if (C === 'crawlIn') dist.push({ x: nara.position.x, z: nara.position.z, r: 1.1, a: 0.5, mode: 'push' });
-    if (dragP) dist.push({ x: dragP.x, z: dragP.z - 0.3, r: 1.9, a: 1.0, mode: 'push' }, { x: dragP.x, z: dragP.z + 1.0, r: 1.6, a: 0.8, mode: 'push' });
+    if (dragP) { dist.push({ x: dragP.x, z: dragP.z + 1.0, r: 1.7, a: 0.8, mode: 'push' });
+      for (const [dt, a] of [[0, 1.0], [0.12, 0.8], [0.25, 0.55], [0.4, 0.32], [0.6, 0.14]]) { const q = dragAt(t - dt); dist.push({ x: q.x, z: q.z - 0.3, r: 1.9, a, mode: 'push' }); } }
     if (s.sc === 34) dist.push({ x: NC[0], z: 3.4, r: 1.6, a: 0.6, mode: 'shiver', t });
     maze.disturb(dist);
     // tendrils: out of the wall behind her (scene 34), then pulling her by the waist (scene 35)
@@ -344,7 +349,6 @@ time    sound                     volume  options
     if (s.punch && t > s.punch) { const k = Math.exp(-(t - s.punch) * 7); fx.zoom = 0.5 * k; fx.ca = 0.4 * k; }
     if (s.shakeAt && t > s.shakeAt) { const k = Math.exp(-(t - s.shakeAt) * 6); fx.zoom = 0.35 * k; fx.ca = (fx.ca || 0) + 0.3 * k; }
     if (s.sc === 29 && t > T.whip) { const k = clamp(1 - (t - T.whip) / 0.25, 0, 1); fx.whip = 0.9 * k * Math.sin(k * 3.1); }
-    if (s.sc === 35) fx.whip = 0.25 * Math.sin(t * 9);
     for (const c of shots.cuts()) { const k = clamp(1 - Math.abs(t - c) / 0.06, 0, 1); fx.ca = (fx.ca || 0) + 0.12 * k; }
     return fx;
   }
@@ -363,10 +367,10 @@ time    sound                     volume  options
   RT.player.start({
     name: 'maze', duration: DURATION, renderer, scene, camera, frame, render, narration: NAR, speakers: {},
     black, white: () => 0, audio: '../audio/mix/maze_mix.mp3',
-    title: { t0: TITLE_T + 0.1, html: '<div class="t1" style="color:#f6e7b8;text-shadow:0 0 calc(var(--u)*6) rgba(0,0,0,.55),0 calc(var(--u)*.6) calc(var(--u)*1.2) #000">THE CORN MAZE</div><div class="t2">AN “IN THIS TOWN” STORY</div><div class="t3" style="color:#ffe45c">Follow for more.</div>' },
+    title: { t0: TITLE_T + 0.1, html: '<div class="t1" style="color:#f6e7b8;text-shadow:0 0 calc(var(--u)*6) rgba(0,0,0,.55),0 calc(var(--u)*.6) calc(var(--u)*1.2) #000">THE CORN MAZE</div><div class="t3" style="color:#ffe45c">Follow for more.</div>' },
     menu: { title: 'The Corn Maze', sub: 'In this town, if you hear your name inside the corn maze… you walk the other way.' },
     thumbnail(n) {
-      render(n === '2' ? 46.2 : 41.4);
+      render(n === '2' ? 43.0 : 41.4);
       const d = document.createElement('div');
       d.style.cssText = 'position:absolute;left:4%;right:4%;top:' + (n === '2' ? '60%' : '8%') + ';text-align:center;font:900 calc(var(--u)*12.5) Montserrat,Arial Black,sans-serif;line-height:1.02;color:#fff;-webkit-text-stroke:calc(var(--u)*1.3) #000;paint-order:stroke fill;text-shadow:0 calc(var(--u)*.9) 0 #000';
       d.innerHTML = n === '2' ? 'HE NEVER<br>CALLS ME <span style="color:#ffe45c">NARA</span>' : 'IF YOU HEAR<br>YOUR NAME…<br><span style="color:#ffe45c">WALK AWAY</span>';

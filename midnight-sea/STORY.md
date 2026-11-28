@@ -125,7 +125,7 @@ Bram's fishing rod and lantern.
 - Captions: one word at a time, ALL CAPS, yellow with a black outline.
 - Audio: narrator (ElevenLabs Adam, 1.3×) + dreamcore at 50 %. Milo's quoted lines are read by the narrator.
 
-## Stage 4 · Scene plan (DRAFT, waiting for approval)
+## Stage 4 · Scene plan (APPROVED)
 
 Approved script: 371 words, 1,901 characters → about 2:16 of narration (+ 2.5 s end card). Times lock to the real voice.
 48 scenes, one main visual action each, cut fast like the reference clip.

@@ -8,3 +8,5 @@ out/echo-breakers/*-no-voice.mp4
 out/echo-breakers/*-sfx-only.mp4
 out/echo-breakers/*-no-music.mp4
 midnight-sea/build/
+# The Midnight Sea has no sound effects yet: the sfx-only render is silent, not kept
+out/midnight-sea/*-sfx-only.mp4

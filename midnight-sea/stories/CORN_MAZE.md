@@ -107,7 +107,7 @@ Classic blocky build for the humans; beautiful face for Nara; Juno is a boy with
   - The narrator voice and the dreamcore music at 50% are the same as in your other Nara videos.
   - Option: Juno's calls ("Nara!", "VALE! Where are you?") in a separate boy's voice. The scarecrow's copies would use the same voice, so the twist plays fair.
 
-## Stage 4 · Scene plan (FOR APPROVAL)
+## Stage 4 · Scene plan (APPROVED; rendered: out/midnight-sea/maze-with-cover.mp4)
 39 scenes of about 1.5–2.5 s each (the reference's pace), then the title card. Times are estimates and lock to the voice file. Screen direction: Nara enters heading north (away from camera at the entrance); the voice and the clearing are always to the LEFT of frame until she faces the scarecrow; the road is behind her (south).
 
 | # | Narration covered | Visual action | Characters | Location | Camera / framing | Beat | ≈ s |

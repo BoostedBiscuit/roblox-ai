@@ -89,13 +89,16 @@
     return c;
   }
   vec3 gradeRB(vec3 c){
+    // darker, easier on the eyes: deep blacks, a muted crimson for the mid-tones, highlights that stay red
+    // (only the brightest specks, like the eye's glint, reach a soft pink); a touch of the original colour keeps faces readable
     float l = dot(c, vec3(0.299, 0.587, 0.114));
     float redness = clamp((c.r - max(c.g, c.b)) * 1.6, 0.0, 1.0);
-    l = pow(clamp(l, 0.0, 1.4), 1.4);
-    vec3 g = mix(vec3(0.0), vec3(0.42, 0.02, 0.03), smoothstep(0.0, 0.34, l));
-    g = mix(g, vec3(0.92, 0.12, 0.09), smoothstep(0.26, 0.68, l));
-    g = mix(g, vec3(1.0, 0.72, 0.64), smoothstep(0.82, 1.3, l));
-    g += vec3(0.30, 0.02, 0.0) * redness * smoothstep(0.05, 0.4, l);
+    l = pow(clamp(l, 0.0, 1.4), 1.55);
+    vec3 g = mix(vec3(0.0), vec3(0.24, 0.018, 0.022), smoothstep(0.0, 0.32, l));
+    g = mix(g, vec3(0.62, 0.075, 0.06), smoothstep(0.22, 0.7, l));
+    g = mix(g, vec3(0.86, 0.30, 0.24), smoothstep(0.85, 1.35, l));
+    g += vec3(0.16, 0.01, 0.0) * redness * smoothstep(0.05, 0.4, l);
+    g = mix(g, c * vec3(0.55, 0.22, 0.2), 0.12);
     return mix(c, g, grade);
   }
   void main(){
@@ -205,9 +208,9 @@
           pass(blurM, blurRT); base = blurRT.texture;
         }
         // 4. glow: bright parts, blurred at 1/4 and 1/8 size
-        const bloom = fx.bloom ?? 0.8;
+        const bloom = (fx.bloom ?? 0.8) * 0.45;          // softer glow (it was hard on the eyes)
         if (bloom > 0) {
-          brightM.uniforms.tColor.value = base; brightM.uniforms.thr.value = fx.bloomThreshold ?? 0.7; pass(brightM, b1a);
+          brightM.uniforms.tColor.value = base; brightM.uniforms.thr.value = fx.bloomThreshold ?? 0.82; pass(brightM, b1a);
           for (let k = 0; k < 2; k++) {
             gaussM.uniforms.tColor.value = b1a.texture; gaussM.uniforms.dir.value.set(1.6 / b1a.width, 0); pass(gaussM, b1b);
             gaussM.uniforms.tColor.value = b1b.texture; gaussM.uniforms.dir.value.set(0, 1.6 / b1a.height); pass(gaussM, b1a);
